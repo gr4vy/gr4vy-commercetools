@@ -1,0 +1,31 @@
+{
+  "name": "gr4vy",
+  "version": "1.0.0",
+  "description": "Extension package for Commerce tools and Gr4vy",
+  "main": ".build/src/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./.build/src/index.js",
+    "start:dev": "nodemon src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/tryzens-commercetools/gr4vy.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://bitbucket.org/tryzens-commercetools/gr4vy/issues"
+  },
+  "homepage": "https://bitbucket.org/tryzens-commercetools/gr4vy#readme",
+  "dependencies": {
+    "@types/node": "^18.11.18",
+    "typescript": "^4.9.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.32.0",
+    "nodemon": "^2.0.20",
+    "ts-node": "^10.9.1"
+  }
+}
