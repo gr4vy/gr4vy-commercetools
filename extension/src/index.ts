@@ -1,1 +1,1 @@
-console.log('Hello Extension Module!')
+console.log("Hello Extension Module!")
