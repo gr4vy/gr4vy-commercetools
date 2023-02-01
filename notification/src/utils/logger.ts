@@ -5,7 +5,7 @@ let logger: bunyan
 const getLogger = () => {
   if (!logger)
     logger = bunyan.createLogger({
-      name: "ctp-gr4vy-integration-extension",
+      name: "ctp-gr4vy-notification-extension",
       streams: [
         {
           level: "error",
