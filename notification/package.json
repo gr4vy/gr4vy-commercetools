@@ -2,7 +2,7 @@
   "name": "gr4vy",
   "version": "1.0.0",
   "description": "Notification package for Commerce tools and Gr4vy",
-  "main": ".build/src/index.js",
+  "main": ".build/index.js",
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,7 +10,7 @@
     "eslint": "eslint . --ext .ts",
     "prettier": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "start:dev": "nodemon src/index.ts",
-    "prepare": "cd .. && husky install extension/.husky"
+    "prepare": "cd .. && husky install notification/.husky"
   },
   "repository": {
     "type": "git",
