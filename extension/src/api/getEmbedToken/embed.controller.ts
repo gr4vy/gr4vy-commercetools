@@ -1,11 +1,13 @@
 import { IncomingMessage, ServerResponse } from "http"
 
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { ApiClient } from "@gr4vy-ct/common"
 
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
-import { ApiClient } from "./../../service/commercetools/graphql"
-import { getCustomerWithCart } from "./../../service/commercetools/getEmbedToken"
+import { getCustomerWithCart } from "../../service/commercetools/getCustomerCart"
 
 const processRequest = async (request: IncomingMessage, response: ServerResponse) => {
   try {

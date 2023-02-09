@@ -1,5 +1,5 @@
 {
-  "name": "gr4vy",
+  "name": "@gr4vy-ct/notification",
   "version": "1.0.0",
   "description": "Notification package for Commerce tools and Gr4vy",
   "main": ".build/index.js",

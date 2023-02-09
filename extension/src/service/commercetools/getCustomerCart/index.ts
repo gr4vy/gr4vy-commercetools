@@ -1,2 +1,2 @@
-export * from "./requestModel"
+export * from "./query"
 export * from "./responseMapper"
