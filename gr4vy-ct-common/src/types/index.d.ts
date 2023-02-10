@@ -1,0 +1,1 @@
+declare module '@gr4vy-ct-sdk/shared';
