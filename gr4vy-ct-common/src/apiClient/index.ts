@@ -1,41 +1,52 @@
-import { GraphQLClient } from "../graphqlClient"
+import { GraphQLClient, Options } from "../graphqlClient"
 
 export class ApiClient {
-  gClient: any
-  query: any
-  variables: any
+  gClient: GraphQLClient
+  projectKey: string
+  query: string
+  variables = {} as { [key: string]: string }
+  headers = {} as { [key: string]: string }
 
-  constructor() {
-    //TODO: will move credentials to env
+  constructor({
+    authHost,
+    apiHost,
+    projectKey,
+    clientId,
+    clientSecret,
+    scopes,
+  }: Options) {
     this.gClient = new GraphQLClient({
-      authHost: "https://auth.europe-west1.gcp.commercetools.com",
-      apiHost: "https://api.europe-west1.gcp.commercetools.com",
-      projectKey: "gr4vy",
-      clientId: "NNceCWuZHd8665wfEmH8Jel0",
-      clientSecret: "UUv_im19Eox7nUHGdn3gYCjT_9sIqY64",
-      scopes: ["manage_project:gr4vy"],
+      authHost,
+      apiHost,
+      projectKey,
+      clientId,
+      clientSecret,
+      scopes,
     })
+    this.projectKey = projectKey
   }
 
-  setBody({ query, variables }: { query: any; variables?: any }) {
+  setBody({ query, variables }: { query: string; variables: { [key: string]: string } }) {
     this.query = query
     this.variables = variables
   }
 
-  async get() {
+  setAuthorizationBearerHeader(authToken: string) {
+    this.headers["Authorization"] = authToken
+  }
+
+  async execute() {
     try {
       return this.gClient
         .getApiRoot()
-        .withProjectKey({ projectKey: "gr4vy" })
+        .withProjectKey({ projectKey: this.projectKey })
         .graphql()
         .post({
           body: {
             query: this.query,
             variables: this.variables,
           },
-          headers: {
-            Authorization: "Bearer RlGb7MIHMLQcdzcVctDEt0fnTgAm3V9N", // TODO: get token from header
-          },
+          headers: this.headers,
         })
         .execute()
         .then((data: any) => data)

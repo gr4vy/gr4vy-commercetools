@@ -20,14 +20,14 @@ const createServer = () => {
         await route(request, response)
       } else {
         ResponseHelper.setResponseError(response, {
-          statusCode: StatusCodes.NOT_FOUND,
+          httpStatusCode: StatusCodes.NOT_FOUND,
           message: "Route not found",
         })
       }
     } catch (e) {
       logger.error(e, `Unexpected error when processing URL ${request.url}`)
       ResponseHelper.setResponseError(response, {
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        httpStatusCode: StatusCodes.INTERNAL_SERVER_ERROR,
         message: e.message,
       })
     }

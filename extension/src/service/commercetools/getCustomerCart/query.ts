@@ -3,12 +3,15 @@ const getCustomerWithCart = `
     query {
         me {
             customer {
-              email
+              id
               firstName
+              middleName
               lastName
             }
             activeCart{
                 id
+                customerId
+                anonymousId
             }
         }
     }

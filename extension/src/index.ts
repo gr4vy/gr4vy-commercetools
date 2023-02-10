@@ -1,4 +1,8 @@
+import * as dotenv from 'dotenv'
+
 import { createServer } from "./server/"
+
+dotenv.config()
 
 const server = createServer()
 

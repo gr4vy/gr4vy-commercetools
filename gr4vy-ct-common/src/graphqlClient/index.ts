@@ -6,7 +6,7 @@ import {
 } from "@commercetools/sdk-client-v2"
 import { createApiBuilderFromCtpClient, ApiRoot } from "@commercetools/platform-sdk"
 
-interface IGraphQLClientProps {
+export declare type Options = {
   authHost: string
   apiHost: string
   projectKey: string
@@ -18,7 +18,7 @@ interface IGraphQLClientProps {
 export class GraphQLClient {
   apiRoot: ApiRoot
 
-  constructor(props: IGraphQLClientProps) {
+  constructor(props: Options) {
     const { authHost, projectKey, clientId, clientSecret, scopes, apiHost } = props
     // Configure authMiddlewareOptions
     const authMiddlewareOptions: AuthMiddlewareOptions = {
