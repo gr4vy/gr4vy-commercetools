@@ -7,7 +7,7 @@ import { responseMapper } from "./mapper"
 import { cache, keys } from "./../../../cache"
 
 const getCustomObjects = () => {
-  const { GET_CUSTOMER_OBJECTS_CACHE_KEY: cacheKey } = keys
+  const cacheKey = keys.getGr4vyPaymentConfigCacheKey()
 
   if (cache.has(cacheKey)) {
     return cache.get(cacheKey)

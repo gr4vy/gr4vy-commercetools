@@ -4,9 +4,4 @@ import keys from "./keys"
 
 const cache = new NodeCache()
 
-export {
-    cache,
-    keys
-}
-
-
+export { cache, keys }
