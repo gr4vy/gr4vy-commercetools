@@ -4,8 +4,14 @@ import { ApiClient } from "@gr4vy-ct/common"
 
 import { getCustomObjectsByContainerQuery, variables } from "./query"
 import { responseMapper } from "./mapper"
+import { cache, keys } from "./../../../cache"
 
 const getCustomObjects = () => {
+  const { GET_CUSTOMER_OBJECTS_CACHE_KEY: cacheKey } = keys
+
+  if (cache.has(cacheKey)) {
+    return cache.get(cacheKey)
+  }
   const apiClient: ApiClient = new ApiClient()
 
   // Get customer and cart from commercetools
@@ -14,7 +20,11 @@ const getCustomObjects = () => {
     variables: variables,
   })
 
-  return responseMapper(apiClient.getData())
+  const result = responseMapper(apiClient.getData())
+
+  cache.set(cacheKey, result)
+
+  return result
 }
 
 export { getCustomObjects }
