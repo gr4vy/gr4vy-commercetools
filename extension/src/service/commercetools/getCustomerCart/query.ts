@@ -1,5 +1,5 @@
 // GraphQL query to get Customer
-const getCustomerWithCart = `
+const getCustomerWithCartQuery = `
     query {
         me {
             customer {
@@ -17,4 +17,4 @@ const getCustomerWithCart = `
     }
 `
 
-export { getCustomerWithCart }
+export { getCustomerWithCartQuery }

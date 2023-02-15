@@ -1,13 +1,10 @@
 import { IncomingMessage, ServerResponse } from "http"
 
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { ApiClient } from "@gr4vy-ct/common"
 
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
-import { getCustomerWithCart } from "../../service/commercetools/getCustomerCart"
+import { getCustomerWithCart, getCustomObjects } from "../../service/commercetools"
 import { getLogger, getAuthorizationRequestHeader } from "./../../utils"
 
 const logger = getLogger()
@@ -42,24 +39,10 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       })
     }
 
-    // TODO: need to initialize in global
-    const apiClient: ApiClient = new ApiClient({
-      authHost: process.env.CTP_AUTH_URL,
-      apiHost: process.env.CTP_API_URL,
-      projectKey: process.env.CTP_PROJECT_KEY,
-      clientId: process.env.CTP_CLIENT_ID,
-      clientSecret: process.env.CTP_CLIENT_SECRET,
-      scopes: process.env.CTP_SCOPES,
-    })
+    const customerWithCart = await getCustomerWithCart(bearerToken)
+    const customObjects = await getCustomObjects()
 
-    apiClient.setAuthorizationBearerHeader(bearerToken)
-    // Get customer and cart from commercetools
-    apiClient.setBody({
-      query: getCustomerWithCart,
-    })
-    const customerWithCartInfo = await apiClient.execute()
-
-    ResponseHelper.setResponseTo200(response, customerWithCartInfo)
+    ResponseHelper.setResponseTo200(response, { customerWithCart, customObjects})
   } catch (e) {
     ResponseHelper.setResponseError(response, {
       httpStatusCode: 500,
