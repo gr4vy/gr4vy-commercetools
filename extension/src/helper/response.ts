@@ -33,13 +33,13 @@ class ResponseHelper {
 
   setResponseError(
     response: ServerResponse,
-    params: { statusCode: number; message?: string; errors?: [{ code: string; message: string }] }
+    params: { httpStatusCode: number; message?: string; errors?: [{ code: string | number; message: string }] }
   ) {
-    const { statusCode, message, errors } = params
-    response.writeHead(statusCode, this.headers)
+    const { httpStatusCode, message, errors } = params
+    response.writeHead(httpStatusCode, this.headers)
     response.end(
       JSON.stringify({
-        statusCode,
+        status:"nok",
         message,
         errors,
       })

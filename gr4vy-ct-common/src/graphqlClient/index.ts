@@ -6,7 +6,7 @@ import {
 } from "@commercetools/sdk-client-v2"
 import { createApiBuilderFromCtpClient, ApiRoot } from "@commercetools/platform-sdk"
 
-interface IGraphQLClientProps {
+export declare type Options = {
   authHost: string
   apiHost: string
   projectKey: string
@@ -18,7 +18,11 @@ interface IGraphQLClientProps {
 export class GraphQLClient {
   apiRoot: ApiRoot
 
-  constructor(props: IGraphQLClientProps) {
+  constructor() {
+    // constructor props
+  }
+
+  setClientWithAuthMiddlewareOptions(props: Options) {
     const { authHost, projectKey, clientId, clientSecret, scopes, apiHost } = props
     // Configure authMiddlewareOptions
     const authMiddlewareOptions: AuthMiddlewareOptions = {
@@ -40,6 +44,26 @@ export class GraphQLClient {
     // ClientBuilder
     const ctpClient = new ClientBuilder()
       .withClientCredentialsFlow(authMiddlewareOptions)
+      .withHttpMiddleware(httpMiddlewareOptions)
+      .withLoggerMiddleware()
+      .build()
+
+    // Create a API root from API builder of commercetools platform client
+    this.apiRoot = createApiBuilderFromCtpClient(ctpClient)
+  }
+
+  setClientwithExistingTokenFlow(props: { apiHost: string; bearerToken: string }) {
+    const { apiHost, bearerToken } = props
+
+    // Configure httpMiddlewareOptions
+    const httpMiddlewareOptions: HttpMiddlewareOptions = {
+      host: apiHost,
+      fetch,
+    }
+
+    // ClientBuilder
+    const ctpClient = new ClientBuilder()
+      .withExistingTokenFlow(bearerToken, { force: true })
       .withHttpMiddleware(httpMiddlewareOptions)
       .withLoggerMiddleware()
       .build()

@@ -1,17 +1,20 @@
 // GraphQL query to get Customer
-const getCustomerWithCart = `
+const getCustomerWithCartQuery = `
     query {
         me {
             customer {
-              email
+              id
               firstName
+              middleName
               lastName
             }
             activeCart{
                 id
+                customerId
+                anonymousId
             }
         }
     }
 `
 
-export { getCustomerWithCart }
+export { getCustomerWithCartQuery }

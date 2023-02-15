@@ -2,22 +2,19 @@ import { env } from "process"
 
 import { GraphQLClient } from "../graphqlClient"
 
-export class ApiClient {
+export class MeApiClient {
   gClient: GraphQLClient
   projectKey: string
   query: string
   variables = {} as { [key: string]: string }
+  headers = {} as { [key: string]: string }
 
-  constructor() {
+  constructor(props: { bearerToken: string }) {
     this.gClient = new GraphQLClient()
 
-    this.gClient.setClientWithAuthMiddlewareOptions({
+    this.gClient.setClientwithExistingTokenFlow({
       apiHost: env.CTP_API_URL as string,
-      authHost: env.CTP_AUTH_URL as string,
-      projectKey: env.CTP_PROJECT_KEY as string,
-      clientId: env.CTP_CLIENT_ID as string,
-      clientSecret: env.CTP_CLIENT_SECRET as string,
-      scopes: [env.CTP_SCOPES] as unknown as Array<string>,
+      bearerToken: props.bearerToken,
     })
 
     this.projectKey = env.CTP_PROJECT_KEY as string
