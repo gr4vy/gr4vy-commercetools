@@ -5,7 +5,7 @@ import { MeApiClient } from "@gr4vy-ct/common"
 import { getCustomerWithCartQuery } from "./query"
 import { responseMapper } from "./mapper"
 
-const getCustomerWithCart = (bearerToken: string) => {
+const getCustomerWithCart =async (bearerToken: string) => {
   const meApiClient: MeApiClient = new MeApiClient({
     bearerToken,
   })
@@ -15,7 +15,7 @@ const getCustomerWithCart = (bearerToken: string) => {
     query: getCustomerWithCartQuery,
   })
 
-  return responseMapper(meApiClient.getData())
+  return responseMapper(await meApiClient.getData())
 }
 
 export { getCustomerWithCart }

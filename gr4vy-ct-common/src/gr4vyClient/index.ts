@@ -1,3 +1,5 @@
+import fs from "fs"
+
 import { Client, BuyerRequest } from "@gr4vy/node"
 
 import { Options, EmbedParams, BuyerParams } from "./types"
@@ -6,6 +8,9 @@ export class Gr4vy {
   client: Client
 
   constructor({ gr4vyId, privateKey, environment }: Options) {
+
+    privateKey = String(fs.readFileSync(privateKey));
+
     this.client = new Client({
       gr4vyId,
       privateKey,

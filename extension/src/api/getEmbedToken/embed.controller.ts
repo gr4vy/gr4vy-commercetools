@@ -4,7 +4,7 @@ import { StatusCodes, getReasonPhrase } from "http-status-codes"
 
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
-import { getCustomerWithCart, getCustomObjects } from "../../service/commercetools"
+import { getCustomerWithCart, getCustomObjects, createBuyer } from "../../service"
 import { getLogger, getAuthorizationRequestHeader } from "./../../utils"
 
 const logger = getLogger()
@@ -39,10 +39,13 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       })
     }
 
-    const customerWithCart = await getCustomerWithCart(bearerToken)
-    const customObjects = await getCustomObjects()
-
-    ResponseHelper.setResponseTo200(response, { customerWithCart, customObjects})
+    // load commercetools data
+    const { customer, activeCart: cart } = await getCustomerWithCart(bearerToken)
+    const paymentConfig = await getCustomObjects()
+    // create buyer
+    const buyer = await createBuyer({ customer, cart, paymentConfig })
+    
+    ResponseHelper.setResponseTo200(response, { customer, cart, paymentConfig,buyer })
   } catch (e) {
     ResponseHelper.setResponseError(response, {
       httpStatusCode: 500,
