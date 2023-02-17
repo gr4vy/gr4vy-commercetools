@@ -1,6 +1,10 @@
-const responseMapper = async (result: any) => {
-  const e = await result
-  return e?.body?.data?.customObjects || {}
+import c from "./../../../config/constants"
+
+const responseMapper = (response: any) => {
+  const parsedRes = response?.body?.data?.customObjects || {}
+  return parsedRes.results.find(
+    (e: any) => e.container === c.CTP_GR4VY_PAYMENT_CONFIGURATION_CONTAINER
+  )
 }
 
 export { responseMapper }
