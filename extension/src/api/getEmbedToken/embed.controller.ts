@@ -51,18 +51,20 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
 
     // create buyer in gr4vy if buyer id is not present
     if (!customer.gr4vyBuyerId) {
-      const buyer = await createBuyer({ customer, cart, paymentConfig })
+      const { body: buyer } = await createBuyer({ customer, cart, paymentConfig })
       // Update CT customer with buyer info
-      await updateCustomer(customer.id, buyer)
-      // Set gr4vyBuyerId in customer
-      customer.gr4vyBuyerId = {
-        value: buyer.id,
+      const isCustomerUpdated = await updateCustomer({ customer, buyer })
+      if (isCustomerUpdated) {
+        // Set gr4vyBuyerId in customer
+        customer.gr4vyBuyerId = {
+          value: buyer.id,
+        }
       }
     }
 
     const embedToken = await createEmbedToken({ customer, cart, paymentConfig })
 
-    ResponseHelper.setResponseTo200(response, { embedToken })
+    ResponseHelper.setResponseTo200(response, { customer, embedToken })
   } catch (e) {
     ResponseHelper.setResponseError(response, {
       httpStatusCode: 500,

@@ -5,7 +5,7 @@ export declare type Customer = {
   lastName: string
   version: string
   gr4vyBuyerId: {
-    name: string
+    name?: string
     value: string
   }
 }
