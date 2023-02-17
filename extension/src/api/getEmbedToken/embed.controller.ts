@@ -4,7 +4,13 @@ import { StatusCodes, getReasonPhrase } from "http-status-codes"
 
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
-import { getCustomerWithCart, getCustomObjects, createBuyer } from "../../service"
+import {
+  getCustomerWithCart,
+  getCustomObjects,
+  createBuyer,
+  updateCustomer,
+  createEmbedToken,
+} from "../../service"
 import { getLogger, getAuthorizationRequestHeader } from "./../../utils"
 
 const logger = getLogger()
@@ -40,12 +46,23 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
     }
 
     // load commercetools data
-    const { customer, activeCart: cart } = await getCustomerWithCart(bearerToken)
+    const { customer, cart } = await getCustomerWithCart(bearerToken)
     const paymentConfig = await getCustomObjects()
-    // create buyer
-    const buyer = await createBuyer({ customer, cart, paymentConfig })
-    
-    ResponseHelper.setResponseTo200(response, { customer, cart, paymentConfig,buyer })
+
+    // create buyer in gr4vy if buyer id is not present
+    if (!customer.gr4vyBuyerId) {
+      const buyer = await createBuyer({ customer, cart, paymentConfig })
+      // Update CT customer with buyer info
+      await updateCustomer(customer.id, buyer)
+      // Set gr4vyBuyerId in customer
+      customer.gr4vyBuyerId = {
+        value: buyer.id,
+      }
+    }
+
+    const embedToken = await createEmbedToken({ customer, cart, paymentConfig })
+
+    ResponseHelper.setResponseTo200(response, { embedToken })
   } catch (e) {
     ResponseHelper.setResponseError(response, {
       httpStatusCode: 500,
