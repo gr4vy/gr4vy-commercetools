@@ -16,7 +16,8 @@
     "lint": "jest --config jest.eslint.config.js",
     "format": "prettier --write '**/*.js'",
     "versions:appkit": "manypkg upgrade @commercetools-frontend",
-    "versions:uikit": "manypkg upgrade @commercetools-uikit"
+    "versions:uikit": "manypkg upgrade @commercetools-uikit",
+    "docker:prod": "npm ci && npm run build && docker build -f Dockerfile.prod -t gr4vy/mc-custom-app ."
   },
   "dependencies": {
     "@apollo/client": "3.7.0",
