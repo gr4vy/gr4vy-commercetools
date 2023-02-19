@@ -1,5 +1,15 @@
+FROM node:lts AS buildIntance
+
+WORKDIR /build
+
+COPY . .
+
+RUN npm ci
+
+RUN npm run build
+
 FROM nginx:latest
 
-COPY ./public /usr/share/nginx/html
+COPY --from=buildIntance /build/public /usr/share/nginx/html
 
 EXPOSE 80
