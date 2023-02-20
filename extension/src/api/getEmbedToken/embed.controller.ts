@@ -4,7 +4,13 @@ import { StatusCodes, getReasonPhrase } from "http-status-codes"
 
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
-import { getCustomerWithCart, getCustomObjects, createBuyer } from "../../service"
+import {
+  getCustomerWithCart,
+  getCustomObjects,
+  createBuyer,
+  updateCustomer,
+  createEmbedToken,
+} from "../../service"
 import { getLogger, getAuthorizationRequestHeader } from "./../../utils"
 
 const logger = getLogger()
@@ -40,18 +46,54 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
     }
 
     // load commercetools data
-    const { customer, activeCart: cart } = await getCustomerWithCart(bearerToken)
+    const { customer, cart } = await getCustomerWithCart(bearerToken)
+
+    if (!customer) {
+      throw { message: "Customer information is missing or empty", statusCode: 400 }
+    }
+
+    if (!cart) {
+      throw { message: "Cart information is missing or empty", statusCode: 400 }
+    }
+
     const paymentConfig = await getCustomObjects()
-    // create buyer
-    const buyer = await createBuyer({ customer, cart, paymentConfig })
-    
-    ResponseHelper.setResponseTo200(response, { customer, cart, paymentConfig,buyer })
+
+    if (!paymentConfig) {
+      throw { message: "Payment configuration is missing or empty", statusCode: 400 }
+    }
+
+    // create buyer in gr4vy if buyer id is not present
+    if (!customer.gr4vyBuyerId) {
+      const { body: buyer } = await createBuyer({ customer, cart, paymentConfig })
+      // Update CT customer with buyer info
+      const isCustomerUpdated = await updateCustomer({ customer, buyer })
+
+      if (!isCustomerUpdated) {
+        throw { message: "Error in updating buyer in CTP for customer", statusCode: 400 }
+      }
+      // Set gr4vyBuyerId in customer
+      customer.gr4vyBuyerId = {
+        value: buyer.id,
+      }
+    }
+
+    // Omit specific keys
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { privateKey, ...restConfig } = paymentConfig.value
+    const embedToken = await createEmbedToken({ customer, cart, paymentConfig })
+
+    ResponseHelper.setResponseTo200(response, { embedToken, ...restConfig })
   } catch (e) {
+    const errorStackTrace =
+      `Error during parsing creating embed token request: Ending the process. ` +
+      `Error: ${JSON.stringify(e)}`
+    logger.error(errorStackTrace)
+
     ResponseHelper.setResponseError(response, {
-      httpStatusCode: 500,
+      httpStatusCode: e.statusCode || 500,
       errors: [
         {
-          code: 500,
+          code: e.statusCode || 500,
           message: e.message,
         },
       ],

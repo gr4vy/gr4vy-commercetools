@@ -3,12 +3,21 @@ export declare type Customer = {
   firstName: string
   middleName: string
   lastName: string
+  version: string
+  gr4vyBuyerId: {
+    name?: string
+    value: string
+  }
 }
 
 export declare type Cart = {
   id: string
   customerId: string
   anonymousId: string
+  totalPrice: {
+    currencyCode: string
+    centAmount: number
+  }
 }
 
 export declare type PaymentConfig = {

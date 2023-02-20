@@ -7,11 +7,22 @@ const getCustomerWithCartQuery = `
               firstName
               middleName
               lastName
+              version
+              custom {
+                customFieldsRaw{
+                    name
+                    value
+                }
+              }
             }
             activeCart{
                 id
                 customerId
                 anonymousId
+                totalPrice{
+                    currencyCode
+                    centAmount
+                }
             }
         }
     }
