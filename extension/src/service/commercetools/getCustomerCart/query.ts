@@ -23,6 +23,8 @@ const getCustomerWithCartQuery = `
                     currencyCode
                     centAmount
                 }
+                country
+                locale
             }
         }
     }

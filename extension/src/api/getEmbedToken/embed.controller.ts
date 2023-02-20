@@ -65,12 +65,16 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
     // create buyer in gr4vy if buyer id is not present
     if (!customer.gr4vyBuyerId) {
       const { body: buyer } = await createBuyer({ customer, cart, paymentConfig })
+      if (!buyer) {
+        throw { message: "Error in creating buyer in CTP for customer", statusCode: 400 }
+      }
+
       // Update CT customer with buyer info
       const isCustomerUpdated = await updateCustomer({ customer, buyer })
-
       if (!isCustomerUpdated) {
         throw { message: "Error in updating buyer in CTP for customer", statusCode: 400 }
       }
+
       // Set gr4vyBuyerId in customer
       customer.gr4vyBuyerId = {
         value: buyer.id,
@@ -82,7 +86,13 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
     const { privateKey, ...restConfig } = paymentConfig.value
     const embedToken = await createEmbedToken({ customer, cart, paymentConfig })
 
-    ResponseHelper.setResponseTo200(response, { embedToken, ...restConfig })
+    const responseData = {
+      embedToken,
+      ...restConfig,
+      cart
+    }
+
+    ResponseHelper.setResponseTo200(response, responseData)
   } catch (e) {
     const errorStackTrace =
       `Error during parsing creating embed token request: Ending the process. ` +
