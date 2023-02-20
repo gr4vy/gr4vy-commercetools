@@ -67,7 +67,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       const { body: buyer } = await createBuyer({ customer, cart, paymentConfig })
       // Update CT customer with buyer info
       const isCustomerUpdated = await updateCustomer({ customer, buyer })
-      
+
       if (!isCustomerUpdated) {
         throw { message: "Error in updating buyer in CTP for customer", statusCode: 400 }
       }
@@ -77,12 +77,16 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       }
     }
 
+    // Omit specific keys
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { privateKey, ...restConfig } = paymentConfig.value
     const embedToken = await createEmbedToken({ customer, cart, paymentConfig })
 
-    ResponseHelper.setResponseTo200(response, { embedToken })
+    ResponseHelper.setResponseTo200(response, { embedToken, ...restConfig })
   } catch (e) {
     const errorStackTrace =
-      `Error during parsing creating embed token request: Ending the process. ` + `Error: ${JSON.stringify(e)}`
+      `Error during parsing creating embed token request: Ending the process. ` +
+      `Error: ${JSON.stringify(e)}`
     logger.error(errorStackTrace)
 
     ResponseHelper.setResponseError(response, {
