@@ -21,10 +21,6 @@ export const createEmbedToken = async ({
     privateKey,
   })
 
-  if (!cart) {
-    throw new Error("Missing cart details")
-  }
-
   const {
     totalPrice: { centAmount, currencyCode },
   } = cart

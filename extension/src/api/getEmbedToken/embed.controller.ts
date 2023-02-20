@@ -47,30 +47,49 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
 
     // load commercetools data
     const { customer, cart } = await getCustomerWithCart(bearerToken)
+
+    if (!customer) {
+      throw { message: "Customer information is missing or empty", statusCode: 400 }
+    }
+
+    if (!cart) {
+      throw { message: "Cart information is missing or empty", statusCode: 400 }
+    }
+
     const paymentConfig = await getCustomObjects()
+
+    if (!paymentConfig) {
+      throw { message: "Payment configuration is missing or empty", statusCode: 400 }
+    }
 
     // create buyer in gr4vy if buyer id is not present
     if (!customer.gr4vyBuyerId) {
       const { body: buyer } = await createBuyer({ customer, cart, paymentConfig })
       // Update CT customer with buyer info
       const isCustomerUpdated = await updateCustomer({ customer, buyer })
-      if (isCustomerUpdated) {
-        // Set gr4vyBuyerId in customer
-        customer.gr4vyBuyerId = {
-          value: buyer.id,
-        }
+      
+      if (!isCustomerUpdated) {
+        throw { message: "Error in updating buyer in CTP for customer", statusCode: 400 }
+      }
+      // Set gr4vyBuyerId in customer
+      customer.gr4vyBuyerId = {
+        value: buyer.id,
       }
     }
 
     const embedToken = await createEmbedToken({ customer, cart, paymentConfig })
 
-    ResponseHelper.setResponseTo200(response, { customer, embedToken })
+    ResponseHelper.setResponseTo200(response, { embedToken })
   } catch (e) {
+    const errorStackTrace =
+      `Error during parsing creating embed token request: Ending the process. ` + `Error: ${JSON.stringify(e)}`
+    logger.error(errorStackTrace)
+
     ResponseHelper.setResponseError(response, {
-      httpStatusCode: 500,
+      httpStatusCode: e.statusCode || 500,
       errors: [
         {
-          code: 500,
+          code: e.statusCode || 500,
           message: e.message,
         },
       ],

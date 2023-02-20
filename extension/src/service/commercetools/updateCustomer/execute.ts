@@ -5,6 +5,8 @@ import { ApiClient } from "@gr4vy-ct/common"
 import { updateCustomerMutation } from "./query"
 import { responseMapper } from "./mapper"
 import { Customer } from "./../../types"
+import c from "./../../../config/constants"
+import { escapedJSON } from "./../../../utils"
 
 const updateCustomer = async ({
   customer,
@@ -20,7 +22,8 @@ const updateCustomer = async ({
     variables: {
       version: customer.version,
       customerId: customer.id,
-      buyerId: buyer.id,
+      buyerId: escapedJSON(buyer.id),
+      ctpCustomFieldNameForGr4vyBuyerId: c.CTP_GR4VY_BUYER_FIELD_ID,
     },
   })
 
