@@ -1,12 +1,14 @@
-FROM node:alpine
+FROM gr4vy/ct-common
 
 # create root application folder
-WORKDIR /app
+WORKDIR /extension
 
-# copy source code to /app folder
-COPY . /app
+# copy source code to app folder
+COPY . /extension
 
 RUN npm install
+
+RUN npm link ../common
 
 RUN npm run build
 
