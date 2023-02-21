@@ -41,6 +41,8 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
 
     const order = await getOrder()
 
+  //Update Buyer
+
     ResponseHelper.setResponseTo200(response, { order})
   } catch (e) {
     ResponseHelper.setResponseError(response, {

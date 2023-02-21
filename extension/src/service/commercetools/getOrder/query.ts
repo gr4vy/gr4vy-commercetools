@@ -12,6 +12,12 @@ const getOrderByIDQuery = `
           lastName
           customerNumber
           externalId
+          custom {
+            customFieldsRaw {
+              name
+              value
+            }
+          }
         }
         billingAddress {
           ...addressFields
@@ -36,6 +42,12 @@ const getOrderByIDQuery = `
       building
       apartment
       region
+      custom {
+        customFieldsRaw {
+          name
+          value
+        }
+      }
     }
 `;
 
