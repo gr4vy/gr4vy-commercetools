@@ -1,12 +1,14 @@
-FROM node:alpine
+FROM gr4vy/ct-common
 
 # create root application folder
 WORKDIR /notification
 
-# copy source code to /app folder
+# copy source code to app folder
 COPY . /notification
 
 RUN npm install
+
+RUN npm link ../common
 
 RUN npm run build
 
