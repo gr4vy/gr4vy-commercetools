@@ -1,6 +1,6 @@
 import fs from "fs"
 
-import { Client, BuyerRequest, ShippingDetailRequest } from "@gr4vy/node"
+import { Client, BuyerRequest, ShippingDetailRequest, TransactionCaptureRequest } from "@gr4vy/node"
 
 import {
   Options,
@@ -8,7 +8,8 @@ import {
   BuyerParams,
   UpdateBuyerParams,
   ParamGr4vyBuyerId,
-  UpdateBuyerShippingAddressParams
+  UpdateBuyerShippingAddressParams,
+  TransactionCaptureParams
 } from "./types"
 
 export class Gr4vy {
@@ -68,5 +69,11 @@ export class Gr4vy {
     shippingRequest.phoneNumber = phone_number
     shippingRequest.address = address
     return this.client.updateBuyerShippingDetail(buyerId, buyerShippingId, shippingRequest)
+  }
+
+  transactionCapture({amount, transactionId}: TransactionCaptureParams) {
+    const transactionCaptureRequest = new TransactionCaptureRequest()
+    transactionCaptureRequest.amount = amount
+    return this.client.captureTransaction(transactionId, transactionCaptureRequest)
   }
 }

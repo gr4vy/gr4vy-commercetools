@@ -56,3 +56,8 @@ export declare type UpdateBuyerShippingAddressParams = {
   buyerId: string
   buyerShippingId: string
 }
+
+export declare type TransactionCaptureParams = {
+  amount: number,
+  transactionId: string
+}

@@ -4,10 +4,13 @@ import c from "../../../config/constants";
 const getOrderByIDQuery = `
     query ($id: String){
       order(id: $id) {
+        id
+        version
         customerEmail
         customerId
         anonymousId
         customer {
+          version
           firstName
           lastName
           customerNumber

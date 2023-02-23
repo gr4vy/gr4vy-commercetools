@@ -9,7 +9,9 @@ import {
   getOrder,
   updateBuyerDetails,
   createBuyerShippingAddress,
-  updateBuyerShippingAddress
+  updateBuyerShippingAddress,
+  updateCustomerOrder,
+  updateCustomerAddressOrderWithAddress
 } from "../../service"
 import { getLogger, getAuthorizationRequestHeader } from "./../../utils"
 
@@ -45,7 +47,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       })
     }
 
-    const {updateBuyer, gr4vyBuyerId, updateShippingAddress} = await getOrder()
+    const {updateBuyer, gr4vyBuyerId, updateShippingAddress, updateGr4vyReference} = await getOrder()
     //const order = await getOrder()
 
     const gr4vyId = gr4vyBuyerId.gr4vyBuyerId;
@@ -60,27 +62,38 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       }
 
       // Update buyer details in Gr4vy
-      const { body: buyer } = await updateBuyerDetails({ updateBuyer, gr4vyBuyerId , paymentConfig})
+      /*const { body: buyer } = await updateBuyerDetails({ updateBuyer, gr4vyBuyerId , paymentConfig})
       if (!buyer) {
         throw { message: "Error in updating buyer in CTP for customer", statusCode: 400 }
-      }
+      }*/
 
       const buyerShippingId = ''
       const shippingDetail = {}
+      const returnCustomer = {}
 
       if (buyerShippingId) {
-        //create buyer shipping address in Gr4vy
-        const { body: shippingDetail } = await createBuyerShippingAddress({updateShippingAddress, paymentConfig});
-      } else {
         //update buyer shipping address in Gr4vy
-        const { body: shippingDetail } = await updateBuyerShippingAddress({updateShippingAddress, paymentConfig});
+        //const { body: shippingDetail } = await updateBuyerShippingAddress({updateShippingAddress, paymentConfig});
+      } else {
+        //create buyer shipping address in Gr4vy
+        //const { body: shippingDetail } = await createBuyerShippingAddress({updateShippingAddress, paymentConfig});
+        updateGr4vyReference.addressDetailId = "\"dsdsd-test-test\""//shippingDetail?.id
+        updateGr4vyReference.gr4vyBuyerId =  "\"31b6f0ea-8b3d-4c92-864c-f0529b0ac2d9\""
+      }
+
+      if (updateGr4vyReference.addressId) {
+        //Update Shipping Detail ID into the Shipping Address of the CT customer // Update Buyer ID in Order Object
+        const isUpdated = await updateCustomerAddressOrderWithAddress({updateGr4vyReference})
+      } else {
+        const isUpdated = await updateCustomerOrder({updateGr4vyReference})
       }
 
       if (!shippingDetail) {
         throw { message: "Error in updating buyer address in CTP for customer", statusCode: 400 }
       }
 
-      ResponseHelper.setResponseTo200(response, { shippingDetail})
+
+      ResponseHelper.setResponseTo200(response, { returnCustomer})
     } else {
       throw { message: "Buyer ID is missing in order data", statusCode: 400 }
     }

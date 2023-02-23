@@ -1,4 +1,4 @@
-import {UpdateBuyer, Gr4vyBuyerId, UpdateShippingAddress} from "./../../types"
+import {UpdateBuyer, Gr4vyBuyerId, UpdateShippingAddress, UpdateGr4vyReference} from "./../../types"
 import c from "../../../config/constants";
 
 const responseMapper = async (
@@ -7,6 +7,7 @@ const responseMapper = async (
   updateBuyer: UpdateBuyer,
   gr4vyBuyerId: Gr4vyBuyerId
   updateShippingAddress: UpdateShippingAddress
+  updateGr4vyReference: UpdateGr4vyReference
 }> => {
   const stripeOrder = result?.body?.data?.order || {}
 
@@ -16,6 +17,8 @@ const responseMapper = async (
   const external_identifier = stripeOrder.customerId?stripeOrder.customerId:stripeOrder.anonymousId
 
   const street = stripeOrder?.billingAddress?.streetNumber+' '+stripeOrder?.billingAddress?.streetName;
+
+  const customerId = stripeOrder.customerId?stripeOrder.customerId:stripeOrder.anonymousId;
 
   const updateBuyer = {
     'display_name': display_name,
@@ -73,10 +76,23 @@ const responseMapper = async (
     'buyerShippingId': '1caa0984-100f-4554-990e-f79440ca322c' //To Do
   }
 
+  const updateGr4vyReference = {
+    'customerVersion': stripeOrder?.customer?.version,
+    'customerId': customerId,
+    'gr4vyBuyerId': gr4vyBuyerId.gr4vyBuyerId,
+    'orderVersion': stripeOrder?.version,
+    'addressId': "HCkvhGwf",//stripeOrder?.shippingAddress?.id,
+    'ctCustomFieldNameAddressId': c.CTP_GR4VY_ADDRESS_DETAIL_ID_ADDRESS,
+    'addressDetailId': "",
+    'orderId': stripeOrder?.id,
+    'ctCustomFieldNameBuyerIdOrder': c.CTP_GR4VY_BUYER_FIELD_ID_ORDER
+  }
+
   return {
     updateBuyer,
     gr4vyBuyerId,
-    updateShippingAddress
+    updateShippingAddress,
+    updateGr4vyReference
   }
 }
 
