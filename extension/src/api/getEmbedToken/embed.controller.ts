@@ -46,7 +46,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
     }
 
     // load commercetools data
-    const { customer, cart } = await getCustomerWithCart(bearerToken)
+    const { customer, cart, cartItems } = await getCustomerWithCart(bearerToken)
 
     if (!customer) {
       throw { message: "Customer information is missing or empty", statusCode: 400 }
@@ -64,7 +64,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
 
     // create buyer in gr4vy if buyer id is not present
     if (!customer.gr4vyBuyerId) {
-      const { body: buyer } = await createBuyer({ customer, cart, paymentConfig })
+      const { body: buyer } = await createBuyer({ customer, paymentConfig })
       if (!buyer) {
         throw { message: "Error in creating buyer in CTP for customer", statusCode: 400 }
       }
@@ -89,7 +89,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
     const responseData = {
       embedToken,
       ...restConfig,
-      cart
+      cartItems
     }
 
     ResponseHelper.setResponseTo200(response, responseData)
