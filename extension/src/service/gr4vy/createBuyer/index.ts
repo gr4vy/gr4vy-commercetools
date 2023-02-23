@@ -2,9 +2,15 @@
 // @ts-ignore
 import { Gr4vy } from "@gr4vy-ct/common"
 
-import { CreateBuyer } from "./../../types"
+import { Customer, PaymentConfig } from "./../../types"
 
-export const createBuyer = async ({ customer, paymentConfig }: CreateBuyer) => {
+export const createBuyer = async ({
+  customer,
+  paymentConfig,
+}: {
+  customer: Customer
+  paymentConfig: PaymentConfig
+}) => {
   const { gr4vyId, privateKey } = paymentConfig.value || {}
 
   // Initialize gr4vy
