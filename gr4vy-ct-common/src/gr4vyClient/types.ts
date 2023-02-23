@@ -18,3 +18,8 @@ export declare type BuyerParams = {
   externalIdentifier?: string | null
   displayName?: string | null
 }
+
+export declare type TransactionCaptureParams = {
+  amount: number,
+  transactionId: string
+}

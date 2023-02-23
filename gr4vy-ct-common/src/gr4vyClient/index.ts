@@ -1,8 +1,8 @@
 import fs from "fs"
 
-import { Client, BuyerRequest } from "@gr4vy/node"
+import { Client, BuyerRequest, TransactionCaptureRequest } from "@gr4vy/node"
 
-import { Options, EmbedParams, BuyerParams } from "./types"
+import { Options, EmbedParams, BuyerParams, TransactionCaptureParams } from "./types"
 
 export class Gr4vy {
   client: Client
@@ -33,5 +33,11 @@ export class Gr4vy {
     buyerRequest.displayName = displayName
     buyerRequest.externalIdentifier = externalIdentifier
     return this.client.addBuyer(buyerRequest)
+  }
+
+  transactionCapture({amount, transactionId}: TransactionCaptureParams) {
+    const transactionCaptureRequest = new TransactionCaptureRequest()
+    transactionCaptureRequest.amount = amount
+    return this.client.captureTransaction(transactionId, transactionCaptureRequest)
   }
 }
