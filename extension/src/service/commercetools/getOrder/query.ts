@@ -29,6 +29,7 @@ const getOrderByIDQuery = `
     }
 
     fragment addressFields on Address{
+      id
       firstName
       lastName
       email

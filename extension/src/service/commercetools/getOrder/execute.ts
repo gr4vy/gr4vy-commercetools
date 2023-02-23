@@ -5,7 +5,7 @@ import { ApiClient } from "@gr4vy-ct/common"
 import { getOrderByIDQuery, variables } from "./query"
 import { responseMapper } from "./mapper"
 
-const getOrder = () => {
+const getOrder = async () => {
   const apiClient: ApiClient = new ApiClient()
 
   // Get Order from CommerceTools
@@ -14,7 +14,7 @@ const getOrder = () => {
     variables: variables,
   })
 
-  return responseMapper(apiClient.getData())
+  return responseMapper(await apiClient.getData())
 }
 
 export { getOrder }

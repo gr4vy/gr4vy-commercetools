@@ -4,7 +4,13 @@ import { StatusCodes, getReasonPhrase } from "http-status-codes"
 
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
-import { getOrder } from "../../service/commercetools"
+import {
+  getCustomObjects,
+  getOrder,
+  updateBuyerDetails,
+  createBuyerShippingAddress,
+  updateBuyerShippingAddress
+} from "../../service"
 import { getLogger, getAuthorizationRequestHeader } from "./../../utils"
 
 const logger = getLogger()
@@ -39,11 +45,45 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       })
     }
 
-    const order = await getOrder()
+    const {updateBuyer, gr4vyBuyerId, updateShippingAddress} = await getOrder()
+    //const order = await getOrder()
 
-  //Update Buyer
+    const gr4vyId = gr4vyBuyerId.gr4vyBuyerId;
 
-    ResponseHelper.setResponseTo200(response, { order})
+    // create buyer in gr4vy if buyer id is not present
+    if (gr4vyId) {
+
+      const paymentConfig = await getCustomObjects()
+
+      if (!paymentConfig) {
+        throw { message: "Payment configuration is missing or empty", statusCode: 400 }
+      }
+
+      // Update buyer details in Gr4vy
+      const { body: buyer } = await updateBuyerDetails({ updateBuyer, gr4vyBuyerId , paymentConfig})
+      if (!buyer) {
+        throw { message: "Error in updating buyer in CTP for customer", statusCode: 400 }
+      }
+
+      const buyerShippingId = ''
+      const shippingDetail = {}
+
+      if (buyerShippingId) {
+        //create buyer shipping address in Gr4vy
+        const { body: shippingDetail } = await createBuyerShippingAddress({updateShippingAddress, paymentConfig});
+      } else {
+        //update buyer shipping address in Gr4vy
+        const { body: shippingDetail } = await updateBuyerShippingAddress({updateShippingAddress, paymentConfig});
+      }
+
+      if (!shippingDetail) {
+        throw { message: "Error in updating buyer address in CTP for customer", statusCode: 400 }
+      }
+
+      ResponseHelper.setResponseTo200(response, { shippingDetail})
+    } else {
+      throw { message: "Buyer ID is missing in order data", statusCode: 400 }
+    }
   } catch (e) {
     ResponseHelper.setResponseError(response, {
       httpStatusCode: 500,
