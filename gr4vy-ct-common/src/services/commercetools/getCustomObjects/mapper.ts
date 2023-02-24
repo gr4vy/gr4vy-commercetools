@@ -1,4 +1,4 @@
-import c from "./../../../config/constants"
+import c from "../../../config/constants"
 
 const responseMapper = (response: any) => {
   const parsedRes = response?.body?.data?.customObjects || {}
