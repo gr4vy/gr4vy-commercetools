@@ -1,16 +1,13 @@
 import { IncomingMessage, ServerResponse } from "http"
 
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { getCustomObjects } from "@gr4vy-ct/common"
 
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
-import {
-  getCustomerWithCart,
-  getCustomObjects,
-  createBuyer,
-  updateCustomer,
-  createEmbedToken,
-} from "../../service"
+import { getCustomerWithCart, createBuyer, updateCustomer, createEmbedToken } from "../../service"
 import { getLogger, getAuthorizationRequestHeader } from "./../../utils"
 
 const logger = getLogger()
@@ -89,7 +86,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
     const responseData = {
       embedToken,
       ...restConfig,
-      cartItems
+      cartItems,
     }
 
     ResponseHelper.setResponseTo200(response, responseData)
