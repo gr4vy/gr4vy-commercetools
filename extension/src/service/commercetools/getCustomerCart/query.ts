@@ -17,6 +17,8 @@ const getCustomerWithCartQuery = `
             }
             activeCart {
                 id
+                customerId
+                anonymousId
                 totalPrice{
                   currencyCode
                   centAmount

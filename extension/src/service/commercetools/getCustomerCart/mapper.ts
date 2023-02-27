@@ -4,7 +4,7 @@ import { Customer, CartLineItem, CartItem, Cart, CustomerCartResult } from "./..
 const responseMapper = async (
   result: CustomerCartResult
 ): Promise<{
-  customer: Customer
+  customer: Customer | null
   cart: Cart
   cartItems: CartItem[]
 }> => {

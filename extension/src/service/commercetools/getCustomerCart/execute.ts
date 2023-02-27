@@ -31,7 +31,7 @@ const getCustomerWithCart = async (bearerToken: string) => {
 const setProductCategoryInResult = async (
   meApiClient: MeApiClient,
   result: {
-    customer: Customer
+    customer: Customer | null
     cart: Cart
     cartItems: CartItem[]
   }
