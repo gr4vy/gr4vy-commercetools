@@ -1,0 +1,47 @@
+{
+  "information": "Currently installed version: 1.0.22",
+  "active": 1,
+  "payment_type": "webcheckout",
+  "gr4vyId": "partners",
+  "environment": "sandbox",
+  "debug": 0,
+  "paymentSource": "ecommerce",
+  "paymentStore": "ask",
+  "requiredSecurityCode": 0,
+  "title": "Gr4vy Payments",
+  "allowspecific": 0,
+  "statementDescriptor": {},
+  "theme": {
+    "fonts": { "body": "google:Lato, Tahoma, Arial" },
+    "colors": {
+      "text": "#0f0f0f",
+      "subtle_text": "#434343",
+      "label_text": "#0f0f0f",
+      "primary": "#006cd0",
+      "page_background": "#ffffff",
+      "container_background_unchecked": "#fcfcfc",
+      "container_background": "#ffffff",
+      "container_border": "#f2f2f2",
+      "input_border": "#b6b6b6",
+      "input_background": "#ffffff",
+      "input_text": "#0f0f0f",
+      "danger": "#d82121",
+      "danger_background": "#fbf7f7",
+      "danger_text": "#b81010",
+      "info": "#3ea2ff",
+      "info_background": "#e7f2fb",
+      "info_text": "#0367c4",
+      "focus": "#4844ff"
+    },
+    "border_widths": {
+      "container": "thin",
+      "input": "thin"
+    },
+    "radii": {
+      "container": "subtle",
+      "input": "subtle"
+    },
+    "shadows": { "focus_ring": "0 0 0 2px #ffffff, 0 0 0 4px #4844ff" }
+  },
+  "intent": "authorize"
+}

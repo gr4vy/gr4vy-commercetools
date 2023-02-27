@@ -1,10 +1,10 @@
-import LocalizedTextInput from '@commercetools-uikit/localized-text-input';
 import TextField from '@commercetools-uikit/text-field';
 import DateField from '@commercetools-uikit/date-field';
 import SelectField from '@commercetools-uikit/select-field';
-import FieldLabel from '@commercetools-uikit/field-label';
 import MultilineTextInput from '@commercetools-uikit/multiline-text-input';
+import Spacings from '@commercetools-uikit/spacings';
 
+// Gr4vy Form and Values
 export const formSections = [
   {
     name: 'API Configuration',
@@ -13,13 +13,13 @@ export const formSections = [
         name: '',
         children: [
           {
-            id: 'info',
+            id: 'information',
             title: 'Information',
             type: 'label',
             value: 'Currently installed version: 1.0.22',
           },
           {
-            id: 'enabled',
+            id: 'active',
             title: 'Enabled',
             type: 'multiple',
             options: [
@@ -28,7 +28,7 @@ export const formSections = [
             ],
           },
           {
-            id: 'display',
+            id: 'payment_type',
             title: 'Display Type',
             type: 'multiple',
             options: [{ value: 'webcheckout', label: 'Gr4vy Web Checkout' }],
@@ -39,12 +39,12 @@ export const formSections = [
             type: 'text',
           },
           {
-            id: 'privateId',
-            title: 'Private id',
+            id: 'privateKey',
+            title: 'Private Key',
             type: 'file',
           },
           {
-            id: 'env',
+            id: 'environment',
             title: 'Enviroment',
             type: 'multiple',
             options: [
@@ -53,7 +53,7 @@ export const formSections = [
             ],
           },
           {
-            id: 'enableDebug',
+            id: 'debug',
             title: 'Enable Debug',
             type: 'multiple',
             options: [
@@ -62,7 +62,7 @@ export const formSections = [
             ],
           },
           {
-            id: 'paymentAction',
+            id: 'intent',
             title: 'Payment Action',
             type: 'multiple',
             options: [
@@ -81,17 +81,7 @@ export const formSections = [
             type: 'multi-line',
           },
           {
-            id: 'newOrderStatus',
-            title: 'New Order Status',
-            type: 'multiple',
-            options: [
-              { value: 'pending', label: 'Pending' },
-              { value: 'processing', label: 'Processing' },
-              { value: 'fraud', label: 'Suspended Fraud' },
-            ],
-          },
-          {
-            id: 'paymentFromApplicableCountries',
+            id: 'allowspecific',
             title: 'Payment From Applicable countries',
             type: 'multiple',
             options: [
@@ -100,11 +90,11 @@ export const formSections = [
             ],
           },
           {
-            id: 'paymentFromApplicableCountriesList',
-            title: 'Payment From Applicable countries',
-            type: 'multiple',
+            id: 'specificcountry',
+            title: 'Payment Applicable countries List',
+            type: 'text',
             disabled: true,
-            options: [],
+            tooltip: 'Enter only one country',
           },
           {
             id: 'sortOrder',
@@ -140,8 +130,9 @@ export const formSections = [
             options: [
               { value: 'ask', label: 'Ask' },
               { value: 1, label: 'Yes' },
-              { value: null, label: 'No' },
+              { value: 0, label: 'No' },
             ],
+            tooltip: 'Explicitly store the payment method or ask the buyer',
           },
           {
             id: 'customData',
@@ -149,7 +140,7 @@ export const formSections = [
             type: 'text',
           },
           {
-            id: 'requireSecurityCode',
+            id: 'requiredSecurityCode',
             title: 'Require Security Code',
             type: 'multiple',
             options: [
@@ -163,27 +154,32 @@ export const formSections = [
         name: 'Statement Descriptor',
         children: [
           {
-            id: 'statementName',
+            id: 'name',
+            parent: 'statementDescriptor',
             title: 'Statement Name',
             type: 'text',
           },
           {
-            id: 'statementDescription',
+            id: 'description',
+            parent: 'statementDescriptor',
             title: 'Statement Description',
             type: 'text',
           },
           {
-            id: 'stateCity',
+            id: 'city',
+            parent: 'statementDescriptor',
             title: 'Statement City',
             type: 'text',
           },
           {
-            id: 'statementPhoneNumber',
+            id: 'phonenumber',
+            parent: 'statementDescriptor',
             title: 'Statement Phone Number',
             type: 'text',
           },
           {
-            id: 'statementUrl',
+            id: 'url',
+            parent: 'statementDescriptor',
             title: 'Statement Url',
             type: 'text',
           },
@@ -198,9 +194,12 @@ export const formSections = [
         name: 'Fonts',
         children: [
           {
-            id: 'fontBody',
+            id: 'body',
+            parent: 'fonts',
+            superParent: 'theme',
             title: 'Font Body',
             type: 'text',
+            tooltip: 'Used for all text',
           },
         ],
       },
@@ -208,104 +207,157 @@ export const formSections = [
         name: 'Colors',
         children: [
           {
-            id: 'textColor',
+            id: 'text',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Text Color',
             type: 'colorPalette',
+            tooltip: 'Main body text, labels and headers',
           },
           {
-            id: 'subtleTextColor',
+            id: 'subtle_text',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Subtle Text Color',
             type: 'colorPalette',
+            tooltip: 'Hints and Smaller text, e.g. Card Expiry',
           },
           {
-            id: 'labelTextColor',
+            id: 'label_text',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Label Text Color',
             type: 'colorPalette',
+            tooltip: 'Hints and Smaller text, e.g. Card Expiry',
           },
           {
-            id: 'primaryColor',
+            id: 'primary',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Primary Color',
             type: 'colorPalette',
+            tooltip: 'Interactive elements or Brand',
           },
           {
-            id: 'pageBackgroundColor',
+            id: 'page_background',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Page Background Color',
             type: 'colorPalette',
+            tooltip: 'The main body/page of the Embed iFrame',
           },
           {
-            id: 'containerBackgroundUncheckColor',
+            id: 'container_background_unchecked',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Container Background Uncheck Color',
             type: 'colorPalette',
+            tooltip:
+              'Used for bounding elements, e.g. an individual payment option',
           },
           {
-            id: 'containerBackgroundColor',
+            id: 'container_background',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Container Backgroung Color',
             type: 'colorPalette',
           },
           {
-            id: 'containerBorderColor',
+            id: 'container_border',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Container Border Color',
             type: 'colorPalette',
           },
           {
-            id: 'inputBorderColor',
+            id: 'input_border',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Input Border Color',
             type: 'colorPalette',
+            tooltip: 'Used for inputs',
           },
           {
-            id: 'inputBackgroundColor',
+            id: 'input_background',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Input Background Color',
             type: 'colorPalette',
           },
           {
-            id: 'inputTextColor',
+            id: 'input_text',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Input Text Color',
             type: 'colorPalette',
           },
           {
-            id: 'inputRadioBorderColor',
+            id: 'input_radio_border_color',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Input Radio Border Color',
             type: 'colorPalette',
+            tooltip: 'Defaults to container border Color',
           },
           {
-            id: 'inputRadioBorderCheckedColor',
+            id: 'input_radio_border_checked_color',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Input Radio Border Checked Color',
             type: 'colorPalette',
+            tooltip: 'Defaults to primary color',
           },
           {
-            id: 'dangerColor',
+            id: 'danger',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Danger Color',
             type: 'colorPalette',
+            tooltip: 'Used for Error states or Destructive Action',
           },
           {
-            id: 'dangerBackgroundColor',
+            id: 'danger_background',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Danger Background Color',
             type: 'colorPalette',
           },
           {
-            id: 'dangerTextColor',
+            id: 'danger_text',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Danger Text Color',
             type: 'colorPalette',
           },
           {
-            id: 'infoColor',
+            id: 'info',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Info Color',
             type: 'colorPalette',
+            tooltip: 'Used for information / loading states',
           },
           {
-            id: 'infoBackgroundColor',
+            id: 'info_background',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Info Background Color',
             type: 'colorPalette',
           },
           {
-            id: 'infoTextColor',
+            id: 'info_text',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Info Text Color',
             type: 'colorPalette',
           },
           {
-            id: 'focusColor',
+            id: 'focus',
+            parent: 'colors',
+            superParent: 'theme',
             title: 'Focus Color',
             type: 'colorPalette',
+            tooltip: 'Color of the focus ring if shadows.focus is not set',
           },
         ],
       },
@@ -313,14 +365,20 @@ export const formSections = [
         name: 'Borders',
         children: [
           {
-            id: 'containerBorderWidth',
-            title: 'containerBorderWidth',
+            id: 'container',
+            parent: 'border_widths',
+            superParent: 'theme',
+            title: 'container Border Width',
             type: 'text',
+            tooltip: 'A bounding layout element.',
           },
           {
-            id: 'inputBorderWidth',
+            id: 'input',
+            parent: 'border_widths',
+            superParent: 'theme',
             title: 'Input Border Width',
             type: 'text',
+            tooltip: 'A Form Input, e.g. Card Number',
           },
         ],
       },
@@ -329,13 +387,19 @@ export const formSections = [
         children: [
           {
             id: 'container',
+            parent: 'radii',
+            superParent: 'theme',
             title: 'Container',
             type: 'text',
+            tooltip: 'A bounding layout element',
           },
           {
             id: 'input',
+            parent: 'radii',
+            superParent: 'theme',
             title: 'Input',
             type: 'text',
+            tooltip: 'A Form Input, e.g. Card Number',
           },
         ],
       },
@@ -343,9 +407,12 @@ export const formSections = [
         name: 'Shadows',
         children: [
           {
-            id: 'focusRing',
+            id: 'focus_ring',
+            parent: 'shadows',
+            superParent: 'theme',
             title: 'Font Ring',
-            type: 'colorPalette',
+            type: 'text',
+            tooltip: 'Surrounds an element that is currently focused',
           },
         ],
       },
@@ -353,6 +420,7 @@ export const formSections = [
   },
 ];
 
+// Function to return approriate input field based on type
 export const getField = ({
   id,
   type,
@@ -362,97 +430,122 @@ export const getField = ({
   eventTrigger,
   options,
   disabled = false,
-  key,
 }) => {
   switch (type) {
     case 'label':
       return (
-        <>
-          <FieldLabel htmlFor={id} title={title} key={key} />
-        </>
+        <TextField
+          htmlFor={id}
+          title={''}
+          value={value ? value : ''}
+          name={name}
+          isReadOnly
+        />
       );
     case 'text':
       return (
-        <>
-          <TextField
-            id={id}
-            title={title}
-            value={value ? value : ''}
-            name={name}
-            onChange={eventTrigger}
-            isDisabled={disabled}
-            key={key}
-          />
-        </>
+        <TextField
+          id={id}
+          title={''}
+          value={value ? value : ''}
+          name={name}
+          onChange={eventTrigger}
+          isDisabled={disabled}
+        />
       );
     case 'date':
       return (
-        <>
-          <DateField
-            id={id}
-            title={title}
-            value={value}
-            onChange={eventTrigger}
-            isDisabled={disabled}
-            key={key}
-          />
-        </>
+        <DateField
+          id={id}
+          title={''}
+          value={value}
+          onChange={eventTrigger}
+          isDisabled={disabled}
+        />
       );
     case 'multiple':
       return (
         <SelectField
           id={id}
-          title={title}
+          title={''}
           value={value}
           options={options ? options : []}
           onChange={eventTrigger}
           isDisabled={disabled}
-          key={key}
         />
       );
     case 'multi-line':
       return (
-        <>
-          <FieldLabel htmlFor={id} title={title} />
-          <MultilineTextInput
-            id={id}
-            title={title}
-            value={value ? value : ''}
-            options={options}
-            onChange={eventTrigger}
-            isDisabled={disabled}
-            key={key}
-          />
-        </>
+        <MultilineTextInput
+          id={id}
+          title={''}
+          value={value ? value : ''}
+          onChange={eventTrigger}
+          isDisabled={disabled}
+        />
       );
     case 'file':
       return (
-        <>
-          <FieldLabel htmlFor={id} title={title} />
+        <Spacings.Inline>
           <input
             id={id}
             type="file"
             name={id}
             onChange={eventTrigger}
-            disabled={disabled}
-            key={key}
+            style={{ display: 'none' }}
+            accept=".pem"
           />
-        </>
+          <input
+            type="button"
+            value="Browse..."
+            onClick={() => document.getElementById(id).click()}
+            disabled={disabled}
+          />
+          {value ? (
+            <div
+              style={{
+                maxWidth: '400px',
+                overflowWrap: 'break-word',
+                wordWrap: 'break-word',
+                wordBreak: 'break-word',
+              }}
+            >
+              {value}
+            </div>
+          ) : null}
+        </Spacings.Inline>
       );
     case 'colorPalette':
       return (
-        <>
-          <FieldLabel htmlFor={id} title={title} />
+        <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
           <input
             type="color"
+            id={`color_${id}`}
+            value={value ? value : '#000000'}
+            onChange={(e) => {
+              document.getElementsByName(id)[0].value = e.target.value;
+            }}
+            onBlur={(e) => {
+              document.getElementsByName(id)[0].focus();
+            }}
+            disabled={disabled}
+          />
+          <input
+            className="color-input"
+            type="text"
             id={id}
             name={id}
             value={value}
-            onChange={eventTrigger}
-            disabled={disabled}
-            key={key}
+            onFocus={(e) => {
+              document.getElementById(`color_${id}`).value = e.target.value;
+              eventTrigger(e);
+            }}
+            onChange={(e) => {
+              document.getElementById(`color_${id}`).value = e.target.value;
+              eventTrigger(e);
+            }}
           />
-        </>
+        </div>
       );
   }
 };
