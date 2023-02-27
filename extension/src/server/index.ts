@@ -18,6 +18,22 @@ const createServer = () => {
 
       if (route) {
         await route(request, response)
+        const headers = {
+          "Access-Control-Allow-Origin": process.env.APP_CORS_ALLOWED_HOSTS,
+          "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
+          "Access-Control-Max-Age": 2592000, // 30 days
+        };
+
+        if (request.method === "OPTIONS") {
+          response.writeHead(204, headers);
+          response.end();
+          return;
+        }
+
+        response.writeHead(200, headers);
+        response.end();
+        return;
+
       } else {
         ResponseHelper.setResponseError(response, {
           httpStatusCode: StatusCodes.NOT_FOUND,
