@@ -8,7 +8,7 @@ import { getCustomObjects } from "@gr4vy-ct/common"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import { getCustomerWithCart, createBuyer, updateCustomer, createEmbedToken } from "../../service"
-import { getLogger, getAuthorizationRequestHeader } from "./../../utils"
+import { getLogger } from "./../../utils"
 
 const logger = getLogger()
 
@@ -27,23 +27,8 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
   }
 
   try {
-    // Verify if header token exists:
-    const bearerToken = getAuthorizationRequestHeader(request)
-    if (!bearerToken) {
-      logger.debug(`Received Unauthorized request for url: ${request.url}`)
-      return ResponseHelper.setResponseError(response, {
-        httpStatusCode: StatusCodes.UNAUTHORIZED,
-        errors: [
-          {
-            code: StatusCodes.UNAUTHORIZED,
-            message: "The request is unauthorized.",
-          },
-        ],
-      })
-    }
-
     // load commercetools data
-    const { customer, cart, cartItems } = await getCustomerWithCart(bearerToken)
+    const { customer, cart, cartItems } = await getCustomerWithCart(request)
 
     if (!cart) {
       throw { message: "Cart information is missing or empty", statusCode: 400 }

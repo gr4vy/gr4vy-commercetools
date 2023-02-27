@@ -1,3 +1,5 @@
+import { IncomingMessage } from "http"
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { MeApiClient } from "@gr4vy-ct/common"
@@ -7,9 +9,9 @@ import { responseMapper } from "./mapper"
 import { Customer, Cart, CartItem, ProductMasterDataCurrent } from "./../../types"
 import c from "./../../../config/constants"
 
-const getCustomerWithCart = async (bearerToken: string) => {
+const getCustomerWithCart = async (request: IncomingMessage) => {
   const meApiClient: MeApiClient = new MeApiClient({
-    bearerToken,
+    request,
   })
 
   // Get customer and cart from commercetools
