@@ -6,6 +6,7 @@ import { StatusCodes } from "http-status-codes"
 import { getLogger } from "./../utils"
 import { routes } from "./../router"
 import ResponseHelper from "./../helper/response"
+import cors from "../helper/headers"
 
 const logger = getLogger()
 
@@ -17,23 +18,12 @@ const createServer = () => {
       const route = routes[parts.pathname as keyof typeof routes]
 
       if (route) {
-        await route(request, response)
-        const headers = {
-          "Access-Control-Allow-Origin": process.env.APP_CORS_ALLOWED_HOSTS,
-          "Access-Control-Allow-Methods": "OPTIONS, POST, GET",
-          "Access-Control-Max-Age": 2592000, // 30 days
-        };
-
         if (request.method === "OPTIONS") {
-          response.writeHead(204, headers);
-          response.end();
-          return;
+          response.writeHead(204, cors())
+          response.end()
+          return
         }
-
-        response.writeHead(200, headers);
-        response.end();
-        return;
-
+        await route(request, response)
       } else {
         ResponseHelper.setResponseError(response, {
           httpStatusCode: StatusCodes.NOT_FOUND,
