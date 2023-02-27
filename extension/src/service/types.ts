@@ -18,6 +18,7 @@ export declare type Customer = {
 
 export declare type Cart = {
   id: string
+  version: string
   customerId: string | null
   anonymousId: string
   totalPrice: {
