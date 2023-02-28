@@ -7,8 +7,13 @@ import { getCustomObjects } from "@gr4vy-ct/common"
 
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
-import { getCustomerWithCart, createBuyer, updateCustomer, createEmbedToken } from "../../service"
-import { getLogger, getAuthorizationRequestHeader } from "./../../utils"
+import {
+  getCustomerWithCart,
+  createBuyer,
+  updateCustomerCart,
+  createEmbedToken,
+} from "../../service"
+import { getLogger } from "./../../utils"
 
 const logger = getLogger()
 
@@ -27,27 +32,8 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
   }
 
   try {
-    // Verify if header token exists:
-    const bearerToken = getAuthorizationRequestHeader(request)
-    if (!bearerToken) {
-      logger.debug(`Received Unauthorized request for url: ${request.url}`)
-      return ResponseHelper.setResponseError(response, {
-        httpStatusCode: StatusCodes.UNAUTHORIZED,
-        errors: [
-          {
-            code: StatusCodes.UNAUTHORIZED,
-            message: "The request is unauthorized.",
-          },
-        ],
-      })
-    }
-
     // load commercetools data
-    const { customer, cart, cartItems } = await getCustomerWithCart(bearerToken)
-
-    if (!customer) {
-      throw { message: "Customer information is missing or empty", statusCode: 400 }
-    }
+    const { customer, cart, cartItems } = await getCustomerWithCart(request)
 
     if (!cart) {
       throw { message: "Cart information is missing or empty", statusCode: 400 }
@@ -60,16 +46,19 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
     }
 
     // create buyer in gr4vy if buyer id is not present
-    if (!customer.gr4vyBuyerId) {
+    if (customer && !customer.gr4vyBuyerId) {
       const { body: buyer } = await createBuyer({ customer, paymentConfig })
       if (!buyer) {
         throw { message: "Error in creating buyer in CTP for customer", statusCode: 400 }
       }
 
-      // Update CT customer with buyer info
-      const isCustomerUpdated = await updateCustomer({ customer, buyer })
-      if (!isCustomerUpdated) {
-        throw { message: "Error in updating buyer in CTP for customer", statusCode: 400 }
+      // Update CT customer and cart with buyer info
+      const isCustomerCartUpdated = await updateCustomerCart({ customer, cart, buyer })
+      if (!isCustomerCartUpdated) {
+        throw {
+          message: "Error in updating buyer id in CTP for customer and cart",
+          statusCode: 400,
+        }
       }
 
       // Set gr4vyBuyerId in customer

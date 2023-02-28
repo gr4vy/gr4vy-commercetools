@@ -18,7 +18,8 @@ export declare type Customer = {
 
 export declare type Cart = {
   id: string
-  customerId: string
+  version: string
+  customerId: string | null
   anonymousId: string
   totalPrice: {
     currencyCode: string
@@ -93,7 +94,7 @@ export declare type CustomerCartResult = {
   body: {
     data: {
       me: {
-        customer: Customer
+        customer: Customer | null
         activeCart: Cart
       }
     }
