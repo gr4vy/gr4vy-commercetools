@@ -4,7 +4,7 @@ import { Customer, CartLineItem, CartItem, Cart, CustomerCartResult } from "./..
 const responseMapper = async (
   result: CustomerCartResult
 ): Promise<{
-  customer: Customer
+  customer: Customer | null
   cart: Cart
   cartItems: CartItem[]
 }> => {
@@ -16,7 +16,7 @@ const responseMapper = async (
     } = customer
     customer.gr4vyBuyerId =
       customFieldsRaw && Array.isArray(customFieldsRaw)
-        ? customFieldsRaw.find((e: { name: string }) => e.name === c.CTP_GR4VY_BUYER_FIELD_ID)
+        ? customFieldsRaw.find((e: { name: string }) => e.name === c.CTP_GR4VY_BUYER_ID_FIELD.NAME)
         : null
   }
 
