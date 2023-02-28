@@ -2,6 +2,8 @@ import { ServerResponse } from "http"
 
 import { StatusCodes } from "http-status-codes"
 
+import cors from "./headers"
+
 class ResponseHelper {
   headers = {
     "Content-Type": "application/json",
@@ -12,7 +14,10 @@ class ResponseHelper {
   }
 
   setResponseTo200<T>(response: ServerResponse, params?: T) {
-    response.writeHead(StatusCodes.OK, this.headers)
+    response.writeHead(StatusCodes.OK, {
+      ...this.headers,
+      ...cors(),
+    })
     response.end(
       JSON.stringify({
         statusCode: StatusCodes.OK,
@@ -22,7 +27,10 @@ class ResponseHelper {
   }
 
   setResponseTo201<T>(response: ServerResponse, params?: T) {
-    response.writeHead(StatusCodes.CREATED, this.headers)
+    response.writeHead(StatusCodes.CREATED, {
+      ...this.headers,
+      ...cors(),
+    })
     response.end(
       JSON.stringify({
         statusCode: StatusCodes.CREATED,
@@ -33,13 +41,20 @@ class ResponseHelper {
 
   setResponseError(
     response: ServerResponse,
-    params: { httpStatusCode: number; message?: string; errors?: [{ code: string | number; message: string }] }
+    params: {
+      httpStatusCode: number
+      message?: string
+      errors?: [{ code: string | number; message: string }]
+    }
   ) {
     const { httpStatusCode, message, errors } = params
-    response.writeHead(httpStatusCode, this.headers)
+    response.writeHead(httpStatusCode, {
+      ...this.headers,
+      ...cors(),
+    })
     response.end(
       JSON.stringify({
-        status:"nok",
+        status: "nok",
         message,
         errors,
       })
