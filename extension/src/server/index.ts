@@ -6,6 +6,7 @@ import { StatusCodes } from "http-status-codes"
 import { getLogger } from "./../utils"
 import { routes } from "./../router"
 import ResponseHelper from "./../helper/response"
+import cors from "../helper/headers"
 
 const logger = getLogger()
 
@@ -17,6 +18,11 @@ const createServer = () => {
       const route = routes[parts.pathname as keyof typeof routes]
 
       if (route) {
+        if (request.method === "OPTIONS") {
+          response.writeHead(204, cors())
+          response.end()
+          return
+        }
         await route(request, response)
       } else {
         ResponseHelper.setResponseError(response, {
