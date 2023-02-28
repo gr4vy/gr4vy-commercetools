@@ -1,10 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { ApiClient } from "@gr4vy-ct/common"
-
+import { ApiClient } from "../../../clients/apiClient"
 import { getCustomObjectsByContainerQuery, variables } from "./query"
 import { responseMapper } from "./mapper"
-import { cache, keys } from "./../../../cache"
+import { cache, keys } from "../../../cache"
 
 const getCustomObjects = async () => {
   const cacheKey = keys.getGr4vyPaymentConfigCacheKey()

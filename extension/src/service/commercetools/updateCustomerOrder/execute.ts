@@ -26,11 +26,8 @@ const updateCustomerOrder = async ({
     },
   })
 
-  console.log('shippingDetailReturn')
   //return responseMapper(await apiClient.getData())
   const shippingDetailReturn = await apiClient.getData()
-  console.log('updateGr4vyReference.addressDetailId')
-  console.log(updateGr4vyReference.addressDetailId)
   return shippingDetailReturn
 }
 
