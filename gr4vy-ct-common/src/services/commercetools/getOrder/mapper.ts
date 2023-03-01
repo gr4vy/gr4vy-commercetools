@@ -1,5 +1,5 @@
 const responseMapper = (response: any) => {
-  return response?.body?.data?.updatePayment || {}
+  return response?.body?.data?.me?.order || {}
 }
 
 export { responseMapper }
