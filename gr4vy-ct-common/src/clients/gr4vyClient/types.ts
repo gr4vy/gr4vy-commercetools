@@ -20,40 +20,37 @@ export declare type BuyerParams = {
 }
 
 export declare type UpdateBuyerParams = {
-  external_identifier: string
-  display_name: string
-  billing_details: {
-    email_address: string
-    first_name: string
-    last_name: string
-    phone_number: string
+  displayName?: string | null
+  externalIdentifier?: string | null,
+  billingDetails: {
+    emailAddress?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    phoneNumber?: string | null
     address: {
-      city: string
-      country: string
-      line1: string
-      postal_code: string
-      state: string
+      city?: string | null
+      country?: string | null
+      line1?: string | null
+      postalCode?: string | null
+      state?: string | null
     }
   }
-}
-
-export declare type ParamGr4vyBuyerId = {
   gr4vyBuyerId: string
 }
 
 export declare type UpdateBuyerShippingAddressParams = {
-  email_address: string
-  first_name: string
-  last_name: string
-  phone_number: string
+  emailAddress?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  phoneNumber?: string | null
   address: {
-    city: string
-    country: string
-    line1: string
-    postal_code: string
-    state: string
+    city?: string | null
+    country?: string | null
+    line1?: string | null
+    postalCode?: string | null
+    state?: string | null
   }
-  buyerId: string
+  gr4vyBuyerId: string
   buyerShippingId: string
 }
 

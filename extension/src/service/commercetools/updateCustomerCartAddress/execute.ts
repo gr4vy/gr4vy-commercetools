@@ -4,25 +4,21 @@ import { ApiClient } from "@gr4vy-ct/common"
 
 import { updateCustomerOrderMutation } from "./query"
 import { responseMapper } from "./mapper"
-import { UpdateGr4vyReference } from "./../../types"
+import { UpdateBuyerQuery } from "./../../types"
 import c from "./../../../config/constants"
 import { escapedJSON } from "./../../../utils"
 
-const updateCustomerCartAddress = async ({
-  updateGr4vyReference
-}: {
-  updateGr4vyReference: UpdateGr4vyReference
-}): Promise<boolean> => {
+const updateCustomerCartAddress = async ({ customer, cart }: UpdateBuyerQuery): Promise<boolean> => {
   const apiClient: ApiClient = new ApiClient()
 
   apiClient.setBody({
     query: updateCustomerOrderMutation,
     variables: {
-      version: updateGr4vyReference.customerVersion,
-      customerId: updateGr4vyReference.customerId,
+      version: customer.version,
+      customerId: customer.id?customer.id:cart.anonymousId,
       ctCustomFieldNameForGr4vyBuyerAddressId: c.CTP_GR4VY_ADDRESS_DETAIL_ID_ADDRESS,
-      addressDetailId: escapedJSON(updateGr4vyReference.addressDetailId),
-      addressId: updateGr4vyReference.addressId
+      addressDetailId: escapedJSON(cart.gr4vyShippingDetailId),
+      addressId: cart.shippingAddress.id
     },
   })
 

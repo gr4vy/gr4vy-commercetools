@@ -14,6 +14,8 @@ export declare type Customer = {
     name?: string
     value: string
   }
+  externalIdentifier: string
+  displayName: string
 }
 
 export declare type Cart = {
@@ -28,6 +30,9 @@ export declare type Cart = {
   lineItems: CartLineItem
   country: string
   locale: string
+  gr4vyShippingDetailId: string
+  billingAddress: CtCustomerAddress
+  shippingAddress: CtCustomerAddress
 }
 
 export declare type PaymentConfig = {
@@ -116,64 +121,35 @@ export declare type ProductMasterDataCurrent = {
   }
 }
 
-export declare type UpdateBuyer = {
-  external_identifier: string
-  display_name: string
-  billing_details: {
-    email_address: string
-    first_name: string
-    last_name: string
-    phone_number: string
-    address: {
-      city: string
-      country: string
-      line1: string
-      postal_code: string
-      state: string
+export declare type CtCustomerAddress = {
+  id?: string
+  firstName?: string
+  lastName?: string
+  email?: string
+  phone?: string
+  city?: string
+  country?: string
+  streetName?: string
+  streetNumber?: string
+  postalCode?: string
+  state?: string
+  building?: string
+  apartment?: string
+  region?: string
+  custom: {
+    customFieldsRaw?: {
+      name: string
+      value: string
     }
+  }
+  gr4vyShippingDetailId?: {
+    name?: string
+    value: string
   }
 }
 
 export declare type UpdateBuyerQuery = {
-  updateBuyer: UpdateBuyer
-  gr4vyBuyerId: Gr4vyBuyerId
+  customer: Customer
+  cart: Cart
   paymentConfig: PaymentConfig
-  updateGr4vyReference: UpdateGr4vyReference
-}
-
-export declare type UpdateGr4vyReference = {
-  customerVersion: string
-  customerId: string
-  gr4vyBuyerId: string
-  orderVersion: string
-  addressId: string
-  ctCustomFieldNameAddressId: string
-  addressDetailId: string
-  orderId: string
-  ctCustomFieldNameBuyerIdOrder: string
-}
-
-export declare type Gr4vyBuyerId = {
-  gr4vyBuyerId: string
-}
-
-export declare type UpdateBuyerShippingAddressQuery = {
-  updateShippingAddress: UpdateShippingAddress
-  paymentConfig: PaymentConfig
-}
-
-export declare type UpdateShippingAddress = {
-  email_address: string
-  first_name: string
-  last_name: string
-  phone_number: string
-  address: {
-    city: string
-    country: string
-    line1: string
-    postal_code: string
-    state: string
-  }
-  buyerId: string
-  buyerShippingId: string
 }

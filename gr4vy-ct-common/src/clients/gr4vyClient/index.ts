@@ -7,7 +7,6 @@ import {
   EmbedParams,
   BuyerParams,
   UpdateBuyerParams,
-  ParamGr4vyBuyerId,
   UpdateBuyerShippingAddressParams,
   TransactionCaptureParams
 } from "./types"
@@ -43,32 +42,32 @@ export class Gr4vy {
     return this.client.addBuyer(buyerRequest)
   }
 
-  updateBuyer({ display_name, external_identifier, billing_details }: UpdateBuyerParams, {gr4vyBuyerId}: ParamGr4vyBuyerId) {
+  updateBuyer({ displayName, externalIdentifier, billingDetails, gr4vyBuyerId }: UpdateBuyerParams) {
     const buyerRequest = new BuyerRequest()
-    buyerRequest.displayName = display_name;
-    buyerRequest.externalIdentifier = external_identifier
-    buyerRequest.billingDetails = billing_details
+    buyerRequest.displayName = displayName;
+    buyerRequest.externalIdentifier = externalIdentifier
+    buyerRequest.billingDetails = billingDetails
     return this.client.updateBuyer(gr4vyBuyerId, buyerRequest)
   }
 
-  addBuyerShippingDetail({first_name, last_name, email_address, phone_number, address,buyerId}: UpdateBuyerShippingAddressParams) {
+  addBuyerShippingDetail({firstName, lastName, emailAddress, phoneNumber, address,gr4vyBuyerId}: UpdateBuyerShippingAddressParams) {
     const shippingRequest = new ShippingDetailRequest()
-    shippingRequest.firstName = first_name
-    shippingRequest.lastName = last_name
-    shippingRequest.emailAddress = email_address
-    shippingRequest.phoneNumber = phone_number
+    shippingRequest.firstName = firstName
+    shippingRequest.lastName = lastName
+    shippingRequest.emailAddress = emailAddress
+    shippingRequest.phoneNumber = phoneNumber
     shippingRequest.address = address
-    return this.client.addBuyerShippingDetail(buyerId, shippingRequest)
+    return this.client.addBuyerShippingDetail(gr4vyBuyerId, shippingRequest)
   }
 
-  updateBuyerShippingDetail({first_name, last_name, email_address, phone_number, address,buyerId, buyerShippingId}: UpdateBuyerShippingAddressParams) {
+  updateBuyerShippingDetail({firstName, lastName, emailAddress, phoneNumber, address,gr4vyBuyerId,buyerShippingId}: UpdateBuyerShippingAddressParams) {
     const shippingRequest = new ShippingDetailRequest()
-    shippingRequest.firstName = first_name
-    shippingRequest.lastName = last_name
-    shippingRequest.emailAddress = email_address
-    shippingRequest.phoneNumber = phone_number
+    shippingRequest.firstName = firstName
+    shippingRequest.lastName = lastName
+    shippingRequest.emailAddress = emailAddress
+    shippingRequest.phoneNumber = phoneNumber
     shippingRequest.address = address
-    return this.client.updateBuyerShippingDetail(buyerId, buyerShippingId, shippingRequest)
+    return this.client.updateBuyerShippingDetail(gr4vyBuyerId, buyerShippingId, shippingRequest)
   }
 
   transactionCapture({amount, transactionId}: TransactionCaptureParams) {

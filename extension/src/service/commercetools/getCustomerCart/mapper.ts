@@ -25,6 +25,31 @@ const responseMapper = async (
       ? cart?.lineItems.map((c: CartLineItem) => getCartItem(c))
       : []
 
+  if (customer) {
+    customer.displayName = customer?.firstName+' '+customer?.lastName
+    customer.externalIdentifier = customer.id?customer.id:cart.anonymousId
+  }
+
+  if (cart?.billingAddress.custom) {
+    const {
+      custom: { customFieldsRaw },
+    } = cart.billingAddress
+    cart.billingAddress.gr4vyShippingDetailId =
+        customFieldsRaw && Array.isArray(customFieldsRaw)
+            ? customFieldsRaw.find((e: { name: string }) => e.name === c.CTP_GR4VY_ADDRESS_DETAIL_ID_ADDRESS)
+            : null
+  }
+
+  if (cart?.shippingAddress.custom) {
+    const {
+      custom: { customFieldsRaw },
+    } = cart.shippingAddress
+    cart.shippingAddress.gr4vyShippingDetailId =
+        customFieldsRaw && Array.isArray(customFieldsRaw)
+            ? customFieldsRaw.find((e: { name: string }) => e.name === c.CTP_GR4VY_ADDRESS_DETAIL_ID_ADDRESS)
+            : null
+  }
+
   return {
     customer,
     cart,
