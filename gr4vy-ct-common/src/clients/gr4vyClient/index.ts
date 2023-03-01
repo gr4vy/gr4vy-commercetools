@@ -17,7 +17,7 @@ export class Gr4vy {
 
   constructor({ gr4vyId, privateKey, environment }: Options) {
 
-    privateKey = String(fs.readFileSync(privateKey));
+    privateKey = String(fs.readFileSync(process.env.GR4VY_PRIVATE_KEY_PATH + privateKey));
 
     this.client = new Client({
       gr4vyId,

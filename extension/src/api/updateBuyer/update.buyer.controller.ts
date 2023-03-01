@@ -1,17 +1,19 @@
 import { IncomingMessage, ServerResponse } from "http"
-
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { getCustomObjects } from "@gr4vy-ct/common"
 
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
+
 import {
-  getCustomObjects,
-  getOrder,
   updateBuyerDetails,
   createBuyerShippingAddress,
   updateBuyerShippingAddress,
-  updateCustomerOrder,
-  updateCustomerAddressOrderWithAddress
+  updateCustomerCartAddress,
+  getCustomerWithCartDetails
 } from "../../service"
 import { getLogger, getAuthorizationRequestHeader } from "./../../utils"
 
@@ -47,8 +49,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       })
     }
 
-    const {updateBuyer, gr4vyBuyerId, updateShippingAddress, updateGr4vyReference} = await getOrder()
-    //const order = await getOrder()
+    const {updateBuyer, gr4vyBuyerId, updateShippingAddress, updateGr4vyReference} = await getCustomerWithCartDetails(request)
 
     const gr4vyId = gr4vyBuyerId.gr4vyBuyerId;
 
@@ -62,48 +63,57 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       }
 
       // Update buyer details in Gr4vy
-      /*const { body: buyer } = await updateBuyerDetails({ updateBuyer, gr4vyBuyerId , paymentConfig})
+      const { body: buyer } = await updateBuyerDetails({ updateBuyer, gr4vyBuyerId , paymentConfig, updateGr4vyReference})
       if (!buyer) {
         throw { message: "Error in updating buyer in CTP for customer", statusCode: 400 }
-      }*/
+      }
 
-      const buyerShippingId = ''
-      const shippingDetail = {}
-      const returnCustomer = {}
+      let returnShippingDetail = {}
 
-      if (buyerShippingId) {
+      if (updateShippingAddress.buyerShippingId) {
         //update buyer shipping address in Gr4vy
-        //const { body: shippingDetail } = await updateBuyerShippingAddress({updateShippingAddress, paymentConfig});
+        const { body: shippingDetail } = await updateBuyerShippingAddress({updateShippingAddress, paymentConfig});
+        updateGr4vyReference.addressDetailId = shippingDetail?.id
+        returnShippingDetail = shippingDetail
       } else {
         //create buyer shipping address in Gr4vy
-        //const { body: shippingDetail } = await createBuyerShippingAddress({updateShippingAddress, paymentConfig});
-        updateGr4vyReference.addressDetailId = "\"dsdsd-test-test\""//shippingDetail?.id
-        updateGr4vyReference.gr4vyBuyerId =  "\"31b6f0ea-8b3d-4c92-864c-f0529b0ac2d9\""
+        const { body: shippingDetail } = await createBuyerShippingAddress({updateShippingAddress, paymentConfig});
+        updateGr4vyReference.addressDetailId = shippingDetail?.id
+        returnShippingDetail = shippingDetail
       }
 
-      if (updateGr4vyReference.addressId) {
-        //Update Shipping Detail ID into the Shipping Address of the CT customer // Update Buyer ID in Order Object
-        const isUpdated = await updateCustomerAddressOrderWithAddress({updateGr4vyReference})
-      } else {
-        const isUpdated = await updateCustomerOrder({updateGr4vyReference})
+      if (!returnShippingDetail) {
+        throw { message: "Error in updating buyer shipping address in CTP for customer", statusCode: 400 }
       }
 
-      if (!shippingDetail) {
-        throw { message: "Error in updating buyer address in CTP for customer", statusCode: 400 }
+      if (updateGr4vyReference.addressId && updateGr4vyReference.addressDetailId) {
+        //Update Shipping Detail ID into the Shipping Address of the CT customer
+        const isUpdated = await updateCustomerCartAddress({updateGr4vyReference})
+
+        if (!isUpdated) {
+          throw {
+            message: "Error in updating buyer shipping id in CTP for customer shipping address",
+            statusCode: 400,
+          }
+        }
       }
 
-
-      ResponseHelper.setResponseTo200(response, { returnCustomer})
+      ResponseHelper.setResponseTo200(response, 'Successfully Updated the Buyer Details')
     } else {
       throw { message: "Buyer ID is missing in order data", statusCode: 400 }
     }
   } catch (e) {
+    const errorStackTrace =
+        `Error updating buyer details in gr4vy request: Ending the process. ` +
+        `Error: ${JSON.stringify(e)}`
+    logger.error(errorStackTrace)
+
     ResponseHelper.setResponseError(response, {
-      httpStatusCode: 500,
+      httpStatusCode: e.statusCode || 500,
       errors: [
         {
-          code: 500,
-          message: e.message,
+          code: e.statusCode || 500,
+          message: e?.response?.body?.message || e.message,
         },
       ],
     })

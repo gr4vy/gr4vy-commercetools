@@ -9,7 +9,7 @@ export const createEmbedToken = async ({
   cart,
   paymentConfig,
 }: {
-  customer: Customer
+  customer: Customer | null
   cart: Cart
   paymentConfig: PaymentConfig
 }) => {
@@ -30,7 +30,7 @@ export const createEmbedToken = async ({
     currency: currencyCode,
   }
 
-  const { gr4vyBuyerId } = customer
+  const { gr4vyBuyerId } = customer || {}
 
   // If gr4vyBuyerId is present, pass it as buyerId in the request.
   if (gr4vyBuyerId) {
@@ -38,7 +38,7 @@ export const createEmbedToken = async ({
   }
   // If the gr4vyBuyerId is not present against cart or customer:
   else if (cart) {
-    /* If cart id has a customer id, that will be used as buyer externalIdentifier
+  /* If cart id has a customer id, that will be used as buyer externalIdentifier
      If customer id is not there, anonymous Id is used as buyer externalIdentifier 
   */
     buyerParams.buyerExternalIdentifier = cart.customerId || cart.anonymousId

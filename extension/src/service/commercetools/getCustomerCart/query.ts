@@ -4,10 +4,10 @@ const getCustomerWithCartQuery = `
         me {
             customer {
               id
+              version
               firstName
               middleName
               lastName
-              version
               custom {
                 customFieldsRaw{
                     name
@@ -17,9 +17,18 @@ const getCustomerWithCartQuery = `
             }
             activeCart {
                 id
+                version
+                customerId
+                anonymousId
                 totalPrice{
                   currencyCode
                   centAmount
+                }
+                custom {
+                  customFieldsRaw{
+                      name
+                      value
+                  }
                 }
                 lineItems{
                   id
