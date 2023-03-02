@@ -1,4 +1,5 @@
 export default {
+  CTP_GR4VY_ADDRESS_DETAIL_ID_ADDRESS : 'gr4vyShippingDetailId',
   CTP_GR4VY_BUYER_ID_FIELD: {
     NAME: "gr4vyBuyerId",
     TYPE: "type",
