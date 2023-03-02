@@ -47,4 +47,8 @@ export class Gr4vy {
     transactionCaptureRequest.amount = amount
     return this.client.captureTransaction(transactionId, transactionCaptureRequest)
   }
+
+  getTransactionById(transactionId: string) {
+    return this.client.getTransaction(transactionId)
+  }
 }
