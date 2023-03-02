@@ -5,10 +5,11 @@ query ($orderId: String) {
     me {
       order(id:$orderId){
         id
+        version
         paymentInfo {
           payments {
             id
-            key
+            version
             transactions {
               id
               type
@@ -16,7 +17,6 @@ query ($orderId: String) {
                 currencyCode
                 centAmount
               }
-              state
             }
           }
         }

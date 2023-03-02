@@ -3,7 +3,7 @@ import { ServerResponse } from "http"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getTransactionById as getGr4vyTransactionById, getOrder } from "@gr4vy-ct/common"
+import { getTransactionById, getOrder, updateStatus, Constants } from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
@@ -36,10 +36,10 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       }
     }
 
-    // Get transaction by ID
-    const transaction = await getGr4vyTransactionById(gr4vyTransactionId)
+    // Get gr4vy transaction by ID
+    const gr4vyTransaction = await getTransactionById(gr4vyTransactionId)
 
-    if (!transaction) {
+    if (!gr4vyTransaction) {
       throw {
         message: `Error in fetching gr4vy transaction for ID ${gr4vyTransactionId}`,
         statusCode: 400,
@@ -47,48 +47,119 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     }
 
     // Fetch order id from the transaction
-    const { external_identifier: orderId = "b2c4d973-578b-431d-866b-b068124a0c7e", status } =
-      transaction?.body || {}
+    const {
+      external_identifier: orderId,
+      status,
+      amount: gr4vyTransactionAmount,
+    } = gr4vyTransaction?.body || {}
 
     // // Get order payment and transaction details
     const order = await getOrder({ request, orderId })
 
     if (!order) {
       throw {
-        message: `Error in fetching CT order for ID ${orderId}`,
+        message: `Error in fetching CT order`,
         statusCode: 400,
       }
     }
 
-    // switch (status) {
-    //   case "authorization_succeeded":
-    //     updateCTOrderStatus("Confirmed")
-    //     updateCTPaymentStatus("Paid")
-    //     updateCTTransactionStatus("Success")
-    //     break
-    //   case "capture_pending":
-    //     updateCTOrderStatus("Open")
-    //     updateCTPaymentStatus("Pending")
-    //     updateCTTransactionStatus("Pending")
-    //     break
-    //   case "capture_succeeded":
-    //     updateCTOrderStatus("Confirmed")
-    //     updateCTPaymentStatus("Paid")
-    //     updateCTTransactionStatus("Success")
-    //     break
-    //   case "authorization_declined":
-    //   case "authorization_failed":
-    //     updateCTOrderStatus("Cancelled")
-    //     updateCTPaymentStatus("Failed")
-    //     updateCTTransactionStatus("Failure")
-    //     break
-    //   default:
-    //     ""
-    // }
+    const [payment] = order?.paymentInfo?.payments || []
+
+    if (!payment) {
+      throw {
+        message: `Error in fetching payment for order ID ${orderId}`,
+        statusCode: 400,
+      }
+    }
+
+    const [transaction] = payment?.transactions || []
+
+    if (!transaction) {
+      throw {
+        message: `Error in fetching transaction for order payment ID ${payment?.id}`,
+        statusCode: 400,
+      }
+    }
+
+    const ctTransactionAmount = transaction?.amount?.centAmount
+    const ctTransactionType = transaction?.type
+
+    // Double check if the amount are equal
+    if (gr4vyTransactionAmount !== ctTransactionAmount) {
+      throw {
+        message: `Error in mismatch amounts for gr4vy and CT for order payment ID ${payment?.id}`,
+        statusCode: 400,
+      }
+    }
+
+    let orderState, orderPaymentState, transactionState
+    const {
+      STATES: { GR4VY, CT },
+    } = Constants
+
+    switch (status) {
+      case GR4VY.TRANSACTION.AUTHORIZATION_SUCCEEDED:
+        if (ctTransactionType !== CT.TRANSACTION.TYPES.AUTHORIZATION) {
+          throw {
+            message: `Error mismatch transaction type for transaction ID ${transaction?.id}`,
+            statusCode: 400,
+          }
+        }
+        orderState = CT.ORDER.CONFIRMED
+        orderPaymentState = CT.ORDERPAYMENT.PAID
+        transactionState = CT.TRANSACTION.SUCCESS
+        break
+      case GR4VY.TRANSACTION.CAPTURE_PENDING:
+        if (ctTransactionType !== CT.TRANSACTION.TYPES.CHARGE) {
+          throw {
+            message: `Error mismatch transaction type for transaction ID ${transaction?.id}`,
+            statusCode: 400,
+          }
+        }
+        orderState = CT.ORDER.OPEN
+        orderPaymentState = CT.ORDERPAYMENT.PENDING
+        transactionState = CT.TRANSACTION.PENDING
+        break
+      case GR4VY.TRANSACTION.CAPTURE_SUCCEEDED:
+        if (ctTransactionType !== CT.TRANSACTION.TYPES.CHARGE) {
+          throw {
+            message: `Error mismatch transaction type for transaction ID ${transaction?.id}`,
+            statusCode: 400,
+          }
+        }
+        orderState = CT.ORDER.CONFIRMED
+        orderPaymentState = CT.ORDERPAYMENT.PAID
+        transactionState = CT.TRANSACTION.SUCCESS
+        break
+      case GR4VY.TRANSACTION.AUTHORIZATION_DECLINED:
+      case GR4VY.TRANSACTION.AUTHORIZATION_FAILED:
+        if (ctTransactionType !== CT.TRANSACTION.TYPES.AUTHORIZATION) {
+          throw {
+            message: `Error mismatch transaction type for transaction ID ${transaction?.id}`,
+            statusCode: 400,
+          }
+        }
+        orderState = CT.ORDER.CANCELLED
+        orderPaymentState = CT.ORDERPAYMENT.FAILED
+        transactionState = CT.TRANSACTION.FAILURE
+        break
+
+      default:
+        throw {
+          message: `Error during updating CT order statuses with ID ${orderId}`,
+          statusCode: 400,
+        }
+    }
+
+    const result = await updateStatus({
+      order,
+      orderState,
+      orderPaymentState,
+      transactionState,
+    })
 
     const responseData = {
-      order,
-      transaction,
+      status: result,
     }
 
     ResponseHelper.setResponseTo200(response, responseData)
