@@ -1,1 +1,1 @@
-declare module '@gr4vy-ct-sdk/shared';
+declare module '@gr4vy-ct/common';

@@ -15,8 +15,7 @@ export class Gr4vy {
   client: Client
 
   constructor({ gr4vyId, privateKey, environment }: Options) {
-
-    privateKey = String(fs.readFileSync(process.env.GR4VY_PRIVATE_KEY_PATH + privateKey));
+    privateKey = String(fs.readFileSync(process.env.GR4VY_PRIVATE_KEY_PATH + privateKey))
 
     this.client = new Client({
       gr4vyId,
@@ -70,9 +69,13 @@ export class Gr4vy {
     return this.client.updateBuyerShippingDetail(gr4vyBuyerId, buyerShippingId, shippingRequest)
   }
 
-  transactionCapture({amount, transactionId}: TransactionCaptureParams) {
+  transactionCapture({ amount, transactionId }: TransactionCaptureParams) {
     const transactionCaptureRequest = new TransactionCaptureRequest()
     transactionCaptureRequest.amount = amount
     return this.client.captureTransaction(transactionId, transactionCaptureRequest)
+  }
+
+  getTransactionById(transactionId: string) {
+    return this.client.getTransaction(transactionId)
   }
 }
