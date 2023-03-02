@@ -45,9 +45,11 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       throw { message: "Payment configuration is missing or empty", statusCode: 400 }
     }
 
+    let gr4vyBuyerId = customer?.gr4vyBuyerId
+    
     // create buyer in gr4vy if buyer id is not present
-    if (customer && !customer.gr4vyBuyerId) {
-      const { body: buyer } = await createBuyer({ customer, paymentConfig })
+    if (customer && !gr4vyBuyerId) {
+      const { body: buyer } = await createBuyer({ customer, cart, paymentConfig })
       if (!buyer) {
         throw { message: "Error in creating buyer in CTP for customer", statusCode: 400 }
       }
@@ -65,17 +67,37 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       customer.gr4vyBuyerId = {
         value: buyer.id,
       }
+      gr4vyBuyerId = buyer.id
+    }
+
+    // For guest user, create buyer with cart anonymousId
+    if (cart?.anonymousId) {
+      const { body: buyer} = await createBuyer({ customer, cart, paymentConfig })
+      if (!buyer) {
+        throw { message: "Error in creating buyer in CTP for guest user", statusCode: 400 }
+      }
+      //TODO: update the buyer id in cart
+      gr4vyBuyerId = buyer.id
     }
 
     // Omit specific keys
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { privateKey, ...restConfig } = paymentConfig.value
-    const embedToken = await createEmbedToken({ customer, cart, paymentConfig })
+    const embedToken = await createEmbedToken({ customer, cart, paymentConfig, cartItems })
+
+    const { id, totalPrice, country } = cart
 
     const responseData = {
+      cartFull: cart,
       embedToken,
       ...restConfig,
+      cart: {
+        id,
+        totalPrice,
+        country,
+      },
       cartItems,
+      gr4vyBuyerId: gr4vyBuyerId || null,
     }
 
     ResponseHelper.setResponseTo200(response, responseData)
@@ -90,7 +112,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       errors: [
         {
           code: e.statusCode || 500,
-          message: e.message,
+          message: e?.response?.body?.message || e.message,
         },
       ],
     })

@@ -12,6 +12,7 @@ export declare type EmbedParams = {
   buyerId?: string
   buyerExternalIdentifier?: string
   metadata?: Record<string, string>
+  cartItems?: []
 }
 
 export declare type BuyerParams = {
@@ -20,6 +21,6 @@ export declare type BuyerParams = {
 }
 
 export declare type TransactionCaptureParams = {
-  amount: number,
+  amount: number
   transactionId: string
 }

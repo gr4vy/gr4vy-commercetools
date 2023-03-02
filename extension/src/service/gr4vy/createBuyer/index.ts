@@ -2,13 +2,15 @@
 // @ts-ignore
 import { Gr4vy } from "@gr4vy-ct/common"
 
-import { Customer, PaymentConfig } from "./../../types"
+import { Cart, Customer, PaymentConfig } from "./../../types"
 
 export const createBuyer = async ({
   customer,
+  cart,
   paymentConfig,
 }: {
-  customer: Customer
+  customer: Customer | null
+  cart: Cart
   paymentConfig: PaymentConfig
 }) => {
   const { gr4vyId, privateKey } = paymentConfig.value || {}
@@ -19,8 +21,12 @@ export const createBuyer = async ({
     privateKey,
   })
 
-  const buyerParams = {
-    displayName: `${customer.firstName} ${customer.middleName} ${customer.lastName}`,
+  const buyerParams: any = {}
+
+  if (customer) {
+    buyerParams.displayName = `${customer.firstName} ${customer.middleName} ${customer.lastName}`
+  } else if (cart) {
+    buyerParams.externalIdentifier = cart.anonymousId
   }
 
   return gr4vy.createBuyer(buyerParams)

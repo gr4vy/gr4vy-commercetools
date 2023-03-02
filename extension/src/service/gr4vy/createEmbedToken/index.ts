@@ -2,18 +2,20 @@
 // @ts-ignore
 import { Gr4vy } from "@gr4vy-ct/common"
 
-import { Customer, Cart, PaymentConfig } from "./../../types"
+import { Customer, Cart, PaymentConfig, CartItem } from "./../../types"
 
 export const createEmbedToken = async ({
   customer,
   cart,
   paymentConfig,
+  cartItems,
 }: {
   customer: Customer | null
   cart: Cart
   paymentConfig: PaymentConfig
+  cartItems: CartItem[]
 }) => {
-  const { gr4vyId, privateKey } = paymentConfig.value || {}
+  const { gr4vyId, privateKey, metadata } = paymentConfig.value || {}
 
   // Initialize gr4vy
   const gr4vy = new Gr4vy({
@@ -25,24 +27,26 @@ export const createEmbedToken = async ({
     totalPrice: { centAmount, currencyCode },
   } = cart
 
-  const buyerParams: any = {
+  const params: any = {
     amount: centAmount,
     currency: currencyCode,
+    metadata,
+    cartItems,
   }
 
   const { gr4vyBuyerId } = customer || {}
 
   // If gr4vyBuyerId is present, pass it as buyerId in the request.
   if (gr4vyBuyerId) {
-    buyerParams.buyerId = gr4vyBuyerId.value
+    params.buyerId = gr4vyBuyerId.value
   }
   // If the gr4vyBuyerId is not present against cart or customer:
   else if (cart) {
-  /* If cart id has a customer id, that will be used as buyer externalIdentifier
+    /* If cart id has a customer id, that will be used as buyer externalIdentifier
      If customer id is not there, anonymous Id is used as buyer externalIdentifier 
   */
-    buyerParams.buyerExternalIdentifier = cart.customerId || cart.anonymousId
+    params.buyerExternalIdentifier = cart.customerId || cart.anonymousId
   }
 
-  return gr4vy.getEmbedToken(buyerParams)
+  return gr4vy.getEmbedToken(params)
 }
