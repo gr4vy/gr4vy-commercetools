@@ -1,4 +1,4 @@
-import http, { IncomingMessage, ServerResponse } from "http"
+import http, { ServerResponse } from "http"
 import url from "url"
 
 import { StatusCodes } from "http-status-codes"
@@ -7,11 +7,12 @@ import { getLogger } from "./../utils"
 import { routes } from "./../router"
 import ResponseHelper from "./../helper/response"
 import cors from "../helper/headers"
+import { Request } from "./../types"
 
 const logger = getLogger()
 
 const createServer = () => {
-  return http.createServer(async (request: IncomingMessage, response: ServerResponse) => {
+  return http.createServer(async (request: Request, response: ServerResponse) => {
     try {
       const requestUrl = request.url || "/"
       const parts = url.parse(requestUrl)
@@ -23,7 +24,24 @@ const createServer = () => {
           response.end()
           return
         }
-        await route(request, response)
+
+        if (request.method === "POST") {
+          let chunks = ""
+          request.on("data", chunk => {
+            chunks += chunk
+          })
+          request.on("end", async () => {
+            try {
+              request.body = JSON.parse(chunks)
+            } catch (err) {
+              request.body = {}
+            }
+            await route(request, response)
+          })
+        } else {
+          await route(request, response)
+        }
+        
       } else {
         ResponseHelper.setResponseError(response, {
           httpStatusCode: StatusCodes.NOT_FOUND,
