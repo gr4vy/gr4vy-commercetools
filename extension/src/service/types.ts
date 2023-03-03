@@ -33,6 +33,16 @@ export declare type Cart = {
   gr4vyShippingDetailId: string
   billingAddress: CtCustomerAddress
   shippingAddress: CtCustomerAddress
+  custom: {
+    customFieldsRaw?: {
+      name: string
+      value: string
+    }
+  }
+  gr4vyBuyerId?: {
+    name?: string
+    value: string
+  }
 }
 
 export declare type PaymentConfig = {
@@ -149,7 +159,7 @@ export declare type CtCustomerAddress = {
 }
 
 export declare type UpdateBuyerQuery = {
-  customer: Customer
+  customer: Customer | null
   cart: Cart
   paymentConfig: PaymentConfig
 }

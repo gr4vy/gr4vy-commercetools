@@ -5,7 +5,7 @@ import { Gr4vy } from "@gr4vy-ct/common"
 
 import {UpdateBuyerQuery} from "./../../types"
 
-export const manageBuyerShippingAddress = async ({ customer, cart, paymentConfig }: UpdateBuyerQuery) => {
+export const manageBuyerShippingAddress = async ({ cart, paymentConfig }: UpdateBuyerQuery) => {
   const { gr4vyId, privateKey } = paymentConfig.value || {}
 
   // Initialize gr4vy
@@ -26,7 +26,7 @@ export const manageBuyerShippingAddress = async ({ customer, cart, paymentConfig
       'postalCode': cart?.shippingAddress?.postalCode,
       'state': cart?.shippingAddress?.state,
     },
-    'gr4vyBuyerId': customer.gr4vyBuyerId?.value,
+    'gr4vyBuyerId': cart.gr4vyBuyerId?.value,
     'buyerShippingId': cart.shippingAddress?.gr4vyShippingDetailId?.value
   }
 

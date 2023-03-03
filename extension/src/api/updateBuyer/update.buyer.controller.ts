@@ -34,8 +34,8 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
 
   try {
     //Get Active customer cart details
-    const {customer, cart, cartItems} = await getCustomerWithCart(request)
-    if (customer?.gr4vyBuyerId?.value) {
+    const {customer, cart} = await getCustomerWithCart(request)
+    if (cart?.gr4vyBuyerId?.value) {
       const paymentConfig = await getCustomObjects()
 
       if (!paymentConfig) {

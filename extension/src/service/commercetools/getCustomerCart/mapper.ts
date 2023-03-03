@@ -20,6 +20,16 @@ const responseMapper = async (
         : null
   }
 
+  if (cart?.custom) {
+    const {
+      custom: { customFieldsRaw },
+    } = cart
+    cart.gr4vyBuyerId =
+        customFieldsRaw && Array.isArray(customFieldsRaw)
+            ? customFieldsRaw.find((e: { name: string }) => e.name === c.CTP_GR4VY_BUYER_ID_FIELD.NAME)
+            : null
+  }
+
   const cartItems: CartItem[] =
     cart?.lineItems && Array.isArray(cart?.lineItems)
       ? cart?.lineItems.map((c: CartLineItem) => getCartItem(c))
