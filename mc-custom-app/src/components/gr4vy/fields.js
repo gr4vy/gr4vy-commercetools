@@ -547,5 +547,7 @@ export const getField = ({
           />
         </div>
       );
+    default:
+      return null;
   }
 };
