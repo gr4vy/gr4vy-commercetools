@@ -67,6 +67,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
             transactionState,
         })
 
+        //Replicate cart from order
         const replicateCartResult = await replicateCartFromOrder({orderId })
 
         const replicateCartResponseData = {
