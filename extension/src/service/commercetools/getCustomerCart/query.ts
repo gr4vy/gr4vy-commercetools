@@ -8,6 +8,7 @@ const getCustomerWithCartQuery = `
               firstName
               middleName
               lastName
+              email
               custom {
                 customFieldsRaw{
                     name
@@ -20,6 +21,12 @@ const getCustomerWithCartQuery = `
                 version
                 customerId
                 anonymousId
+                billingAddress {
+                    ...addressFields
+                }
+                shippingAddress {
+                    ...addressFields
+                }
                 totalPrice{
                   currencyCode
                   centAmount
@@ -76,6 +83,29 @@ const getCustomerWithCartQuery = `
                 }
               }
         }
+    }
+    
+    fragment addressFields on Address{
+      id
+      firstName
+      lastName
+      email
+      phone
+      city
+      country
+      streetName
+      streetNumber
+      postalCode
+      state
+      building
+      apartment
+      region
+      custom {
+        customFieldsRaw {
+          name
+          value
+        }
+      }
     }
 `
 
