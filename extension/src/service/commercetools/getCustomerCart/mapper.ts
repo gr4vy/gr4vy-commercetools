@@ -4,7 +4,7 @@ import { Customer, CartLineItem, CartItem, Cart, CustomerCartResult } from "./..
 const responseMapper = async (
   result: CustomerCartResult
 ): Promise<{
-  customer: Customer
+  customer: Customer | null
   cart: Cart
   cartItems: CartItem[]
 }> => {
@@ -16,7 +16,7 @@ const responseMapper = async (
     } = customer
     customer.gr4vyBuyerId =
       customFieldsRaw && Array.isArray(customFieldsRaw)
-        ? customFieldsRaw.find((e: { name: string }) => e.name === c.CTP_GR4VY_BUYER_FIELD_ID)
+        ? customFieldsRaw.find((e: { name: string }) => e.name === c.CTP_GR4VY_BUYER_ID_FIELD.NAME)
         : null
   }
 
@@ -24,6 +24,31 @@ const responseMapper = async (
     cart?.lineItems && Array.isArray(cart?.lineItems)
       ? cart?.lineItems.map((c: CartLineItem) => getCartItem(c))
       : []
+
+  if (customer) {
+    customer.displayName = customer?.firstName+' '+customer?.lastName
+    customer.externalIdentifier = customer.id?customer.id:cart.anonymousId
+  }
+
+  if (cart?.billingAddress.custom) {
+    const {
+      custom: { customFieldsRaw },
+    } = cart.billingAddress
+    cart.billingAddress.gr4vyShippingDetailId =
+        customFieldsRaw && Array.isArray(customFieldsRaw)
+            ? customFieldsRaw.find((e: { name: string }) => e.name === c.CTP_GR4VY_ADDRESS_DETAIL_ID_ADDRESS)
+            : null
+  }
+
+  if (cart?.shippingAddress.custom) {
+    const {
+      custom: { customFieldsRaw },
+    } = cart.shippingAddress
+    cart.shippingAddress.gr4vyShippingDetailId =
+        customFieldsRaw && Array.isArray(customFieldsRaw)
+            ? customFieldsRaw.find((e: { name: string }) => e.name === c.CTP_GR4VY_ADDRESS_DETAIL_ID_ADDRESS)
+            : null
+  }
 
   return {
     customer,

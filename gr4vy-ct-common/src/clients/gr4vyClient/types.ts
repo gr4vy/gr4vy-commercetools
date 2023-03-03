@@ -19,6 +19,41 @@ export declare type BuyerParams = {
   displayName?: string | null
 }
 
+export declare type UpdateBuyerParams = {
+  displayName?: string | null
+  externalIdentifier?: string | null,
+  billingDetails: {
+    emailAddress?: string | null
+    firstName?: string | null
+    lastName?: string | null
+    phoneNumber?: string | null
+    address: {
+      city?: string | null
+      country?: string | null
+      line1?: string | null
+      postalCode?: string | null
+      state?: string | null
+    }
+  }
+  gr4vyBuyerId: string
+}
+
+export declare type UpdateBuyerShippingAddressParams = {
+  emailAddress?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  phoneNumber?: string | null
+  address: {
+    city?: string | null
+    country?: string | null
+    line1?: string | null
+    postalCode?: string | null
+    state?: string | null
+  }
+  gr4vyBuyerId: string
+  buyerShippingId: string
+}
+
 export declare type TransactionCaptureParams = {
   amount: number,
   transactionId: string

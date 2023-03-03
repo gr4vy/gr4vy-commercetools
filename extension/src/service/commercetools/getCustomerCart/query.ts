@@ -4,10 +4,11 @@ const getCustomerWithCartQuery = `
         me {
             customer {
               id
+              version
               firstName
               middleName
               lastName
-              version
+              email
               custom {
                 customFieldsRaw{
                     name
@@ -17,9 +18,24 @@ const getCustomerWithCartQuery = `
             }
             activeCart {
                 id
+                version
+                customerId
+                anonymousId
+                billingAddress {
+                    ...addressFields
+                }
+                shippingAddress {
+                    ...addressFields
+                }
                 totalPrice{
                   currencyCode
                   centAmount
+                }
+                custom {
+                  customFieldsRaw{
+                      name
+                      value
+                  }
                 }
                 lineItems{
                   id
@@ -61,6 +77,29 @@ const getCustomerWithCartQuery = `
                 locale
               }
         }
+    }
+    
+    fragment addressFields on Address{
+      id
+      firstName
+      lastName
+      email
+      phone
+      city
+      country
+      streetName
+      streetNumber
+      postalCode
+      state
+      building
+      apartment
+      region
+      custom {
+        customFieldsRaw {
+          name
+          value
+        }
+      }
     }
 `
 

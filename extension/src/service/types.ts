@@ -14,11 +14,14 @@ export declare type Customer = {
     name?: string
     value: string
   }
+  externalIdentifier: string
+  displayName: string
 }
 
 export declare type Cart = {
   id: string
-  customerId: string
+  version: string
+  customerId: string | null
   anonymousId: string
   totalPrice: {
     currencyCode: string
@@ -27,6 +30,9 @@ export declare type Cart = {
   lineItems: CartLineItem
   country: string
   locale: string
+  gr4vyShippingDetailId: string
+  billingAddress: CtCustomerAddress
+  shippingAddress: CtCustomerAddress
 }
 
 export declare type PaymentConfig = {
@@ -93,7 +99,7 @@ export declare type CustomerCartResult = {
   body: {
     data: {
       me: {
-        customer: Customer
+        customer: Customer | null
         activeCart: Cart
       }
     }
@@ -113,4 +119,37 @@ export declare type ProductMasterDataCurrent = {
       ]
     }
   }
+}
+
+export declare type CtCustomerAddress = {
+  id?: string
+  firstName?: string
+  lastName?: string
+  email?: string
+  phone?: string
+  city?: string
+  country?: string
+  streetName?: string
+  streetNumber?: string
+  postalCode?: string
+  state?: string
+  building?: string
+  apartment?: string
+  region?: string
+  custom: {
+    customFieldsRaw?: {
+      name: string
+      value: string
+    }
+  }
+  gr4vyShippingDetailId?: {
+    name?: string
+    value: string
+  }
+}
+
+export declare type UpdateBuyerQuery = {
+  customer: Customer
+  cart: Cart
+  paymentConfig: PaymentConfig
 }
