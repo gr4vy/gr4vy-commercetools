@@ -1,15 +1,15 @@
 // GraphQL query to get Customer
 const updateCustomerMutation = `
     mutation (
-      $buyerId: String!, 
+      $buyerId: String!,
       $ctpCustFieldName: String!
-      $ctpCustFieldType: String!, 
-      $customerId:String!, 
-      $customerVersion:Long!, 
-      $ctpCustFieldCustomerKey: String!, 
-      $cartId:String!, 
-      $cartVersion:Long!, 
-      $ctpCustFieldOrderKey: String!, 
+      $ctpCustFieldType: String!,
+      $customerId:String!,
+      $customerVersion:Long!,
+      $ctpCustFieldCustomerKey: String!,
+      $cartId:String!,
+      $cartVersion:Long!,
+      $ctpCustFieldOrderKey: String!,
     ){
       updateCustomer(
         version:$customerVersion,
@@ -49,5 +49,6 @@ const updateCustomerMutation = `
       }
     }
 `
+
 
 export { updateCustomerMutation }

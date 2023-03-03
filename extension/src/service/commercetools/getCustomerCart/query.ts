@@ -68,6 +68,12 @@ const getCustomerWithCartQuery = `
                 }
                 country
                 locale
+                custom {
+                  customFieldsRaw{
+                      name
+                      value
+                  }
+                }
               }
         }
     }

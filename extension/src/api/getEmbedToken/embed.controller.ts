@@ -12,6 +12,7 @@ import {
   createBuyer,
   updateCustomerCart,
   createEmbedToken,
+  updateCart
 } from "../../service"
 import { getLogger } from "./../../utils"
 
@@ -45,39 +46,47 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       throw { message: "Payment configuration is missing or empty", statusCode: 400 }
     }
 
-    let gr4vyBuyerId = customer?.gr4vyBuyerId
-    
+    //TODO: If the guest user has a buyer saved as custom field in cart, then no need to create buyer.
+    let gr4vyBuyerId = customer?.gr4vyBuyerId || cart.gr4vyBuyerId
+
     // create buyer in gr4vy if buyer id is not present
-    if (customer && !gr4vyBuyerId) {
+    if (!gr4vyBuyerId) {
       const { body: buyer } = await createBuyer({ customer, cart, paymentConfig })
       if (!buyer) {
         throw { message: "Error in creating buyer in CTP for customer", statusCode: 400 }
       }
+      gr4vyBuyerId = buyer.id
 
       // Update CT customer and cart with buyer info
-      const isCustomerCartUpdated = await updateCustomerCart({ customer, cart, buyer })
-      if (!isCustomerCartUpdated) {
-        throw {
-          message: "Error in updating buyer id in CTP for customer and cart",
-          statusCode: 400,
+      if(customer) {
+        const isCustomerCartUpdated = await updateCustomerCart({ customer, cart, buyer })
+        if (!isCustomerCartUpdated) {
+          throw {
+            message: "Error in updating buyer id in CTP for registered customer and cart",
+            statusCode: 400,
+          }
+        }
+
+        // Set gr4vyBuyerId in customer
+        customer.gr4vyBuyerId = {
+          value: buyer.id,
         }
       }
+      else {
+        //Update Cart with buyer Id
+        const isCartUpdated = await updateCart({cart, buyer})
+        if(!isCartUpdated) {
+          throw {
+            message: "Error in updating buyer id in CTP for guest cart",
+            statusCode: 400,
+          }
+        }
 
-      // Set gr4vyBuyerId in customer
-      customer.gr4vyBuyerId = {
-        value: buyer.id,
+        // Set gr4vyBuyerId in customer
+        cart.gr4vyBuyerId = {
+          value: buyer.id,
+        }
       }
-      gr4vyBuyerId = buyer.id
-    }
-
-    // For guest user, create buyer with cart anonymousId
-    if (cart?.anonymousId) {
-      const { body: buyer} = await createBuyer({ customer, cart, paymentConfig })
-      if (!buyer) {
-        throw { message: "Error in creating buyer in CTP for guest user", statusCode: 400 }
-      }
-      //TODO: update the buyer id in cart
-      gr4vyBuyerId = buyer.id
     }
 
     // Omit specific keys

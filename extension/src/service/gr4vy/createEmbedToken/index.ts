@@ -34,7 +34,7 @@ export const createEmbedToken = async ({
     cartItems,
   }
 
-  const { gr4vyBuyerId } = customer || {}
+  const { gr4vyBuyerId } = customer || cart || {}
 
   // If gr4vyBuyerId is present, pass it as buyerId in the request.
   if (gr4vyBuyerId) {

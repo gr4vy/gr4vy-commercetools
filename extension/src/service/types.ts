@@ -28,6 +28,10 @@ export declare type Cart = {
   lineItems: CartLineItem
   country: string
   locale: string
+  gr4vyBuyerId?: {
+    name?: string
+    value: string
+  }
 }
 
 export declare type PaymentConfig = {

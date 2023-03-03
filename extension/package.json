@@ -10,6 +10,7 @@
     "eslint": "eslint . --ext .ts",
     "prettier": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "start:dev": "nodemon src/index.ts",
+    "start:debug": "nodemon --exec \"node --inspect-brk=0.0.0.0:9229 --require ts-node/register src/index.ts\"",
     "prepare": "cd .. && husky install extension/.husky"
   },
   "repository": {
