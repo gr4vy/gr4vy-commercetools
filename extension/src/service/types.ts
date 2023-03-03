@@ -37,6 +37,7 @@ export declare type Cart = {
   gr4vyShippingDetailId: string
   billingAddress: CtCustomerAddress
   shippingAddress: CtCustomerAddress
+  shippingInfo: CtShippingInfo
 }
 
 export declare type PaymentConfig = {
@@ -87,15 +88,14 @@ export declare type CartLineItem = {
 
 export declare type CartItem = {
   name: string
-  productId: string
   quantity: number
-  unitAmount: number
-  discountAmount: number | null
-  taxAmount: number | null
-  externalIdentifier: string | null
-  sku: string | null
-  imageUrl: string | null
-  categories: string | null
+  unitAmount?: number
+  discountAmount?: number | null
+  taxAmount?: number | null
+  externalIdentifier: string
+  sku?: string | null
+  imageUrl?: string | null
+  categories?: string[] | null
   productType: string | null
 }
 
@@ -156,4 +156,18 @@ export declare type UpdateBuyerQuery = {
   customer: Customer
   cart: Cart
   paymentConfig: PaymentConfig
+}
+
+export declare type CtShippingInfo = {
+  price?: {
+    centAmount: number
+    currencyCode: string
+  }
+  shippingMethodName: string
+  discountedPrice?: {
+    value: {
+      centAmount: number
+      currencyCode: string
+    }
+  }
 }

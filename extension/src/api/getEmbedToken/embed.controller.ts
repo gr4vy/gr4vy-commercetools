@@ -46,7 +46,6 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       throw { message: "Payment configuration is missing or empty", statusCode: 400 }
     }
 
-    //TODO: If the guest user has a buyer saved as custom field in cart, then no need to create buyer.
     let gr4vyBuyerId = customer?.gr4vyBuyerId || cart.gr4vyBuyerId
 
     // create buyer in gr4vy if buyer id is not present
@@ -94,19 +93,16 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
     const { privateKey, ...restConfig } = paymentConfig.value
     const embedToken = await createEmbedToken({ customer, cart, paymentConfig, cartItems })
 
-    const { id, totalPrice, country } = cart
+    const { totalPrice: {centAmount, currencyCode}, country } = cart
 
     const responseData = {
-      cartFull: cart,
       embedToken,
+      buyerId: gr4vyBuyerId || null,
+      amount: centAmount,
+      currency: currencyCode,
+      country,
       ...restConfig,
-      cart: {
-        id,
-        totalPrice,
-        country,
-      },
       cartItems,
-      gr4vyBuyerId: gr4vyBuyerId || null,
     }
 
     ResponseHelper.setResponseTo200(response, responseData)
