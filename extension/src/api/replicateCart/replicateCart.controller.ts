@@ -42,13 +42,6 @@ const processRequest = async (request: Request, response: ServerResponse) => {
             }
         }
 
-        const version  = order?.version || {}
-        if (!version) {
-            throw {
-                message: `Error in fetching version for order ID ${orderId}`,
-                statusCode: 400,
-            }
-        }
 
         let orderState, orderPaymentState, transactionState
         const {

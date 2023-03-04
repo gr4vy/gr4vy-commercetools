@@ -2,10 +2,11 @@
 // @ts-ignore
 
 import { Gr4vy } from "@gr4vy-ct/common"
+import { phone } from 'phone'
 
 import {UpdateBuyerQuery} from "./../../types"
 
-export const manageBuyerShippingAddress = async ({ cart, paymentConfig }: UpdateBuyerQuery) => {
+export const manageBuyerShippingAddress = async ({customer, cart, paymentConfig }: UpdateBuyerQuery) => {
   const { gr4vyId, privateKey } = paymentConfig.value || {}
 
   // Initialize gr4vy
@@ -14,11 +15,18 @@ export const manageBuyerShippingAddress = async ({ cart, paymentConfig }: Update
     privateKey,
   })
 
+    //validate phone number. If invalid, format it.
+    let phoneNumber = "";
+    if(cart?.shippingAddress?.phone) {
+      const validatePhone = phone(cart?.shippingAddress?.phone, { country: cart?.shippingAddress?.country})
+      phoneNumber = validatePhone.phoneNumber??""
+    }
+
   const updateShippingAddress = {
     'emailAddress': cart?.shippingAddress?.email,
     'firstName': cart?.shippingAddress?.firstName,
     'lastName': cart?.shippingAddress?.lastName,
-    'phoneNumber': cart?.shippingAddress?.phone,
+    ...(phoneNumber? {'phoneNumber': phoneNumber}:{}),
     'address': {
       'city': cart?.shippingAddress?.city,
       'country': cart?.shippingAddress?.country,
@@ -26,7 +34,8 @@ export const manageBuyerShippingAddress = async ({ cart, paymentConfig }: Update
       'postalCode': cart?.shippingAddress?.postalCode,
       'state': cart?.shippingAddress?.state,
     },
-    'gr4vyBuyerId': cart.gr4vyBuyerId?.value,
+    //if the buyer Id is not there in customer, get it from cart.
+    'gr4vyBuyerId': customer?.gr4vyBuyerId?.value?? cart.gr4vyBuyerId?.value,
     'buyerShippingId': cart.shippingAddress?.gr4vyShippingDetailId?.value
   }
 

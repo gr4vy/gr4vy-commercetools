@@ -12,7 +12,8 @@ import {
   createBuyer,
   updateCustomerCart,
   createEmbedToken,
-  updateCart
+  updateCart,
+  getBuyer,
 } from "../../service"
 import { getLogger } from "./../../utils"
 
@@ -46,15 +47,25 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       throw { message: "Payment configuration is missing or empty", statusCode: 400 }
     }
 
-    let gr4vyBuyerId = customer?.gr4vyBuyerId || cart.gr4vyBuyerId
+    let gr4vyBuyerId = customer?.gr4vyBuyerId ?? cart.gr4vyBuyerId
 
     // create buyer in gr4vy if buyer id is not present
     if (!gr4vyBuyerId) {
-      const { body: buyer } = await createBuyer({ customer, cart, paymentConfig })
-      if (!buyer) {
-        throw { message: "Error in creating buyer in CTP for customer", statusCode: 400 }
+
+      //if there is no gr4vy buyer Id against cart or customer, see if it is there in Gr4vy.
+      const userId = customer?.id ?? cart.anonymousId;
+      const { body: {items} } = await getBuyer({userId, paymentConfig})
+      let buyer;
+      if(items.length == 0) {
+        const { body } = await createBuyer({ customer, cart, paymentConfig })
+        buyer = body;
+        if (!buyer) {
+          throw { message: "Error in creating buyer in CTP for customer", statusCode: 400 }
+        }
       }
-      gr4vyBuyerId = buyer.id
+      else {
+        buyer = items[0];
+      }
 
       // Update CT customer and cart with buyer info
       if(customer) {
@@ -70,6 +81,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
         customer.gr4vyBuyerId = {
           value: buyer.id,
         }
+        gr4vyBuyerId = customer.gr4vyBuyerId;
       }
       else {
         //Update Cart with buyer Id
@@ -85,6 +97,8 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
         cart.gr4vyBuyerId = {
           value: buyer.id,
         }
+
+        gr4vyBuyerId = cart.gr4vyBuyerId;
       }
     }
 
@@ -93,11 +107,13 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
     const { privateKey, ...restConfig } = paymentConfig.value
     const embedToken = await createEmbedToken({ customer, cart, paymentConfig, cartItems })
 
+    //TBD: If the embedToken generation fails maybe the buyer need to be created.
+
     const { totalPrice: {centAmount, currencyCode}, country } = cart
 
     const responseData = {
       embedToken,
-      buyerId: gr4vyBuyerId || null,
+      buyerId: gr4vyBuyerId?.value || null,
       amount: centAmount,
       currency: currencyCode,
       country,

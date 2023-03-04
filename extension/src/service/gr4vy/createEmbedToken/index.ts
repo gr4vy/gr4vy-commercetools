@@ -15,7 +15,7 @@ export const createEmbedToken = async ({
   paymentConfig: PaymentConfig
   cartItems: CartItem[]
 }) => {
-  const { gr4vyId, privateKey, metadata } = paymentConfig.value || {}
+  const { gr4vyId, privateKey, metadata: customData } = paymentConfig.value || {}
 
   // Initialize gr4vy
   const gr4vy = new Gr4vy({
@@ -30,23 +30,22 @@ export const createEmbedToken = async ({
   const params: any = {
     amount: centAmount,
     currency: currencyCode,
-    metadata,
+    metadata: {
+      ct_custom_data: customData    },  //TBD: convert to proper meta data.
     cartItems,
   }
 
-  const { gr4vyBuyerId } = customer || cart || {}
+  const { gr4vyBuyerId } = customer ?? cart;
+  if(!gr4vyBuyerId) {
+    throw {
+      message: "Missing Buyer Id",
+      statusCode: 400,
+    }
+  }
 
-  // If gr4vyBuyerId is present, pass it as buyerId in the request.
-  if (gr4vyBuyerId) {
-    params.buyerId = gr4vyBuyerId.value
-  }
-  // If the gr4vyBuyerId is not present against cart or customer:
-  else if (cart) {
-    /* If cart id has a customer id, that will be used as buyer externalIdentifier
-     If customer id is not there, anonymous Id is used as buyer externalIdentifier 
-  */
-    params.buyerExternalIdentifier = cart.customerId || cart.anonymousId
-  }
+  params.buyerId = gr4vyBuyerId.value
+
+  console.log("Debug", params);
 
   return gr4vy.getEmbedToken(params)
 }

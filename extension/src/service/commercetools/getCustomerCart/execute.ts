@@ -45,9 +45,7 @@ const setProductCategoryInResult = async (
     return result
   }
 
-  const locale = result?.cart?.locale || c.defaultLocale
-
-  console.log(skus);
+  const locale = result?.cart?.locale ?? c.defaultLocale
 
   meApiClient.setBody({
     query: getProductsCategoriesQuery,
@@ -74,7 +72,7 @@ const setProductCategoryInResult = async (
   })
 
   result.cartItems.forEach((cartItem: CartItem) => {
-    cartItem.categories = productCategoryMapper[cartItem.externalIdentifier] || null
+    cartItem.categories = productCategoryMapper[cartItem.externalIdentifier] ?? []
   })
 }
 

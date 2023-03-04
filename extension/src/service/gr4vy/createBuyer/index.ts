@@ -27,6 +27,7 @@ export const createBuyer = async ({
     buyerParams.displayName = `${customer.firstName} ${customer.middleName} ${customer.lastName}`
     buyerParams.externalIdentifier = customer.id
   } else if (cart) {
+    buyerParams.displayName = 'ct_guest_user';
     buyerParams.externalIdentifier = cart.anonymousId
   }
 
