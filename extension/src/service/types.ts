@@ -38,6 +38,12 @@ export declare type Cart = {
   billingAddress: CtCustomerAddress
   shippingAddress: CtCustomerAddress
   shippingInfo: CtShippingInfo
+  custom: {
+    customFieldsRaw?: {
+      name: string
+      value: string
+    }
+  }
 }
 
 export declare type PaymentConfig = {
@@ -153,7 +159,7 @@ export declare type CtCustomerAddress = {
 }
 
 export declare type UpdateBuyerQuery = {
-  customer: Customer
+  customer: Customer | null
   cart: Cart
   paymentConfig: PaymentConfig
 }

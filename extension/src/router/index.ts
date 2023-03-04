@@ -3,6 +3,7 @@ import embedTokenController from "../api/getEmbedToken/embed.controller"
 import updateBuyer from "./../api/updateBuyer/update.buyer.controller"
 import keyUploadController from "../api/keyFileUpload/keyfileupload.controller"
 import updatePaymentController from "../api/updatePayment/payment.controller"
+import replicateCartController from "../api/replicateCart/replicateCart.controller"
 
 const routes = {
   "/": healthController.processRequest,
@@ -11,6 +12,7 @@ const routes = {
   "/updateBuyer": updateBuyer.processRequest,
   "/key/upload": keyUploadController.processRequest,
   "/updatePayment": updatePaymentController.processRequest,
+  "/replicateCart": replicateCartController.processRequest,
 }
 
 export { routes }

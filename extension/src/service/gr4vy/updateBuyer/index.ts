@@ -30,7 +30,7 @@ export const updateBuyerDetails = async ({ customer, cart, paymentConfig }: Upda
         'state': cart?.billingAddress?.state,
       }
     },
-    'gr4vyBuyerId': customer.gr4vyBuyerId?.value
+    'gr4vyBuyerId': cart.gr4vyBuyerId?.value
   }
 
   return gr4vy.updateBuyer(updateBuyer)
