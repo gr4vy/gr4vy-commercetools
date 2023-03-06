@@ -1,13 +1,12 @@
 import { IncomingMessage, ServerResponse } from "http"
-import { StatusCodes, getReasonPhrase } from "http-status-codes"
 
+import { StatusCodes, getReasonPhrase } from "http-status-codes"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { getCustomObjects } from "@gr4vy-ct/common"
 
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
-
 import {
   updateBuyerDetails,
   updateCustomerCartAddress,
@@ -35,7 +34,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
   try {
     //Get Active customer cart details
     const {customer, cart} = await getCustomerWithCart(request)
-    if (cart?.gr4vyBuyerId?.value) {
+    if (customer?.gr4vyBuyerId?.value || cart?.gr4vyBuyerId?.value) {
       const paymentConfig = await getCustomObjects()
 
       if (!paymentConfig) {
@@ -75,7 +74,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       // create buyer in gr4vy if buyer id is not present
       ResponseHelper.setResponseTo200(response, 'Successfully Updated the Buyer Details')
     } else {
-      throw { message: "Buyer ID is missing in order data", statusCode: 400 }
+      throw { message: "Buyer ID is missing in CT data", statusCode: 400 }
     }
   } catch (e) {
     const errorStackTrace =

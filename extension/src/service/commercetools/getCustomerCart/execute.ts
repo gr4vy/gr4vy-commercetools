@@ -39,13 +39,13 @@ const setProductCategoryInResult = async (
   }
 ) => {
   // Prepare skus for the API call
-  const skus = result?.cartItems?.map(cartItem => cartItem?.sku) || []
+  const skus = result?.cartItems?.filter(cartItem => cartItem?.sku).map(cartItem => cartItem?.sku) || []
 
   if (!skus.length) {
     return result
   }
 
-  const locale = result?.cart?.locale || c.defaultLocale
+  const locale = result?.cart?.locale ?? c.defaultLocale
 
   meApiClient.setBody({
     query: getProductsCategoriesQuery,
@@ -63,16 +63,16 @@ const setProductCategoryInResult = async (
     return result
   }
 
-  const productCategoryMapper: { [key: string]: string } = {}
+  const productCategoryMapper: { [key: string]: string[] } = {}
   products.forEach((product: ProductMasterDataCurrent) => {
     const categories = product?.masterData?.current?.categories || []
     if (categories.length) {
-      productCategoryMapper[product.id] = categories.map(c => c.name).join(", ")
+      productCategoryMapper[product.id] = categories.map(c => c.name)
     }
   })
 
   result.cartItems.forEach((cartItem: CartItem) => {
-    cartItem.categories = productCategoryMapper[cartItem.productId] || null
+    cartItem.categories = productCategoryMapper[cartItem.externalIdentifier] ?? []
   })
 }
 

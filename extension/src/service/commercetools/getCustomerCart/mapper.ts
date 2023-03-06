@@ -40,7 +40,7 @@ const responseMapper = async (
     customer.externalIdentifier = customer.id?customer.id:cart.anonymousId
   }
 
-  if (cart?.billingAddress.custom) {
+  if (cart?.billingAddress?.custom) {
     const {
       custom: { customFieldsRaw },
     } = cart.billingAddress
@@ -50,7 +50,7 @@ const responseMapper = async (
             : null
   }
 
-  if (cart?.shippingAddress.custom) {
+  if (cart?.shippingAddress?.custom) {
     const {
       custom: { customFieldsRaw },
     } = cart.shippingAddress
@@ -58,6 +58,19 @@ const responseMapper = async (
         customFieldsRaw && Array.isArray(customFieldsRaw)
             ? customFieldsRaw.find((e: { name: string }) => e.name === c.CTP_GR4VY_ADDRESS_DETAIL_ID_ADDRESS)
             : null
+  }
+
+  //Add Shipping as an item to the cart Items.
+  if (cart?.shippingInfo) {
+    const shippingItem: CartItem = {
+      name: cart.shippingInfo?.shippingMethodName,
+      quantity: 1,
+      unitAmount: cart.shippingInfo.discountedPrice?.value.centAmount??cart.shippingInfo.price?.centAmount,
+      productType: 'shipping_fee',
+      externalIdentifier: cart.shippingInfo?.shippingMethodName,
+    };
+
+    cartItems.push(shippingItem);
   }
 
   return {
@@ -70,33 +83,39 @@ const responseMapper = async (
 const getCartItem = (c: CartLineItem): CartItem => {
   const {
     id,
-    productId,
     name,
     quantity,
     discountedPricePerQuantity,
-    taxedPrice,
+    //taxedPrice,
     variant,
     price,
-    productType,
+    //productType,
   } = c
 
-  const discountAmount =
+  const discountedItemAmount =
     Array.isArray(discountedPricePerQuantity) && discountedPricePerQuantity?.length > 0
       ? discountedPricePerQuantity?.discountedPrice?.value?.centAmount
-      : null
+      : null;
+
+    //calculate total discount amount in all the quantity of items.
+    let discountItemAmount = 0;
+    if(discountedItemAmount) {
+      const totalItemAmount = price?.value?.centAmount * quantity;
+
+      discountItemAmount = totalItemAmount - discountedItemAmount;
+    }
 
   return {
     name,
-    productId,
     quantity,
     unitAmount: price?.value?.centAmount,
-    discountAmount,
-    taxAmount: taxedPrice?.totalTax?.centAmount || null,
-    externalIdentifier: id || null,
+    discountAmount: discountItemAmount,
+    //taxAmount: taxedPrice?.totalTax?.centAmount || null,
+    externalIdentifier: id,
     sku: variant?.sku || null,
     imageUrl: Array.isArray(variant?.images) ? variant?.images[0]?.url : null,
     categories: null,
-    productType: productType?.name || null,
+    productType: 'physical' || null,
   }
 }
 

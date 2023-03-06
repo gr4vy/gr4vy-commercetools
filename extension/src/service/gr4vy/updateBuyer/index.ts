@@ -2,6 +2,7 @@
 // @ts-ignore
 
 import { Gr4vy } from "@gr4vy-ct/common"
+import { phone } from 'phone'
 
 import { UpdateBuyerQuery } from "./../../types"
 
@@ -14,24 +15,30 @@ export const updateBuyerDetails = async ({ customer, cart, paymentConfig }: Upda
     privateKey,
   })
 
+  //validate phone number. If invalid, format it.
+  let phoneNumber = "";
+  if(cart?.billingAddress?.phone) {
+    const validatePhone = phone(cart?.billingAddress?.phone, { country: cart?.billingAddress?.country})
+    phoneNumber = validatePhone.phoneNumber??""
+  }
+
   const updateBuyer = {
-    'displayName': customer?.displayName,
-    'externalIdentifier': customer?.externalIdentifier,
+    'displayName': customer?.displayName ?? cart?.billingAddress?.firstName + " " + cart?.billingAddress?.lastName,
+    'externalIdentifier': cart?.customerId ?? cart?.anonymousId,
     'billingDetails': {
       'emailAddress': cart?.billingAddress?.email,
       'firstName': cart?.billingAddress?.firstName,
       'lastName': cart?.billingAddress?.lastName,
-      'phoneNumber': cart?.billingAddress?.phone,
+      ...(phoneNumber? {'phoneNumber': phoneNumber}:{}),
       'address': {
         'city': cart?.billingAddress?.city,
         'country': cart?.billingAddress?.country,
-        'line1': cart?.billingAddress?.streetNumber+' '+cart?.billingAddress?.streetName,
+        'line1': cart?.billingAddress?.streetNumber??"" + ' ' +cart?.billingAddress?.streetName??"",
         'postalCode': cart?.billingAddress?.postalCode,
         'state': cart?.billingAddress?.state,
       }
     },
-    'gr4vyBuyerId': cart.gr4vyBuyerId?.value
+    'gr4vyBuyerId': customer?.gr4vyBuyerId?.value?? cart.gr4vyBuyerId?.value  //if the buyer is not there in customer, look in cart.
   }
-
   return gr4vy.updateBuyer(updateBuyer)
 }
