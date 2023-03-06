@@ -47,7 +47,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       throw { message: "Payment configuration is missing or empty", statusCode: 400 }
     }
 
-    let gr4vyBuyerId = customer?.gr4vyBuyerId ?? cart.gr4vyBuyerId
+    let gr4vyBuyerId = customer?.gr4vyBuyerId ?? cart.gr4vyBuyerId;
 
     // create buyer in gr4vy if buyer id is not present
     if (!gr4vyBuyerId) {
