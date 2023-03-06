@@ -1,4 +1,4 @@
-// GraphQL query to get Customer
+// GraphQL query to update Customer and Cart
 const updateCustomerMutation = `
     mutation (
       $buyerId: String!,

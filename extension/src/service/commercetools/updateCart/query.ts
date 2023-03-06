@@ -1,5 +1,13 @@
 
-const updateCart = `
+const updateCartMutation = `
+mutation (
+  $cartVersion:Long!,
+  $cartId:String!,
+  $ctpCustFieldOrderKey: String!,
+  $ctpCustFieldType: String!,
+  $ctpCustFieldName: String!
+  $buyerId: String!,
+) {
   updateCart(
     version:$cartVersion,
     id:$cartId,
@@ -18,18 +26,6 @@ const updateCart = `
   ){
     id
   }
-`
-
-const updateCartMutation = `
-mutation (
-  $cartVersion:Long!,
-  $cartId:String!,
-  $ctpCustFieldOrderKey: String!,
-  $ctpCustFieldType: String!,
-  $ctpCustFieldName: String!
-  $buyerId: String!,
-) {
-  ${updateCart}
 }
 `
 

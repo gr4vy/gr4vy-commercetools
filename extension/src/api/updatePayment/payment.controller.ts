@@ -48,12 +48,12 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
     // Fetch order id from the transaction
     const {
-      external_identifier: orderId,
+      externalIdentifier: orderId,
       status,
       amount: gr4vyTransactionAmount,
     } = gr4vyTransaction?.body || {}
 
-    // // Get order payment and transaction details
+    // Get order payment and transaction details
     const order = await getOrder({ request, orderId })
 
     if (!order) {
