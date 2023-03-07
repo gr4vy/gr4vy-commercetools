@@ -1,5 +1,5 @@
 
-import { Constants } from "../../../config/constants"
+import { Constants } from "../../../config"
 import { PaymentConfig } from '../../types'
 
 const responseMapper = (response: any): PaymentConfig => {
