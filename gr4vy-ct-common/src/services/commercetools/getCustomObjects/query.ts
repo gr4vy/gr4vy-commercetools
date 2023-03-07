@@ -1,4 +1,4 @@
-import c from "../../../config/commonconstants"
+import { Constants } from "../../../config"
 
 // GraphQL query to get Custom objects
 const getCustomObjectsByContainerQuery = `
@@ -16,7 +16,7 @@ const getCustomObjectsByContainerQuery = `
 `;
 
 const variables = {
-  containerName: c.CTP_GR4VY_PAYMENT_CONFIGURATION_CONTAINER,
+  containerName: Constants.CTP_GR4VY_PAYMENT_CONFIGURATION_CONTAINER,
 }
 
 export { getCustomObjectsByContainerQuery, variables }
