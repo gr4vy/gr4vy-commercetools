@@ -1,4 +1,4 @@
-import c from "../../../config/constants"
+import c from "../../../config/commonconstants"
 
 // GraphQL query to get Custom objects
 const getCustomObjectsByContainerQuery = `
