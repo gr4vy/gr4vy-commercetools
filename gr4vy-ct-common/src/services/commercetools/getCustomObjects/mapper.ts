@@ -1,11 +1,11 @@
 
-import c from "../../../config/constants"
+import { Constants } from "../../../config/constants"
 import { PaymentConfig } from '../../types'
 
 const responseMapper = (response: any): PaymentConfig => {
   const parsedRes = response?.body?.data?.customObjects || {}
   const result:PaymentConfig = parsedRes.results.find(
-    (e: { container: string }) => e.container === c.CTP_GR4VY_PAYMENT_CONFIGURATION_CONTAINER
+    (e: { container: string }) => e.container === Constants.CTP_GR4VY_PAYMENT_CONFIGURATION_CONTAINER
   )
   cleanup(result)
   return result;
