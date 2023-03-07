@@ -14,6 +14,7 @@ export const getTransactionById = async (transactionId: string) => {
   const gr4vy = new Gr4vy({
     gr4vyId,
     privateKey,
+    debug: paymentConfig?.value?.debug ? true : false
   })
 
   const transaction = await gr4vy.getTransactionById(transactionId)

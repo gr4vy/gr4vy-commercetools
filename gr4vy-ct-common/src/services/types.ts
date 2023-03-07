@@ -5,6 +5,28 @@ export declare type PaymentConfig = {
   value: { [key: string]: string }
 }
 
+export declare type PaymentConfigValue = {
+  gr4vyId: string
+  privateKey: string
+  environment: string
+  paymentSource: string | null
+  requiredSecurityCode: string | null
+  statementDescriptor: {
+    name: string | null
+    description: string | null
+    city: string | null
+    phonenumber: string | null
+    url: string | null
+  }
+  theme: object
+  intent: string
+  payment_type: string | null
+  active: number | null
+  debug: number | null
+  allowspecific: number | null //TBD: Change to string
+  paymentStore: string | null
+}
+
 export declare type Transaction = {
   id: string
   type: string
