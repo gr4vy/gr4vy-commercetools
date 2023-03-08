@@ -8,13 +8,13 @@ export const getTransactionById = async (transactionId: string) => {
     throw { message: "Payment configuration is missing or empty", statusCode: 400 }
   }
 
-  const { gr4vyId, privateKey } = paymentConfig.value || {}
+  const { gr4vyId, privateKey } = paymentConfig || {}
 
   // Initialize gr4vy
   const gr4vy = new Gr4vy({
     gr4vyId,
     privateKey,
-    debug: paymentConfig?.value?.debug ? true : false
+    debug: paymentConfig?.debug ? true : false
   })
 
   const transaction = await gr4vy.getTransactionById(transactionId)
