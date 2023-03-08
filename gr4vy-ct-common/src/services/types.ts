@@ -1,30 +1,34 @@
-export declare type PaymentConfig = {
+export declare type PaymentConfigContainer = {
   id: string
   key: string
   container: string
-  value: { [key: string]: string }
+  value: string
 }
 
-export declare type PaymentConfigValue = {
+export declare type PaymentConfig = {
   gr4vyId: string
   privateKey: string
-  environment: string
-  paymentSource: string | null
-  requiredSecurityCode: string | null
-  statementDescriptor: {
-    name: string | null
-    description: string | null
-    city: string | null
-    phonenumber: string | null
-    url: string | null
-  }
+  environment?: 'production' | 'sandbox'
+  paymentSource?: 'installment' | 'moto' | 'recurring'
+  requiredSecurityCode?: string | null
+  statementDescriptor?: StatementDescriptor
   theme: object
-  intent: string
+  intent?: 'authorize' | 'capture' | 'approve'
   payment_type: string | null
   active: number | null
-  debug: number | null
+  debug?: boolean | null
   allowspecific: number | null //TBD: Change to string
-  paymentStore: string | null
+  paymentStore?: 'ask' | boolean
+  metadata?: Record<string, string>
+  customData?: string | null
+}
+
+export type StatementDescriptor = {
+  name?: string
+  description?: string
+  city?: string
+  phoneNumber?: string
+  url?: string
 }
 
 export declare type Transaction = {

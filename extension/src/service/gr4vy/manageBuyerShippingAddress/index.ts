@@ -7,13 +7,13 @@ import { phone } from 'phone'
 import {UpdateBuyerQuery} from "./../../types"
 
 export const manageBuyerShippingAddress = async ({customer, cart, paymentConfig }: UpdateBuyerQuery) => {
-  const { gr4vyId, privateKey } = paymentConfig.value || {}
+  const { gr4vyId, privateKey } = paymentConfig || {}
 
   // Initialize gr4vy
   const gr4vy = new Gr4vy({
     gr4vyId,
     privateKey,
-    debug: paymentConfig?.value?.debug ? true : false
+    debug: paymentConfig?.debug ? true : false
   })
 
     //validate phone number. If invalid, format it.

@@ -106,8 +106,8 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
     // Omit specific keys
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { privateKey, ...restConfig } = paymentConfig.value
-    const embedToken = await createEmbedToken({ customer, cart, paymentConfig, cartItems })
+    const { privateKey, ...restConfig } = paymentConfig
+    const embedToken: string = await createEmbedToken({ customer, cart, paymentConfig, cartItems })
 
     //TBD: If the embedToken generation fails maybe the buyer need to be created.
 
@@ -115,13 +115,13 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
     const responseData = {
       embedToken,
-      buyerId: gr4vyBuyerId?.value || null,
+      buyerId: gr4vyBuyerId.value,
       amount: centAmount,
       currency: currencyCode,
       country,
       ...restConfig,
       cartItems,
-      cartLocale,
+      locale: cartLocale,
     }
 
     ResponseHelper.setResponseTo200(response, responseData)
