@@ -43,14 +43,13 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         }
 
 
-        let orderState, orderPaymentState, transactionState
         const {
             STATES: { CT },
         } = Constants
 
-        orderState = CT.ORDER.CANCELLED
-        orderPaymentState = CT.ORDERPAYMENT.FAILED
-        transactionState = CT.TRANSACTION.FAILURE
+        const orderState = CT.ORDER.CANCELLED
+        const orderPaymentState = CT.ORDERPAYMENT.FAILED
+        const transactionState = CT.TRANSACTION.FAILURE
 
         //Cancel order
         await updateStatus({

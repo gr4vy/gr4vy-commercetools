@@ -1,10 +1,11 @@
-import { IncomingMessage, ServerResponse } from "http"
+import { ServerResponse } from "http"
 
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { getCustomObjects } from "@gr4vy-ct/common"
 
+import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import {
@@ -19,7 +20,7 @@ import { getLogger } from "./../../utils"
 
 const logger = getLogger()
 
-const processRequest = async (request: IncomingMessage, response: ServerResponse) => {
+const processRequest = async (request: Request, response: ServerResponse) => {
   if (!isPostRequest(request)) {
     logger.debug(`Received non-POST request: ${request.method}. The request will not be processed!`)
     return ResponseHelper.setResponseError(response, {
@@ -35,7 +36,8 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
 
   try {
     // load commercetools data
-    const { customer, cart, cartItems } = await getCustomerWithCart(request)
+    const {locale} = request.body;
+    const { customer, cart, cartItems } = await getCustomerWithCart(request, locale)
 
     if (!cart) {
       throw { message: "Cart information is missing or empty", statusCode: 400 }
@@ -109,7 +111,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
 
     //TBD: If the embedToken generation fails maybe the buyer need to be created.
 
-    const { totalPrice: {centAmount, currencyCode}, country } = cart
+    const { totalPrice: {centAmount, currencyCode}, country, locale: cartLocale } = cart
 
     const responseData = {
       embedToken,
@@ -119,6 +121,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
       country,
       ...restConfig,
       cartItems,
+      cartLocale,
     }
 
     ResponseHelper.setResponseTo200(response, responseData)

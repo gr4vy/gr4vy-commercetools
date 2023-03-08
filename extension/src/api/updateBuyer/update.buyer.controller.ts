@@ -1,10 +1,11 @@
-import { IncomingMessage, ServerResponse } from "http"
+import { ServerResponse } from "http"
 
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { getCustomObjects } from "@gr4vy-ct/common"
 
+import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import {
@@ -17,7 +18,7 @@ import { getLogger } from "./../../utils"
 
 const logger = getLogger()
 
-const processRequest = async (request: IncomingMessage, response: ServerResponse) => {
+const processRequest = async (request: Request, response: ServerResponse) => {
   if (!isPostRequest(request)) {
     logger.debug(`Received non-POST request: ${request.method}. The request will not be processed!`)
     return ResponseHelper.setResponseError(response, {
@@ -32,8 +33,9 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
   }
 
   try {
+    const {locale} = request.body;
     //Get Active customer cart details
-    const {customer, cart} = await getCustomerWithCart(request)
+    const {customer, cart} = await getCustomerWithCart(request, locale)
     if (customer?.gr4vyBuyerId?.value || cart?.gr4vyBuyerId?.value) {
       const paymentConfig = await getCustomObjects()
 
