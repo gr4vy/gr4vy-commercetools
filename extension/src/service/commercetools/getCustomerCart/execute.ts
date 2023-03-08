@@ -9,7 +9,7 @@ import { responseMapper } from "./mapper"
 import { Customer, Cart, CartItem, ProductMasterDataCurrent } from "./../../types"
 import c from "./../../../config/constants"
 
-const getCustomerWithCart = async (request: IncomingMessage) => {
+const getCustomerWithCart = async (request: IncomingMessage, locale: string) => {
   const meApiClient: MeApiClient = new MeApiClient({
     request,
   })
@@ -18,7 +18,7 @@ const getCustomerWithCart = async (request: IncomingMessage) => {
   meApiClient.setBody({
     query: getCustomerWithCartQuery,
     variables: {
-      locale: c.defaultLocale,
+      locale: locale || c.defaultLocale,
     },
   })
 

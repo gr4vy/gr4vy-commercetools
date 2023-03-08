@@ -13,6 +13,7 @@ export const updateBuyerDetails = async ({ customer, cart, paymentConfig }: Upda
   const gr4vy = new Gr4vy({
     gr4vyId,
     privateKey,
+    debug: paymentConfig?.value?.debug ? true : false
   })
 
   //validate phone number. If invalid, format it.

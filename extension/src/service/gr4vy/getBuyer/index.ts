@@ -17,6 +17,7 @@ export const getBuyer = async ({
     const gr4vy = new Gr4vy({
         gr4vyId,
         privateKey,
+        debug: paymentConfig?.value?.debug ? true : false
     })
     if(userId) {
         return gr4vy.listBuyer(userId)

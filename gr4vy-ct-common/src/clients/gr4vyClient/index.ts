@@ -17,14 +17,14 @@ const logger = getLogger();
 export class Gr4vy {
   client: Client
 
-  constructor({ gr4vyId, privateKey, environment }: Options) {
+  constructor({ gr4vyId, privateKey, environment, debug }: Options) {
     privateKey = String(fs.readFileSync(process.env.GR4VY_PRIVATE_KEY_PATH + privateKey))
 
     this.client = new Client({
       gr4vyId,
       privateKey,
       environment: environment || "sandbox",
-      debug: true,
+      debug: debug || false,
     })
   }
 

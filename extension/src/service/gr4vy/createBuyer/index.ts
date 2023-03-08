@@ -19,6 +19,7 @@ export const createBuyer = async ({
   const gr4vy = new Gr4vy({
     gr4vyId,
     privateKey,
+    debug: paymentConfig?.value?.debug ? true : false
   })
 
   const buyerParams: any = {}
