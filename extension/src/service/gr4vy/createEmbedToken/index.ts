@@ -15,12 +15,13 @@ export const createEmbedToken = async ({
   paymentConfig: PaymentConfig
   cartItems: CartItem[]
 }) => {
-  const { gr4vyId, privateKey, metadata: customData } = paymentConfig.value || {}
+  const { gr4vyId, privateKey, metadata } = paymentConfig || {}
 
   // Initialize gr4vy
   const gr4vy = new Gr4vy({
     gr4vyId,
     privateKey,
+    debug: paymentConfig?.debug ? true : false
   })
 
   const {
@@ -30,8 +31,7 @@ export const createEmbedToken = async ({
   const params: any = {
     amount: centAmount,
     currency: currencyCode,
-    metadata: {
-      ct_custom_data: customData    },  //TBD: convert to proper meta data.
+    metadata,
     cartItems,
   }
 
@@ -44,8 +44,6 @@ export const createEmbedToken = async ({
   }
 
   params.buyerId = gr4vyBuyerId.value
-
-  console.log("Debug", params);
 
   return gr4vy.getEmbedToken(params)
 }

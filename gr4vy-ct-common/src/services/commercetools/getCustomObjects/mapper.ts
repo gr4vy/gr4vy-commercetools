@@ -1,18 +1,36 @@
 
-import c from "../../../config/constants"
-import { PaymentConfig } from '../../types'
+import { phone } from 'phone';
+
+import { Constants } from "../../../config";
+import { PaymentConfig, PaymentConfigContainer } from '../../types';
 
 const responseMapper = (response: any): PaymentConfig => {
   const parsedRes = response?.body?.data?.customObjects || {}
-  const result:PaymentConfig = parsedRes.results.find(
-    (e: { container: string }) => e.container === c.CTP_GR4VY_PAYMENT_CONFIGURATION_CONTAINER
+  const result: PaymentConfigContainer = parsedRes.results.find(
+    (e: { container: string }) => e.container === Constants.CTP_GR4VY_PAYMENT_CONFIGURATION_CONTAINER
   )
-  cleanup(result)
-  return result;
+  //parse the configuration and cast to type.
+  const config: PaymentConfig = JSON.parse(JSON.stringify(result.value)) as PaymentConfig;
+  console.log("Debug", JSON.stringify(config));
+  cleanup(config)
+  return config;
 }
 
-const cleanup = (result: PaymentConfig) => {
-  result.value.metadata = result.value?.metadata??'default';
+const cleanup = (config: PaymentConfig) => {
+  config.metadata = config?.customData ? { ct_custom_data: config?.customData } : { ct_custom_data: 'default' };
+
+  //validate phone number in statement descriptor
+  const phoneNumber = config?.statementDescriptor?.phoneNumber;
+
+  if(phoneNumber) {
+    const validatePhoneNumber = phone(phoneNumber)
+    if(config.statementDescriptor && validatePhoneNumber.isValid) {
+      config.statementDescriptor.phoneNumber = validatePhoneNumber.phoneNumber
+    }
+    else {
+      delete config.statementDescriptor?.phoneNumber
+    }
+  }
 }
 
 export { responseMapper }
