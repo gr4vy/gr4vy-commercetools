@@ -77,8 +77,10 @@
     "react-color": "^2.19.3",
     "react-dom": "17.0.2",
     "react-intl": "^5.25.1",
+    "react-phone-number-input": "^3.2.19",
     "react-redux": "7.2.9",
     "react-router-dom": "5.3.4",
+    "react-toastify": "^9.1.1",
     "redux": "4.2.0"
   }
 }
