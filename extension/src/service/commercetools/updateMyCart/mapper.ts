@@ -1,5 +1,5 @@
 const responseMapper = async (result: any) => {
-    return !!result?.body?.data?.updateCart?.id
+    return !!result?.body?.data?.updateMyCart?.id
   }
 
   export { responseMapper }
