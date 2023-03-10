@@ -96,11 +96,6 @@ export const formSections = [
             disabled: true,
             tooltip: 'Enter only one country',
           },
-          {
-            id: 'sortOrder',
-            title: 'Sort Order',
-            type: 'text',
-          },
         ],
       },
     ],

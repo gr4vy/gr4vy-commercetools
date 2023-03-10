@@ -13,9 +13,11 @@ import Grid from '@commercetools-uikit/grid';
 import Tooltip from '@commercetools-uikit/tooltip';
 import CollapsiblePanel from '@commercetools-uikit/collapsible-panel';
 import LoadingSpinner from '@commercetools-uikit/loading-spinner';
+import { ToastContainer, toast } from 'react-toastify';
 import initialValues from './initValues.json';
 import axios from 'axios';
 import config from './gr4vy.config.json';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Gr4vy = () => {
   const [sections, setSections] = useState(formSections);
@@ -39,10 +41,10 @@ const Gr4vy = () => {
         (res) => res.container === config.GR4VY_CUSTOM_OBJECT_CONTAINER
       )[0];
       if (CustObj?.value) {
-        setApiResponse(CustObj?.value);
+        setApiResponse({ ...CustObj?.value, information: config.VERSION });
         setPrivateIdFile({ filePath: CustObj?.value?.privateKey });
       } else {
-        setApiResponse(initialValues);
+        setApiResponse({ ...initialValues, information: config.VERSION });
         setPrivateIdFile({ filePath: initialValues?.privateKey });
       }
       // }
@@ -74,8 +76,28 @@ const Gr4vy = () => {
         })
       );
       formik.resetForm();
+      if (result) {
+        toast('Configuration saved successfully', {
+          position: 'bottom-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          draggable: false,
+          theme: 'light',
+          type: 'success',
+        });
+      }
       fetchCustomObject();
     } catch (error) {
+      toast('Failed to save configuration', {
+        position: 'bottom-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        draggable: false,
+        theme: 'light',
+        type: 'error',
+      });
       setLoading(false);
     }
   };
@@ -120,9 +142,27 @@ const Gr4vy = () => {
       axios(axiosConfig)
         .then(function ({ data }) {
           setPrivateIdFile({ filePath: data.result.newPath });
+          toast('File saved successfully', {
+            position: 'bottom-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            draggable: false,
+            theme: 'light',
+            type: 'success',
+          });
         })
         .catch(function (error) {
           console.log(error);
+          toast('Failed to save file', {
+            position: 'bottom-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            draggable: false,
+            theme: 'light',
+            type: 'error',
+          });
         });
     } catch (error) {}
   };
@@ -310,6 +350,7 @@ const Gr4vy = () => {
           )}
         </fieldset>
       </form>
+      <ToastContainer />
     </>
   );
 };
