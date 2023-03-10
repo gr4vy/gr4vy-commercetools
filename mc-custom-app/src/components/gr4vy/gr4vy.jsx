@@ -145,11 +145,28 @@ const Gr4vy = () => {
           setLoading(false);
           return null;
         }
-
-        saveCustomObject({
-          ...values,
-        });
       }
+      if (values?.statementDescriptor?.url) {
+        let pattern =
+          /^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/;
+        if (!pattern.test(values?.statementDescriptor?.url)) {
+          toast('Please enter valid url', {
+            position: 'bottom-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            draggable: false,
+            theme: 'light',
+            type: 'error',
+          });
+          setLoading(false);
+          return null;
+        }
+      }
+
+      saveCustomObject({
+        ...values,
+      });
     },
     enableReinitialize: true,
   });
