@@ -1,6 +1,6 @@
 import { ApiClient } from "../../../clients/apiClient"
-import { mutationQuery } from "./query"
-import { responseMapper } from "./mapper"
+import { mutationQuery, mutationQueryWithoutTransaction } from "./query"
+import { responseMapper, responseMapperWithoutTransaction } from "./mapper"
 import { Order } from "./../../types"
 
 const updateStatus = async ({
@@ -19,24 +19,40 @@ const updateStatus = async ({
   const [payment] = order?.paymentInfo?.payments || []
   const [transaction] = payment?.transactions || []
 
-  apiClient.setBody({
-    query: mutationQuery,
-    variables: {
-      orderId: order.id,
-      orderState,
-      orderVersion: order.version,
-      orderPaymentState,
-      orderPaymentVersion: order.version + 1,
-      paymentId: payment?.id,
-      paymentVersion: payment?.version,
-      transactionId: transaction?.id,
-      transactionState,
-    },
-  })
+  const orderPaymentTransactionState = transaction?.state
 
-  const result = responseMapper(await apiClient.getData())
+  if (transactionState === orderPaymentTransactionState) {
+    apiClient.setBody({
+      query: mutationQueryWithoutTransaction,
+      variables: {
+        orderId: order.id,
+        orderState,
+        orderVersion: order.version,
+        orderPaymentState,
+        orderPaymentVersion: order.version + 1,
+      },
+    })
 
-  return result
+    return responseMapperWithoutTransaction(await apiClient.getData())
+
+  } else {
+    apiClient.setBody({
+      query: mutationQuery,
+      variables: {
+        orderId: order.id,
+        orderState,
+        orderVersion: order.version,
+        orderPaymentState,
+        orderPaymentVersion: order.version + 1,
+        paymentId: payment?.id,
+        paymentVersion: payment?.version,
+        transactionId: transaction?.id,
+        transactionState,
+      },
+    })
+
+    return responseMapper(await apiClient.getData())
+  }
 }
 
 export { updateStatus }

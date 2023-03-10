@@ -34,6 +34,7 @@ export type StatementDescriptor = {
 export declare type Transaction = {
   id: string
   type: string
+  state: string
   amount: {
     currencyCode: string
     centAmount: number

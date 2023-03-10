@@ -1,4 +1,21 @@
 const responseMapper = (response: any) => {
+  checkResponseError(response)
+  return (
+    !!response?.body?.data?.changeOrderState &&
+    !!response?.body?.data?.changePaymentState &&
+    !!response?.body?.data?.changeTransactionState
+  )
+}
+
+const responseMapperWithoutTransaction = (response: any) => {
+  checkResponseError(response)
+  return (
+      !!response?.body?.data?.changeOrderState &&
+      !!response?.body?.data?.changePaymentState
+  )
+}
+
+const checkResponseError = (response: any) => {
   if (response?.body?.errors) {
     throw {
       message: response?.body?.errors.map((e: any) => {
@@ -9,11 +26,6 @@ const responseMapper = (response: any) => {
       statusCode: 400,
     }
   }
-  return (
-    !!response?.body?.data?.changeOrderState &&
-    !!response?.body?.data?.changePaymentState &&
-    !!response?.body?.data?.changeTransactionState
-  )
 }
 
-export { responseMapper }
+export { responseMapper, responseMapperWithoutTransaction }
