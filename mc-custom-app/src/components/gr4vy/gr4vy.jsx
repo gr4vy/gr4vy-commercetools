@@ -44,9 +44,19 @@ const Gr4vy = () => {
         (res) => res.container === config.GR4VY_CUSTOM_OBJECT_CONTAINER
       )[0];
       if (CustObj?.value) {
-        setApiResponse({ ...CustObj?.value, information: config.VERSION });
         setPrivateIdFile({ filePath: CustObj?.value?.privateKey });
         setPhoneNumber(CustObj?.value?.statementDescriptor?.phoneNumber);
+        if (CustObj?.value?.themeOptions === undefined) {
+          setApiResponse({
+            ...CustObj?.value,
+            information: config.VERSION,
+            themeOptions: {
+              ...initialValues?.themeOptions,
+            },
+          });
+        } else {
+          setApiResponse({ ...CustObj?.value, information: config.VERSION });
+        }
       } else {
         setApiResponse({ ...initialValues, information: config.VERSION });
         setPrivateIdFile({ filePath: initialValues?.privateKey });
