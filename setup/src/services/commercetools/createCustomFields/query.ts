@@ -2,13 +2,16 @@
 const createCustomFieldsQuery = `
 mutation createCustomField (
   $key:String!,
-  $locale: Locale!){
+  $locale: Locale!,
+  $name:String!,
+  $label:String!,
+  $description:String!){
   createTypeDefinition(    
     draft:{
       key: $key
       name:{
         locale: $locale
-        value: "Additional field to order Gr4vy Buyer ID Test4"
+        value: $description
       }
       resourceTypeIds: ["order"]
       fieldDefinitions:{
@@ -17,11 +20,11 @@ mutation createCustomField (
             dummy:"string"
           }
         }
-        name:"gr4vyBuyerIdTest4"
+        name:$name
         required:false
         label:{
           locale: $locale
-          value: "Gr4vy Buyer IDTest4"
+          value: $label
         }
         inputHint:SingleLine      
       }

@@ -14,8 +14,9 @@ const createCustomFields = async () => {
     variables: {
       locale: C.defaultLocale,
       key: C.CT.ORDER.CUSTOM_FIELD.GR4VY_BUYERID_KEY,
-      //name: C.CT.ORDER.CUSTOM_FIELD.FIELD_DEF_NAME,
-      //label: C.CT.ORDER.CUSTOM_FIELD.FIELD_DEF_LABEL
+      name: C.CT.ORDER.CUSTOM_FIELD.FIELD_DEF_NAME,
+      label: C.CT.ORDER.CUSTOM_FIELD.FIELD_DEF_LABEL,
+      description: C.CT.ORDER.CUSTOM_FIELD.NAME_DESC
     }
   })
   return responseMapper(await apiClient.getData())
