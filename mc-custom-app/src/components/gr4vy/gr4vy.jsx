@@ -267,10 +267,6 @@ const Gr4vy = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(formik.values);
-  }, [formik.values]);
-
   return (
     <>
       <h1 style={{ fontWeight: '400', marginBottom: '20px' }}>
