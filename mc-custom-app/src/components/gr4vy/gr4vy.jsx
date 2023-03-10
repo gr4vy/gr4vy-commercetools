@@ -17,7 +17,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import initialValues from './initValues.json';
 import axios from 'axios';
-import config from './gr4vy.config.json';
+import config from '../../gr4vy.config.json';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-phone-number-input/style.css';
 

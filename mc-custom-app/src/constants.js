@@ -1,6 +1,6 @@
 // Make sure to import the helper functions from the `ssr` entry point.
 import { entryPointUriPathToPermissionKeys } from '@commercetools-frontend/application-shell/ssr';
-import config from './components/gr4vy/gr4vy.config.json';
+import config from './gr4vy.config.json';
 
 export const entryPointUriPath = config.ENTRY_POINT;
 
