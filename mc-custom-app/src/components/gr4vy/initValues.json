@@ -2,7 +2,7 @@
   "information": "",
   "active": 1,
   "payment_type": "webcheckout",
-  "gr4vyId": "partners",
+  "gr4vyId": "",
   "environment": "sandbox",
   "debug": 0,
   "paymentSource": "ecommerce",
