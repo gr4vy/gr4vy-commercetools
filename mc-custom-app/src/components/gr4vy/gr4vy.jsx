@@ -14,10 +14,12 @@ import Tooltip from '@commercetools-uikit/tooltip';
 import CollapsiblePanel from '@commercetools-uikit/collapsible-panel';
 import LoadingSpinner from '@commercetools-uikit/loading-spinner';
 import { ToastContainer, toast } from 'react-toastify';
+import { isValidPhoneNumber } from 'react-phone-number-input';
 import initialValues from './initValues.json';
 import axios from 'axios';
 import config from './gr4vy.config.json';
 import 'react-toastify/dist/ReactToastify.css';
+import 'react-phone-number-input/style.css';
 
 const Gr4vy = () => {
   const [sections, setSections] = useState(formSections);
@@ -26,6 +28,7 @@ const Gr4vy = () => {
   const [privateIdFile, setPrivateIdFile] = useState({});
   const [deleteFile, setDeleteFile] = useState(false);
   const [apiResponse, setApiResponse] = useState({});
+  const [phoneNumber, setPhoneNumber] = useState(null);
 
   // Function to fetch the custom object
   const fetchCustomObject = async () => {
@@ -43,9 +46,11 @@ const Gr4vy = () => {
       if (CustObj?.value) {
         setApiResponse({ ...CustObj?.value, information: config.VERSION });
         setPrivateIdFile({ filePath: CustObj?.value?.privateKey });
+        setPhoneNumber(CustObj?.value?.statementDescriptor?.phoneNumber);
       } else {
         setApiResponse({ ...initialValues, information: config.VERSION });
         setPrivateIdFile({ filePath: initialValues?.privateKey });
+        setPhoneNumber(initialValues?.statementDescriptor?.phoneNumber);
       }
       // }
     } catch (error) {
@@ -118,9 +123,33 @@ const Gr4vy = () => {
       } else if (privateIdFile?.filePath) {
         values = { ...values, privateKey: privateIdFile.filePath };
       }
-      saveCustomObject({
-        ...values,
-      });
+      if (phoneNumber) {
+        if (isValidPhoneNumber(phoneNumber)) {
+          values = {
+            ...values,
+            statementDescriptor: {
+              ...values.statementDescriptor,
+              phoneNumber: phoneNumber,
+            },
+          };
+        } else {
+          toast('Please enter valid phone number', {
+            position: 'bottom-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            draggable: false,
+            theme: 'light',
+            type: 'error',
+          });
+          setLoading(false);
+          return null;
+        }
+
+        saveCustomObject({
+          ...values,
+        });
+      }
     },
     enableReinitialize: true,
   });
@@ -167,6 +196,10 @@ const Gr4vy = () => {
     } catch (error) {}
   };
 
+  const handleNumber = (e) => {
+    setPhoneNumber(e);
+  };
+
   // UseEffect to toggle payment countries list
   useEffect(() => {
     if (formik.values.allowspecific) {
@@ -187,6 +220,9 @@ const Gr4vy = () => {
   const getValue = ({ type, superParent, parent, id }) => {
     if (type === 'file') {
       return privateIdFile?.filePath;
+    }
+    if (type === 'phoneNumber') {
+      return phoneNumber;
     }
     if (
       superParent &&
@@ -213,6 +249,10 @@ const Gr4vy = () => {
       return id;
     }
   };
+
+  useEffect(() => {
+    console.log(formik.values);
+  }, [formik.values]);
 
   return (
     <>
@@ -282,6 +322,8 @@ const Gr4vy = () => {
                                 eventTrigger:
                                   field?.type === 'file'
                                     ? handleFile
+                                    : field?.type === 'phoneNumber'
+                                    ? handleNumber
                                     : formik.handleChange,
                                 options: field?.options,
                                 disabled: field?.disabled,
@@ -307,7 +349,10 @@ const Gr4vy = () => {
                 </CollapsiblePanel>
               ))}
           </div>
-          {(formik.dirty || privateIdFile?.filePath || deleteFile) && (
+          {(formik.dirty ||
+            privateIdFile?.filePath ||
+            deleteFile ||
+            phoneNumber) && (
             <div
               style={{
                 backgroundColor: '#213c45',
@@ -324,7 +369,10 @@ const Gr4vy = () => {
                 <SecondaryButton
                   label="Cancel"
                   isDisabled={loading}
-                  onClick={() => formik.resetForm()}
+                  onClick={() => {
+                    setPhoneNumber(null);
+                    formik.resetForm();
+                  }}
                   style={{
                     backgroundColor: 'transparent',
                     justifyContent: 'center',
@@ -351,6 +399,24 @@ const Gr4vy = () => {
         </fieldset>
       </form>
       <ToastContainer />
+      <style>
+        {`
+        .PhoneInputInput{
+          height:36px;
+          border-radius:6px;
+          border: 1px solid var(--border-color-for-input, hsl(0, 0%, 60%))
+        }
+        .PhoneInputInput:hover{
+          border-color: var(--border-color-for-input-when-focused, #00b39e)
+        }
+        .PhoneInputInput:focus{
+          box-shadow: inset 0 0 0 2px var(--border-color-for-input-when-focused, #00b39e)
+        }
+        .PhoneInputInput:focus-visible{
+          outline: none;
+        }
+        `}
+      </style>
     </>
   );
 };

@@ -3,6 +3,7 @@ import DateField from '@commercetools-uikit/date-field';
 import SelectField from '@commercetools-uikit/select-field';
 import MultilineTextInput from '@commercetools-uikit/multiline-text-input';
 import Spacings from '@commercetools-uikit/spacings';
+import PhoneInput from 'react-phone-number-input';
 
 // Gr4vy Form and Values
 export const formSections = [
@@ -167,10 +168,10 @@ export const formSections = [
             type: 'text',
           },
           {
-            id: 'phonenumber',
+            id: 'phoneNumber',
             parent: 'statementDescriptor',
             title: 'Statement Phone Number',
-            type: 'text',
+            type: 'phoneNumber',
           },
           {
             id: 'url',
@@ -541,6 +542,19 @@ export const getField = ({
             }}
           />
         </div>
+      );
+    case 'phoneNumber':
+      return (
+        <>
+          <PhoneInput
+            placeholder=" Enter phone number"
+            id={id}
+            title={''}
+            value={value ? value : ''}
+            name={name}
+            onChange={(e) => eventTrigger(e)}
+          />
+        </>
       );
     default:
       return null;
