@@ -21,7 +21,7 @@ export const createEmbedToken = async ({
   const gr4vy = new Gr4vy({
     gr4vyId,
     privateKey,
-    debug: paymentConfig?.debug ? true : false
+    debug: paymentConfig?.debug ? true : false,
   })
 
   const {
@@ -35,8 +35,9 @@ export const createEmbedToken = async ({
     cartItems,
   }
 
-  const { gr4vyBuyerId } = customer ?? cart;
-  if(!gr4vyBuyerId) {
+  const gr4vyBuyerId = customer?.gr4vyBuyerId ?? cart.gr4vyBuyerId
+
+  if (!gr4vyBuyerId) {
     throw {
       message: "Missing Buyer Id",
       statusCode: 400,

@@ -1,5 +1,5 @@
 import { PERMISSIONS, entryPointUriPath } from './src/constants';
-import gr4vyConfig from './src/components/gr4vy/gr4vy.config.json';
+import gr4vyConfig from './src/gr4vy.config.json';
 /**
  * @type {import('@commercetools-frontend/application-config').ConfigOptions}
  */
@@ -33,14 +33,6 @@ const config = {
     labelAllLocales: [],
     permissions: [PERMISSIONS.View],
   },
-  submenuLinks: [
-    {
-      uriPath: 'config',
-      defaultLabel: 'Payment Configuration',
-      labelAllLocales: [],
-      permissions: [PERMISSIONS.View],
-    },
-  ],
 };
 
 export default config;

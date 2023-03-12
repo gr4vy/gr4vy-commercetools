@@ -4,16 +4,14 @@ const updateCustomerMutation = `
       $buyerId: String!,
       $ctpCustFieldName: String!
       $ctpCustFieldType: String!,
-      $customerId:String!,
       $customerVersion:Long!,
       $ctpCustFieldCustomerKey: String!,
       $cartId:String!,
       $cartVersion:Long!,
       $ctpCustFieldOrderKey: String!,
     ){
-      updateCustomer(
+      updateMyCustomer(
         version:$customerVersion,
-        id:$customerId,
         actions:{
           setCustomType: {
             type: {
@@ -29,7 +27,7 @@ const updateCustomerMutation = `
       ){
         id
       }
-      updateCart(
+      updateMyCart(
         version:$cartVersion,
         id:$cartId,
         actions:{
@@ -49,6 +47,5 @@ const updateCustomerMutation = `
       }
     }
 `
-
 
 export { updateCustomerMutation }
