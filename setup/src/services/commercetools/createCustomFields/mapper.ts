@@ -10,7 +10,10 @@ const responseMapper = (response: any) => {
       statusCode: 400,
     }
   }
-  return response?.body?.data?.createTypeDefinition || null
+  return (
+      !!response?.body?.data?.createCustomFieldGr4vyBuyerId &&
+      !!response?.body?.data?.createCustomFieldGr4vyTransactionId
+  )
 }
 
 export { responseMapper }
