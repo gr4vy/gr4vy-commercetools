@@ -29,7 +29,9 @@ export const createBuyer = async ({
   } = {}
 
   if (customer) {
-    buyerParams.displayName = [customer.firstName, customer.middleName, customer.lastName].join(" ")
+    buyerParams.displayName = [customer.firstName, customer.middleName, customer.lastName]
+      .filter(name => name)
+      .join(" ")
     buyerParams.externalIdentifier = customer.id
   } else if (cart) {
     buyerParams.displayName = c.CT_GUEST_USER
