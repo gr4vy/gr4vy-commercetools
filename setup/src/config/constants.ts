@@ -11,8 +11,11 @@ export default {
         GR4VY_TXION_ID_KEY: "gr4vy-transaction-id",
         GR4VY_TXION_ID_FIELD_DEF_NAME: "gr4vy-transaction-id",
         GR4VY_TXION_ID_FIELD_DEF_LABEL: "Gr4vy Transaction Id",
-        GR4VY_TXION_ID_NAME_DESC: "Additional field to order, transaction: Gr4vy Transaction Id",
+        GR4VY_TXION_ID_NAME_DESC: "Additional field to order, transaction: Gr4vy Transaction Id"
       }
+    },
+    SUBSCRIPTION:{
+      KEY: "gr4vy-subscription-1"
     }
   }
 }

@@ -14,7 +14,7 @@ const createCustomFields = async () => {
     variables: {
       locale: C.defaultLocale,
       buyerIdKey: C.CT.ORDER.CUSTOM_FIELD.GR4VY_BUYER_ID_KEY,
-      txionIdKey:C.CT.ORDER.CUSTOM_FIELD.GR4VY_TXION_ID_KEY,
+      txionIdKey: C.CT.ORDER.CUSTOM_FIELD.GR4VY_TXION_ID_KEY,
       buyerIdName: C.CT.ORDER.CUSTOM_FIELD.GR4VY_BUYER_ID_FIELD_DEF_NAME,
       txionIdName: C.CT.ORDER.CUSTOM_FIELD.GR4VY_TXION_ID_FIELD_DEF_NAME,
       buyerIdLabel: C.CT.ORDER.CUSTOM_FIELD.GR4VY_BUYER_ID_FIELD_DEF_LABEL,
@@ -22,10 +22,10 @@ const createCustomFields = async () => {
       buyerIdDescription: C.CT.ORDER.CUSTOM_FIELD.GR4VY_BUYER_ID_NAME_DESC,
       txionIdDescription: C.CT.ORDER.CUSTOM_FIELD.GR4VY_TXION_ID_NAME_DESC,
       buyerIdResourceTypeIds: ["order"],
-      txionIdResourceTypeIds:["order", "transaction"]
+      txionIdResourceTypeIds: ["order", "transaction"]
     }
   })
-  return responseMapper(await apiClient.getData())
+  //return responseMapper(await apiClient.getData())
 }
 
 export { createCustomFields }
