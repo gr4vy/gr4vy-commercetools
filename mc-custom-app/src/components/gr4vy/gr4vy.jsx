@@ -76,6 +76,21 @@ const Gr4vy = () => {
     fetchCustomObject();
   }, []);
 
+  //Function to clear cache
+  const clearCacheData = () => {
+    let axiosConfig = {
+      method: 'post',
+      url: `${config.API_SERVER_URL}/cache/clear`,
+    };
+    axios(axiosConfig)
+      .then(function ({ data }) {
+        return data;
+      })
+      .catch(function (error) {
+        return error;
+      });
+  };
+
   // Function to save the custom object
   const saveCustomObject = async (payload) => {
     try {
@@ -92,6 +107,7 @@ const Gr4vy = () => {
       );
       formik.resetForm();
       if (result) {
+        clearCacheData();
         toast('Configuration saved successfully', {
           position: 'bottom-right',
           autoClose: 3000,
