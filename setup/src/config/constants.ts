@@ -15,7 +15,7 @@ export default {
       }
     },
     SUBSCRIPTION:{
-      KEY: "gr4vy-subscription-1"
+      KEY: "gr4vy-subscription"
     }
   }
 }
