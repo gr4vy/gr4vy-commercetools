@@ -61,7 +61,7 @@ const createCustomFieldGr4vyTransactionId = `
 const createCustomFieldsMutationQuery = `
 mutation createCustomField (
   $buyerIdKey:String!,
-  $txionIdKey: String!
+  $txionIdKey: String!,
   $locale: Locale!,
   $buyerIdName:String!,
   $txionIdName:String!,
