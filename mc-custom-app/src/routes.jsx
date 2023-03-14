@@ -1,7 +1,6 @@
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import Spacings from '@commercetools-uikit/spacings';
 import Gr4vy from './components/gr4vy';
-import Welcome from './components/welcome';
 
 const ApplicationRoutes = () => {
   const match = useRouteMatch();
@@ -19,11 +18,8 @@ const ApplicationRoutes = () => {
   return (
     <Spacings.Inset scale="l">
       <Switch>
-        <Route path={`${match.path}/config`}>
-          <Gr4vy key="gr4vy-route" linkToWelcome={match.url} />
-        </Route>
         <Route>
-          <Welcome />
+          <Gr4vy />
         </Route>
       </Switch>
     </Spacings.Inset>

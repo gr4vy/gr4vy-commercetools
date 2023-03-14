@@ -13,7 +13,7 @@ export class MeApiClient {
 
   constructor(props: { request: IncomingMessage }) {
     this.gClient = new GraphQLClient()
-    this.bearerToken = props.request?.headers?.["authorization"]
+    this.bearerToken = props?.request?.headers?.["authorization"]
 
     if (!this.bearerToken) {
       throw { message: "Unauthorized request", statusCode: 401 }

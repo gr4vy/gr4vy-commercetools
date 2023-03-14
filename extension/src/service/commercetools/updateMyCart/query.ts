@@ -8,7 +8,7 @@ mutation (
   $ctpCustFieldName: String!
   $buyerId: String!,
 ) {
-  updateCart(
+  updateMyCart(
     version:$cartVersion,
     id:$cartId,
     actions:{
