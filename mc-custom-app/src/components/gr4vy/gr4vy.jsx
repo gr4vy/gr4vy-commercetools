@@ -133,6 +133,29 @@ const Gr4vy = () => {
     }
   };
 
+  //Function to validate Statement Descriptor
+  const statementDescriptorValidator = (value, field) => {
+    const len = value.length;
+    switch (field) {
+      case 'url':
+        const urlPattern =
+          /^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/;
+        if (!urlPattern.test(value)) {
+          return true;
+        } else return false;
+      case 'city':
+        if (0 < len >= 13) {
+          return true;
+        } else return false;
+      case 'name':
+      case 'description':
+        const strPattern = /([^<>\\'"*][a-zA-Z0-9.,_\-?+/])/;
+        if (!strPattern.test(value)) {
+          return true;
+        } else return false;
+    }
+  };
+
   // Formik componet initialization
   let formik = useFormik({
     initialValues: apiResponse,
@@ -144,13 +167,15 @@ const Gr4vy = () => {
     },
     onSubmit: (values) => {
       setLoading(true);
+      let error;
+
       if (deleteFile) {
         delete values.privateKey;
       } else if (privateIdFile?.filePath) {
         values = { ...values, privateKey: privateIdFile.filePath };
       }
       if (phoneNumber) {
-        if (isValidPhoneNumber(phoneNumber)) {
+        if (isValidPhoneNumber(phoneNumber) && phoneNumber?.length < 20) {
           values = {
             ...values,
             statementDescriptor: {
@@ -169,30 +194,41 @@ const Gr4vy = () => {
             type: 'error',
           });
           setLoading(false);
-          return null;
-        }
-      }
-      if (values?.statementDescriptor?.url) {
-        let pattern =
-          /^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/;
-        if (!pattern.test(values?.statementDescriptor?.url)) {
-          toast('Please enter valid url', {
-            position: 'bottom-right',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            draggable: false,
-            theme: 'light',
-            type: 'error',
-          });
-          setLoading(false);
+          error = true;
           return null;
         }
       }
 
-      saveCustomObject({
-        ...values,
-      });
+      if (Object.keys(values?.statementDescriptor).length > 0) {
+        Object.keys(values?.statementDescriptor).map((key) => {
+          if (values?.statementDescriptor[key]) {
+            const status = statementDescriptorValidator(
+              values?.statementDescriptor[key],
+              key
+            );
+            error = status;
+            if (status) {
+              toast(`Please enter valid ${key}`, {
+                position: 'bottom-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                draggable: false,
+                theme: 'light',
+                type: 'error',
+              });
+              setLoading(false);
+              return null;
+            }
+          } else {
+            delete values?.statementDescriptor[key];
+          }
+        });
+      }
+      if (!error)
+        saveCustomObject({
+          ...values,
+        });
     },
     enableReinitialize: true,
   });
