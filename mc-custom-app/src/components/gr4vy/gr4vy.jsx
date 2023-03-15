@@ -133,7 +133,8 @@ const Gr4vy = () => {
     }
   };
 
-  const statementValidator = (value, field) => {
+  //Function to validate Statement Descriptor
+  const statementDescriptorValidator = (value, field) => {
     const len = value.length;
     switch (field) {
       case 'url':
@@ -201,7 +202,7 @@ const Gr4vy = () => {
       if (Object.keys(values?.statementDescriptor).length > 0) {
         Object.keys(values?.statementDescriptor).map((key) => {
           if (values?.statementDescriptor[key]) {
-            const status = statementValidator(
+            const status = statementDescriptorValidator(
               values?.statementDescriptor[key],
               key
             );
