@@ -8,9 +8,13 @@ const updateOrderStatus = async ({ orderId, status, transaction, ctTransactionTy
         STATES: { GR4VY, CT },
     } = Constants
 
+    console.log('GR4VY.TRANSACTION.STATUS_GROUPS')
+    console.log(GR4VY.TRANSACTION.STATUS_GROUPS)
+    //if (GR4VY.TRANSACTION)
+
     switch (status) {
 
-        case GR4VY.TRANSACTION.AUTHORIZATION_SUCCEEDED:
+        /*case GR4VY.TRANSACTION.AUTHORIZATION_SUCCEEDED:
             if (ctTransactionType !== CT.TRANSACTION.TYPES.AUTHORIZATION) {
                 throw {
                     message: `Error mismatch transaction type for transaction ID ${transaction?.id}`,
@@ -60,7 +64,7 @@ const updateOrderStatus = async ({ orderId, status, transaction, ctTransactionTy
             throw {
                 message: `Error during updating CT order statuses with ID ${orderId}`,
                 statusCode: 400,
-            }
+            }*/
     }
 
     return {orderState, orderPaymentState, transactionState}
