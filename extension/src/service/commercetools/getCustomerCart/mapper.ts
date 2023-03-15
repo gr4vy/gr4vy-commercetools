@@ -94,7 +94,7 @@ const getCartItem = (c: CartLineItem): CartItem => {
 
   const discountedItemAmount =
     Array.isArray(discountedPricePerQuantity) && discountedPricePerQuantity?.length > 0
-      ? discountedPricePerQuantity?.discountedPrice?.value?.centAmount
+      ? discountedPricePerQuantity[0]?.discountedPrice?.value?.centAmount
       : null;
 
     //calculate total discount amount in all the quantity of items.
