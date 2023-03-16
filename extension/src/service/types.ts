@@ -160,6 +160,7 @@ export declare type CtCustomerAddress = {
   country?: string
   streetName?: string
   streetNumber?: string
+  additionalStreetInfo?: string
   postalCode?: string
   state?: string
   building?: string

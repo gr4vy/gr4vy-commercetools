@@ -32,6 +32,7 @@ export const manageBuyerShippingAddress = async ({customer, cart, paymentConfig 
       'city': cart?.shippingAddress?.city,
       'country': cart?.shippingAddress?.country,
       'line1': cart?.shippingAddress?.streetNumber+' '+cart?.shippingAddress?.streetName,
+      'line2': cart?.shippingAddress?.additionalStreetInfo,
       'postalCode': cart?.shippingAddress?.postalCode,
       'state': cart?.shippingAddress?.state,
     },

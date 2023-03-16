@@ -102,6 +102,7 @@ const getCustomerWithCartQuery = `
     country
     streetName
     streetNumber
+    additionalStreetInfo
     postalCode
     state
     building
