@@ -146,7 +146,7 @@ const Gr4vy = () => {
           return true;
         } else return false;
       case 'city':
-        if (len && len > 13) {
+        if (len && 5 < len && len > 13) {
           return true;
         } else return false;
       case 'name':
