@@ -140,17 +140,21 @@ const Gr4vy = () => {
       case 'url':
         const urlPattern =
           /^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/;
-        if (!urlPattern.test(value)) {
+        if (len && len > 13) {
+          return true;
+        } else if (!urlPattern.test(value)) {
           return true;
         } else return false;
       case 'city':
-        if (0 < len >= 13) {
+        if (len && 5 < len && len > 13) {
           return true;
         } else return false;
       case 'name':
       case 'description':
         const strPattern = /([^<>\\'"*][a-zA-Z0-9.,_\-?+/])/;
-        if (!strPattern.test(value)) {
+        if (len && len > 22) {
+          return true;
+        } else if (!strPattern.test(value)) {
           return true;
         } else return false;
     }
