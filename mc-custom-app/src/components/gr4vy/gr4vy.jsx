@@ -30,6 +30,7 @@ const Gr4vy = () => {
   const [deleteFile, setDeleteFile] = useState(false);
   const [apiResponse, setApiResponse] = useState({});
   const [phoneNumber, setPhoneNumber] = useState(null);
+  const [valError, setValError] = useState(false);
 
   // Function to fetch the custom object
   const fetchCustomObject = async () => {
@@ -137,32 +138,27 @@ const Gr4vy = () => {
   //Function to validate Statement Descriptor
   const statementDescriptorValidator = (value, field) => {
     const len = value.length;
-    const { url, city, name } = gravyStatementDescriptorValidator;
+    console.log(field, len);
+    const { url, city, name, phone } = gravyStatementDescriptorValidator;
     switch (field) {
       case 'url':
         const urlPattern =
           /^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/;
-        if (len >= url.min && len <= url.max) {
-          return true;
-        }
-        if (!urlPattern.test(value)) {
-          return true;
-        }
+        if (len < url.min || len > url.max) return true;
+        if (!urlPattern.test(value)) return true;
         return false;
       case 'city':
-        if (len >= city.min && len <= city.max) {
-          return true;
-        }
+        if (len < city.min || len > city.max) return true;
         return false;
       case 'name':
       case 'description':
         const strPattern = /([^<>\\'"*][a-zA-Z0-9.,_\-?+/])/;
-        if (len >= name.min && len <= name.max) {
-          return true;
-        }
-        if (!strPattern.test(value)) {
-          return true;
-        }
+        if (len < name.min || len > name.max) return true;
+        if (!strPattern.test(value)) return true;
+        return false;
+      case 'phoneNumber':
+        if (len < phone.min || len > phone.max) return true;
+        if (!isValidPhoneNumber(phoneNumber)) return true;
         return false;
     }
   };
@@ -179,50 +175,32 @@ const Gr4vy = () => {
     onSubmit: (values) => {
       setLoading(true);
       let error;
-      const { phone } = gravyStatementDescriptorValidator;
 
       if (deleteFile) {
         delete values.privateKey;
       } else if (privateIdFile?.filePath) {
         values = { ...values, privateKey: privateIdFile.filePath };
       }
+
       if (phoneNumber) {
-        if (
-          isValidPhoneNumber(phoneNumber) &&
-          phoneNumber?.length >= phone.min &&
-          phoneNumber?.length <= phone.max
-        ) {
-          values = {
-            ...values,
-            statementDescriptor: {
-              ...values.statementDescriptor,
-              phoneNumber: phoneNumber,
-            },
-          };
-        } else {
-          toast('Please enter valid phone number', {
-            position: 'bottom-right',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            draggable: false,
-            theme: 'light',
-            type: 'error',
-          });
-          setLoading(false);
-          error = true;
-          return null;
-        }
+        values = {
+          ...values,
+          statementDescriptor: {
+            ...values.statementDescriptor,
+            phoneNumber: phoneNumber,
+          },
+        };
       }
 
+      console.log('value', values?.statementDescriptor);
+      let arr;
       if (Object.keys(values?.statementDescriptor).length > 0) {
-        Object.keys(values?.statementDescriptor).map((key) => {
+        for (let key of Object.keys(values?.statementDescriptor)) {
           if (values?.statementDescriptor[key]) {
             const status = statementDescriptorValidator(
               values?.statementDescriptor[key],
               key
             );
-            error = status;
             if (status) {
               toast(`Please enter valid ${key}`, {
                 position: 'bottom-right',
@@ -233,14 +211,20 @@ const Gr4vy = () => {
                 theme: 'light',
                 type: 'error',
               });
+              setValError((valerror) => {
+                return true;
+              });
               setLoading(false);
+              console.log('check', valError);
               return null;
             }
           } else {
             delete values?.statementDescriptor[key];
           }
-        });
+        }
       }
+
+      console.log('valError', valError, arr);
       if (!error)
         saveCustomObject({
           ...values,
