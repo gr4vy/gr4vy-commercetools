@@ -136,7 +136,6 @@ const Gr4vy = () => {
 
   //Function to validate Statement Descriptor
   const statementDescriptorValidator = (value, field) => {
-    console.log('statement', field, value);
     const len = value.length;
     const { url, city, name, phone } = gravyStatementDescriptorValidator;
     switch (field) {
