@@ -67,6 +67,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       externalIdentifier: orderId,
       status,
       amount: gr4vyTransactionAmount,
+      intent: gr4vyTransactionType,
     } = gr4vyTransaction?.body || {}
 
     // Get order payment and transaction details
@@ -108,7 +109,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       }
     }
 
-    const { orderState, orderPaymentState, transactionState } = await updateOrderStatus({orderId, status, transaction, ctTransactionType})
+    const {orderState, orderPaymentState, transactionState} = await updateOrderStatus({orderId, status, transaction, ctTransactionType, gr4vyTransactionType})
 
     const result = await updateStatus({
       order,

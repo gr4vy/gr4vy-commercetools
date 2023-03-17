@@ -40,7 +40,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
         })
       }
       const oldPath = files.file.filepath
-      const newPath = path.join(__dirname + "/../../../", "private/") + files.file.originalFilename
+      const newPath = process.env.GR4VY_PRIVATE_KEY_PATH + files.file.originalFilename
       const rawData = fs.readFileSync(oldPath)
 
       fs.writeFile(newPath, rawData, function (err) {

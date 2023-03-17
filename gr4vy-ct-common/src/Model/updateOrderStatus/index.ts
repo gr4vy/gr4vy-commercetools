@@ -1,73 +1,46 @@
-import { Constants } from "../../config/constants"
+import { Constants, successStatuses, processStatuses, cancelStatuses } from "../../config"
 import { UpdateOrderStatus } from "../types"
 
-const updateOrderStatus = async ({ orderId, status, transaction, ctTransactionType }: UpdateOrderStatus) => {
+const updateOrderStatus = async ({ orderId, status, transaction, ctTransactionType, gr4vyTransactionType }: UpdateOrderStatus) => {
 
-    let orderState, orderPaymentState, transactionState
+    let returnTransactionStatus = {orderState: "", orderPaymentState: "", transactionState: ""}
+
     const {
-        STATES: { GR4VY, CT },
+        STATES: { GR4VY, CT, CT_GRAVY_MAPPING },
     } = Constants
 
-    console.log('GR4VY.TRANSACTION.STATUS_GROUPS')
-    console.log(GR4VY.TRANSACTION.STATUS_GROUPS)
-    //if (GR4VY.TRANSACTION)
-
-    switch (status) {
-
-        /*case GR4VY.TRANSACTION.AUTHORIZATION_SUCCEEDED:
-            if (ctTransactionType !== CT.TRANSACTION.TYPES.AUTHORIZATION) {
-                throw {
-                    message: `Error mismatch transaction type for transaction ID ${transaction?.id}`,
-                    statusCode: 400,
-                }
-            }
-            orderState = CT.ORDER.CONFIRMED
-            orderPaymentState = CT.ORDERPAYMENT.PAID
-            transactionState = CT.TRANSACTION.SUCCESS
-            break
-        case GR4VY.TRANSACTION.CAPTURE_PENDING:
-            if (ctTransactionType !== CT.TRANSACTION.TYPES.CHARGE) {
-                throw {
-                    message: `Error mismatch transaction type for transaction ID ${transaction?.id}`,
-                    statusCode: 400,
-                }
-            }
-            orderState = CT.ORDER.OPEN
-            orderPaymentState = CT.ORDERPAYMENT.PENDING
-            transactionState = CT.TRANSACTION.PENDING
-            break
-        case GR4VY.TRANSACTION.CAPTURE_SUCCEEDED:
-            if (ctTransactionType !== CT.TRANSACTION.TYPES.CHARGE) {
-                throw {
-                    message: `Error mismatch transaction type for transaction ID ${transaction?.id}`,
-                    statusCode: 400,
-                }
-            }
-            orderState = CT.ORDER.CONFIRMED
-            orderPaymentState = CT.ORDERPAYMENT.PAID
-            transactionState = CT.TRANSACTION.SUCCESS
-            break
-        case GR4VY.TRANSACTION.AUTHORIZATION_DECLINED:
-        case GR4VY.TRANSACTION.AUTHORIZATION_FAILED:
-            if (ctTransactionType !== CT.TRANSACTION.TYPES.AUTHORIZATION) {
-                throw {
-                    message: `Error mismatch transaction type for transaction ID ${transaction?.id}`,
-                    statusCode: 400,
-                }
-            }
-            orderState = CT.ORDER.CANCELLED
-            orderPaymentState = CT.ORDERPAYMENT.FAILED
-            transactionState = CT.TRANSACTION.FAILURE
-            break
-
-        default:
-            throw {
-                message: `Error during updating CT order statuses with ID ${orderId}`,
-                statusCode: 400,
-            }*/
+    //Check if the Gr4vy transaction type is matching with CT transaction type
+    if (ctTransactionType === CT.TRANSACTION.TYPES.AUTHORIZATION &&
+        gr4vyTransactionType !== GR4VY.TRANSACTION.TYPES.AUTHORIZE) {
+        throw {
+            message: `Error mismatch transaction type for transaction ID ${transaction?.id}`,
+            statusCode: 400,
+        }
     }
 
-    return {orderState, orderPaymentState, transactionState}
+    if (ctTransactionType === CT.TRANSACTION.TYPES.CHARGE &&
+        gr4vyTransactionType !== GR4VY.TRANSACTION.TYPES.CAPTURE) {
+        throw {
+            message: `Error mismatch transaction type for transaction ID ${transaction?.id}`,
+            statusCode: 400,
+        }
+    }
+
+    // Mapping Gr4vy status with CT mapping
+    if(successStatuses.find(successStatus => successStatus === status)) {
+        returnTransactionStatus = CT_GRAVY_MAPPING.SUCCESS
+    } else if (processStatuses.find(processStatus => processStatus === status)) {
+        returnTransactionStatus = CT_GRAVY_MAPPING.PROCESS
+    } else if (cancelStatuses.find(cancelStatus => cancelStatus === status)) {
+        returnTransactionStatus = CT_GRAVY_MAPPING.CANCEL
+    } else {
+        throw {
+            message: `Error during updating CT order statuses with ID ${orderId}`,
+            statusCode: 400,
+        }
+    }
+
+    return returnTransactionStatus
 }
 
 export { updateOrderStatus }

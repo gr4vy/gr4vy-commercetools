@@ -23,20 +23,6 @@ export const Constants = {
             AUTHORIZATION_VOIDED: 'authorization_voided',
             AUTHORIZATION_VOID_PENDING: 'authorization_void_pending',
           },
-
-          REFUND: {
-            PROCESS: {
-              PROCESSING: 'processing',
-            },
-            SUCCESS: {
-              SUCCEEDED: 'succeeded',
-            },
-            CANCEL: {
-              DECLINED: 'declined',
-              FAILED: 'failed',
-              VOIDED: 'voided',
-            },
-          },
         },
 
         PROCESSING_FAILED: 'processing_failed',
@@ -55,7 +41,7 @@ export const Constants = {
         BUYER_APPROVAL_FAILED: 'buyer_approval_failed',
         BUYER_APPROVAL_TIMEDOUT: 'buyer_approval_timedout',
 
-        GROUP: {
+        STATUS_TYPE_GROUPS: {
           AUTHORIZATION_GROUP: {
             AUTHORIZATION_SUCCEEDED: "authorization_succeeded",
             AUTHORIZATION_DECLINED: "authorization_declined",
@@ -71,6 +57,10 @@ export const Constants = {
 
           }
         },
+        TYPES: {
+          AUTHORIZE: "authorize",
+          CAPTURE: "capture",
+        }
       },
     },
     CT: {
@@ -96,19 +86,19 @@ export const Constants = {
     },
     CT_GRAVY_MAPPING: {
       PROCESS: {
-        order: "Open",
-        payment: "Pending",
-        transaction: "Pending"
+        orderState: "Open",
+        orderPaymentState: "Pending",
+        transactionState: "Pending"
       },
       SUCCESS: {
-        order: "Confirmed",
-        payment: "Paid",
-        transaction: "Success"
+        orderState: "Confirmed",
+        orderPaymentState: "Paid",
+        transactionState: "Success"
       },
       CANCEL: {
-        order: "Cancelled",
-        payment: "Failed",
-        transaction: "Failure"
+        orderState: "Cancelled",
+        orderPaymentState: "Failed",
+        transactionState: "Failure"
       },
       REFUND_PROCESS: {
         order: "Confirmed",

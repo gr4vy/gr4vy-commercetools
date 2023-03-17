@@ -3,6 +3,7 @@ export declare type UpdateOrderStatus = {
     status: string
     transaction: Transaction
     ctTransactionType: string
+    gr4vyTransactionType: string
 }
 
 export declare type Transaction = {

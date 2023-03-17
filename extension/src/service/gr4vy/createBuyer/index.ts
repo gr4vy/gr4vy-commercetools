@@ -3,6 +3,7 @@
 import { Gr4vy } from "@gr4vy-ct/common"
 
 import { Cart, Customer, PaymentConfig } from "./../../types"
+import c from "./../../../config/constants"
 
 export const createBuyer = async ({
   customer,
@@ -19,16 +20,21 @@ export const createBuyer = async ({
   const gr4vy = new Gr4vy({
     gr4vyId,
     privateKey,
-    debug: paymentConfig?.debug ? true : false
+    debug: paymentConfig?.debug ? true : false,
   })
 
-  const buyerParams: any = {}
+  const buyerParams: {
+    externalIdentifier?: string | null
+    displayName?: string | null
+  } = {}
 
   if (customer) {
-    buyerParams.displayName = `${customer.firstName} ${customer.middleName} ${customer.lastName}`
+    buyerParams.displayName = [customer.firstName, customer.middleName, customer.lastName]
+      .filter(name => name)
+      .join(" ")
     buyerParams.externalIdentifier = customer.id
   } else if (cart) {
-    buyerParams.displayName = 'ct_guest_user';
+    buyerParams.displayName = c.CT_GUEST_USER
     buyerParams.externalIdentifier = cart.anonymousId
   }
 
