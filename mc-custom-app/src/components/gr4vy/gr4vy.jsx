@@ -18,6 +18,7 @@ import { isValidPhoneNumber } from 'react-phone-number-input';
 import initialValues from './initValues.json';
 import axios from 'axios';
 import config from '../../gr4vy.config.json';
+import { gravyStatementDescriptorValidator } from '../../constants';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-phone-number-input/style.css';
 
@@ -136,27 +137,33 @@ const Gr4vy = () => {
   //Function to validate Statement Descriptor
   const statementDescriptorValidator = (value, field) => {
     const len = value.length;
+    const { url, city, name } = gravyStatementDescriptorValidator;
     switch (field) {
       case 'url':
         const urlPattern =
           /^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/;
-        if (len === 0 && len > 13) {
+        if (len >= url.min && len <= url.max) {
           return true;
-        } else if (!urlPattern.test(value)) {
+        }
+        if (!urlPattern.test(value)) {
           return true;
-        } else return false;
+        }
+        return false;
       case 'city':
-        if (len === 0 && len > 13) {
+        if (len >= city.min && len <= city.max) {
           return true;
-        } else return false;
+        }
+        return false;
       case 'name':
       case 'description':
         const strPattern = /([^<>\\'"*][a-zA-Z0-9.,_\-?+/])/;
-        if (5 < len && len > 22) {
+        if (len >= name.min && len <= name.max) {
           return true;
-        } else if (!strPattern.test(value)) {
+        }
+        if (!strPattern.test(value)) {
           return true;
-        } else return false;
+        }
+        return false;
     }
   };
 
@@ -172,6 +179,7 @@ const Gr4vy = () => {
     onSubmit: (values) => {
       setLoading(true);
       let error;
+      const { phone } = gravyStatementDescriptorValidator;
 
       if (deleteFile) {
         delete values.privateKey;
@@ -179,7 +187,11 @@ const Gr4vy = () => {
         values = { ...values, privateKey: privateIdFile.filePath };
       }
       if (phoneNumber) {
-        if (isValidPhoneNumber(phoneNumber) && phoneNumber?.length < 20) {
+        if (
+          isValidPhoneNumber(phoneNumber) &&
+          phoneNumber?.length >= phone.min &&
+          phoneNumber?.length <= phone.max
+        ) {
           values = {
             ...values,
             statementDescriptor: {
