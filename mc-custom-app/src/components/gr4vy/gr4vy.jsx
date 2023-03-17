@@ -30,7 +30,6 @@ const Gr4vy = () => {
   const [deleteFile, setDeleteFile] = useState(false);
   const [apiResponse, setApiResponse] = useState({});
   const [phoneNumber, setPhoneNumber] = useState(null);
-  const [valError, setValError] = useState(false);
 
   // Function to fetch the custom object
   const fetchCustomObject = async () => {
@@ -137,8 +136,8 @@ const Gr4vy = () => {
 
   //Function to validate Statement Descriptor
   const statementDescriptorValidator = (value, field) => {
+    console.log('statement', field, value);
     const len = value.length;
-    console.log(field, len);
     const { url, city, name, phone } = gravyStatementDescriptorValidator;
     switch (field) {
       case 'url':
@@ -174,7 +173,6 @@ const Gr4vy = () => {
     },
     onSubmit: (values) => {
       setLoading(true);
-      let error;
 
       if (deleteFile) {
         delete values.privateKey;
@@ -182,18 +180,14 @@ const Gr4vy = () => {
         values = { ...values, privateKey: privateIdFile.filePath };
       }
 
-      if (phoneNumber) {
-        values = {
-          ...values,
-          statementDescriptor: {
-            ...values.statementDescriptor,
-            phoneNumber: phoneNumber,
-          },
-        };
-      }
+      values = {
+        ...values,
+        statementDescriptor: {
+          ...values.statementDescriptor,
+          phoneNumber: phoneNumber ? phoneNumber : '',
+        },
+      };
 
-      console.log('value', values?.statementDescriptor);
-      let arr;
       if (Object.keys(values?.statementDescriptor).length > 0) {
         for (let key of Object.keys(values?.statementDescriptor)) {
           if (values?.statementDescriptor[key]) {
@@ -211,11 +205,7 @@ const Gr4vy = () => {
                 theme: 'light',
                 type: 'error',
               });
-              setValError((valerror) => {
-                return true;
-              });
               setLoading(false);
-              console.log('check', valError);
               return null;
             }
           } else {
@@ -224,11 +214,9 @@ const Gr4vy = () => {
         }
       }
 
-      console.log('valError', valError, arr);
-      if (!error)
-        saveCustomObject({
-          ...values,
-        });
+      saveCustomObject({
+        ...values,
+      });
     },
     enableReinitialize: true,
   });
