@@ -146,13 +146,13 @@ const Gr4vy = () => {
           return true;
         } else return false;
       case 'city':
-        if (len && 5 < len && len > 13) {
+        if (len && len > 13) {
           return true;
         } else return false;
       case 'name':
       case 'description':
         const strPattern = /([^<>\\'"*][a-zA-Z0-9.,_\-?+/])/;
-        if (len && len > 22) {
+        if (len && 5 < len && len > 22) {
           return true;
         } else if (!strPattern.test(value)) {
           return true;
