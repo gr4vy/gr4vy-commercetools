@@ -8,6 +8,7 @@ import { routes } from "./../router"
 import ResponseHelper from "./../helper/response"
 import cors from "../helper/headers"
 import { Request } from "./../types"
+import { isPostRequest, isMultiPartRequest, isOptionsRequest } from "./../helper"
 
 const logger = getLogger()
 
@@ -19,13 +20,12 @@ const createServer = () => {
       const route = routes[parts.pathname as keyof typeof routes]
 
       if (route) {
-        if (request.method === "OPTIONS") {
+        if (isOptionsRequest(request)) {
           response.writeHead(204, cors())
           response.end()
           return
         }
-
-        if (request.method === "POST") {
+        if (isPostRequest(request) && !isMultiPartRequest(request)) {
           let chunks = ""
           request.on("data", chunk => {
             chunks += chunk

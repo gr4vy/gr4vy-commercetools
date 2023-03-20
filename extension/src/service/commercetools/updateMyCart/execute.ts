@@ -1,42 +1,42 @@
+import { IncomingMessage } from "http"
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { ApiClient } from "@gr4vy-ct/common"
+import { MeApiClient } from "@gr4vy-ct/common"
 
-import { updateCustomerMutation } from "./query"
+import { updateCartMutation } from "./query"
+import { Cart } from "../../types"
 import { responseMapper } from "./mapper"
-import { Cart, Customer } from "../../types"
-import c from "../../../config/constants"
 import { escapedJSON } from "../../../utils"
+import c from "../../../config/constants"
 
-const updateCustomerCart = async ({
-  customer,
+const updateMyCart = async ({
+  request,
   cart,
   buyer,
 }: {
-  customer: Customer
+  request: IncomingMessage
   cart: Cart
   buyer: { id: string }
 }): Promise<boolean> => {
-  const apiClient: ApiClient = new ApiClient()
+  const meApiClient: MeApiClient = new MeApiClient({
+    request,
+  })
 
-  apiClient.setBody({
-    query: updateCustomerMutation,
+  meApiClient.setBody({
+    query: updateCartMutation,
     variables: {
       buyerId: escapedJSON(buyer.id),
       ctpCustFieldName: c.CTP_GR4VY_BUYER_ID_FIELD.NAME,
       ctpCustFieldType: c.CTP_GR4VY_BUYER_ID_FIELD.TYPE,
-
-      customerVersion: customer.version,
-      customerId: customer.id,
       ctpCustFieldCustomerKey: c.CTP_GR4VY_BUYER_ID_FIELD.CUSTOMER_KEY,
-
       cartId: cart.id,
       cartVersion: cart.version,
       ctpCustFieldOrderKey: c.CTP_GR4VY_BUYER_ID_FIELD.ORDER_KEY,
     },
   })
 
-  return responseMapper(await apiClient.getData())
+  return responseMapper(await meApiClient.getData())
 }
 
-export { updateCustomerCart }
+export { updateMyCart }

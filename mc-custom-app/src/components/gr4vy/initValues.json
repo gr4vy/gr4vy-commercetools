@@ -1,8 +1,8 @@
 {
-  "information": "Currently installed version: 1.0.22",
+  "information": "",
   "active": 1,
   "payment_type": "webcheckout",
-  "gr4vyId": "partners",
+  "gr4vyId": "",
   "environment": "sandbox",
   "debug": 0,
   "paymentSource": "ecommerce",
@@ -11,29 +11,29 @@
   "title": "Gr4vy Payments",
   "allowspecific": 0,
   "statementDescriptor": {},
-  "theme": {
+  "themeOptions": {
     "fonts": { "body": "google:Lato, Tahoma, Arial" },
     "colors": {
       "text": "#0f0f0f",
-      "subtle_text": "#434343",
-      "label_text": "#0f0f0f",
+      "subtleText": "#434343",
+      "labelText": "#0f0f0f",
       "primary": "#006cd0",
-      "page_background": "#ffffff",
-      "container_background_unchecked": "#fcfcfc",
-      "container_background": "#ffffff",
-      "container_border": "#f2f2f2",
-      "input_border": "#b6b6b6",
-      "input_background": "#ffffff",
-      "input_text": "#0f0f0f",
+      "pageBackground": "#ffffff",
+      "containerBackgroundUnchecked": "#fcfcfc",
+      "containerBackground": "#ffffff",
+      "containerBorder": "#f2f2f2",
+      "inputBorder": "#b6b6b6",
+      "inputBackground": "#ffffff",
+      "inputText": "#0f0f0f",
       "danger": "#d82121",
-      "danger_background": "#fbf7f7",
-      "danger_text": "#b81010",
+      "dangerBackground": "#fbf7f7",
+      "dangerText": "#b81010",
       "info": "#3ea2ff",
-      "info_background": "#e7f2fb",
-      "info_text": "#0367c4",
+      "infoBackground": "#e7f2fb",
+      "infoText": "#0367c4",
       "focus": "#4844ff"
     },
-    "border_widths": {
+    "borderWidths": {
       "container": "thin",
       "input": "thin"
     },
@@ -41,7 +41,7 @@
       "container": "subtle",
       "input": "subtle"
     },
-    "shadows": { "focus_ring": "0 0 0 2px #ffffff, 0 0 0 4px #4844ff" }
+    "shadows": { "focusRing": "0 0 0 2px #ffffff, 0 0 0 4px #4844ff" }
   },
   "intent": "authorize"
 }

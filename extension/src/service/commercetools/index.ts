@@ -1,4 +1,4 @@
 export * from "./getCustomerCart"
-export * from "./updateCustomerCart"
-export * from "./updateCart"
+export * from "./updateMyCustomerCart"
+export * from "./updateMyCart"
 export * from "./updateCustomerCartAddress"
