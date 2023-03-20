@@ -6,6 +6,11 @@ export default {
     CUSTOMER_KEY: "customer-gr4vyBuyerId",
     ORDER_KEY: "order-gr4vyBuyerId",
   },
+  CTP_GR4VY_TRANSACTION_ID_FIELD: {
+    NAME: "gr4vyTransactionId",
+    TYPE: "type",
+    KEY: "gr4vyTransactionId",
+  },
 
   //Locales
   defaultLocale: "en",
