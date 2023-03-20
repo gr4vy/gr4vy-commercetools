@@ -35,6 +35,7 @@ export const updateBuyerDetails = async ({ customer, cart, paymentConfig }: Upda
         'city': cart?.billingAddress?.city,
         'country': cart?.billingAddress?.country,
         'line1': cart?.billingAddress?.streetNumber??"" + ' ' +cart?.billingAddress?.streetName??"",
+        'line2': cart?.billingAddress?.additionalStreetInfo,
         'postalCode': cart?.billingAddress?.postalCode,
         'state': cart?.billingAddress?.state,
       }
