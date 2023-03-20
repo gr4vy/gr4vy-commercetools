@@ -18,6 +18,7 @@ import { isValidPhoneNumber } from 'react-phone-number-input';
 import initialValues from './initValues.json';
 import axios from 'axios';
 import config from '../../gr4vy.config.json';
+import { gravyStatementDescriptorValidator } from '../../constants';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-phone-number-input/style.css';
 
@@ -136,23 +137,27 @@ const Gr4vy = () => {
   //Function to validate Statement Descriptor
   const statementDescriptorValidator = (value, field) => {
     const len = value.length;
+    const { url, city, name, phone } = gravyStatementDescriptorValidator;
     switch (field) {
       case 'url':
         const urlPattern =
           /^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/;
-        if (!urlPattern.test(value)) {
-          return true;
-        } else return false;
+        if (len < url.min || len > url.max) return true;
+        if (!urlPattern.test(value)) return true;
+        return false;
       case 'city':
-        if (0 < len >= 13) {
-          return true;
-        } else return false;
+        if (len < city.min || len > city.max) return true;
+        return false;
       case 'name':
       case 'description':
         const strPattern = /([^<>\\'"*][a-zA-Z0-9.,_\-?+/])/;
-        if (!strPattern.test(value)) {
-          return true;
-        } else return false;
+        if (len < name.min || len > name.max) return true;
+        if (!strPattern.test(value)) return true;
+        return false;
+      case 'phoneNumber':
+        if (len < phone.min || len > phone.max) return true;
+        if (!isValidPhoneNumber(phoneNumber)) return true;
+        return false;
     }
   };
 
@@ -167,46 +172,28 @@ const Gr4vy = () => {
     },
     onSubmit: (values) => {
       setLoading(true);
-      let error;
 
       if (deleteFile) {
         delete values.privateKey;
       } else if (privateIdFile?.filePath) {
         values = { ...values, privateKey: privateIdFile.filePath };
       }
-      if (phoneNumber) {
-        if (isValidPhoneNumber(phoneNumber) && phoneNumber?.length < 20) {
-          values = {
-            ...values,
-            statementDescriptor: {
-              ...values.statementDescriptor,
-              phoneNumber: phoneNumber,
-            },
-          };
-        } else {
-          toast('Please enter valid phone number', {
-            position: 'bottom-right',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            draggable: false,
-            theme: 'light',
-            type: 'error',
-          });
-          setLoading(false);
-          error = true;
-          return null;
-        }
-      }
+
+      values = {
+        ...values,
+        statementDescriptor: {
+          ...values.statementDescriptor,
+          phoneNumber: phoneNumber ? phoneNumber : '',
+        },
+      };
 
       if (Object.keys(values?.statementDescriptor).length > 0) {
-        Object.keys(values?.statementDescriptor).map((key) => {
+        for (let key of Object.keys(values?.statementDescriptor)) {
           if (values?.statementDescriptor[key]) {
             const status = statementDescriptorValidator(
               values?.statementDescriptor[key],
               key
             );
-            error = status;
             if (status) {
               toast(`Please enter valid ${key}`, {
                 position: 'bottom-right',
@@ -223,12 +210,12 @@ const Gr4vy = () => {
           } else {
             delete values?.statementDescriptor[key];
           }
-        });
+        }
       }
-      if (!error)
-        saveCustomObject({
-          ...values,
-        });
+
+      saveCustomObject({
+        ...values,
+      });
     },
     enableReinitialize: true,
   });
