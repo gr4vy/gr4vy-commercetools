@@ -1,5 +1,5 @@
 // GraphQL query to create custom fields
-const createSubscription = `
+const subscription = `
   createSubscription: createSubscription(
     draft:{
       key:$subsKey
@@ -31,7 +31,7 @@ mutation createSubscriptions (
   $accessKey: String,
   $accessSecret: String,
   $region: String!){
-  ${createSubscription},
+  ${subscription},
 }
 `
 export {createSubscriptionsMutationQuery}

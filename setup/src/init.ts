@@ -13,6 +13,6 @@ export const init = async () => {
         const createSubscriptionsResult = await createSubscriptions();
         logger.debug("Create subscriptions end")
     } catch (e) {
-        logger.error(e)
+        logger.error(JSON.stringify(e))
     }
 }

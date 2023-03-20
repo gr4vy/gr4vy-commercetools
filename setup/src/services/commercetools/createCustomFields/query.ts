@@ -31,23 +31,23 @@ const createCustomFieldGr4vyBuyerId = `
 const createCustomFieldGr4vyTransactionId = `
   createCustomFieldGr4vyTransactionId: createTypeDefinition(    
     draft:{
-      key: $txionIdKey
+      key: $transactionId
       name:{
         locale: $locale
-        value: $txionIdDescription
+        value: $transactionIdDescription
       }
-      resourceTypeIds: $txionIdResourceTypeIds
+      resourceTypeIds: $transactionIdResourceTypeIds
       fieldDefinitions:{
         type:{
           String:{
             dummy:"string"
           }
         }
-        name:$txionIdName
+        name:$transactionIdName
         required:false
         label:{
           locale: $locale
-          value: $txionIdLabel
+          value: $transactionIdLabel
         }
         inputHint:SingleLine      
       }
@@ -61,16 +61,16 @@ const createCustomFieldGr4vyTransactionId = `
 const createCustomFieldsMutationQuery = `
 mutation createCustomField (
   $buyerIdKey:String!,
-  $txionIdKey: String!,
+  $transactionId: String!,
   $locale: Locale!,
   $buyerIdName:String!,
-  $txionIdName:String!,
+  $transactionIdName:String!,
   $buyerIdLabel:String!,
-  $txionIdLabel:String!,
+  $transactionIdLabel:String!,
   $buyerIdDescription:String!,
-  $txionIdDescription:String!,
+  $transactionIdDescription:String!,
   $buyerIdResourceTypeIds:[String!]!,
-  $txionIdResourceTypeIds:[String!]!){
+  $transactionIdResourceTypeIds:[String!]!){
   ${createCustomFieldGr4vyBuyerId},
   ${createCustomFieldGr4vyTransactionId}
 }

@@ -14,18 +14,18 @@ const createCustomFields = async () => {
     variables: {
       locale: C.defaultLocale,
       buyerIdKey: C.CT.ORDER.CUSTOM_FIELD.GR4VY_BUYER_ID_KEY,
-      txionIdKey: C.CT.ORDER.CUSTOM_FIELD.GR4VY_TXION_ID_KEY,
+      transactionId: C.CT.ORDER.CUSTOM_FIELD.GR4VY_TRANSACTION_ID_KEY,
       buyerIdName: C.CT.ORDER.CUSTOM_FIELD.GR4VY_BUYER_ID_FIELD_DEF_NAME,
-      txionIdName: C.CT.ORDER.CUSTOM_FIELD.GR4VY_TXION_ID_FIELD_DEF_NAME,
+      transactionIdName: C.CT.ORDER.CUSTOM_FIELD.GR4VY_TRANSACTION_ID_FIELD_DEF_NAME,
       buyerIdLabel: C.CT.ORDER.CUSTOM_FIELD.GR4VY_BUYER_ID_FIELD_DEF_LABEL,
-      txionIdLabel: C.CT.ORDER.CUSTOM_FIELD.GR4VY_TXION_ID_FIELD_DEF_LABEL,
+      transactionIdLabel: C.CT.ORDER.CUSTOM_FIELD.GR4VY_TRANSACTION_ID_FIELD_DEF_LABEL,
       buyerIdDescription: C.CT.ORDER.CUSTOM_FIELD.GR4VY_BUYER_ID_NAME_DESC,
-      txionIdDescription: C.CT.ORDER.CUSTOM_FIELD.GR4VY_TXION_ID_NAME_DESC,
+      transactionIdDescription: C.CT.ORDER.CUSTOM_FIELD.GR4VY_TRANSACTION_ID_NAME_DESC,
       buyerIdResourceTypeIds: ["order"],
-      txionIdResourceTypeIds: ["order", "transaction"]
+      transactionIdResourceTypeIds: ["order", "transaction"]
     }
   })
-  //return responseMapper(await apiClient.getData())
+  return responseMapper(await apiClient.getData())
 }
 
 export { createCustomFields }

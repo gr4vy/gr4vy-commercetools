@@ -4,8 +4,6 @@ import { ApiClient, Constants} from "@gr4vy-ct/common"
 import {createSubscriptionsMutationQuery} from "./query"
 import {responseMapper} from "./mapper"
 import { env } from "process"
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import C from "./../../../config/constants"
 
 const createSubscriptions = async () => {
