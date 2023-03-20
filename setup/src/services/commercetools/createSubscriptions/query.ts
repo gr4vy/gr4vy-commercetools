@@ -1,6 +1,6 @@
 // GraphQL query to create custom fields
 const subscription = `
-  createSubscription: createSubscription(
+  subscription: createSubscription(
     draft:{
       key:$subsKey
       destination: {

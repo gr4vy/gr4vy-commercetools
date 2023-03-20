@@ -10,7 +10,7 @@ const responseMapper = (response: any) => {
     }
   }
   return (
-      response?.body?.data?.createSubscription1
+      response?.body?.data?.subscription
   )
 }
 
