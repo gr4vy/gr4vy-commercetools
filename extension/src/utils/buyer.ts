@@ -46,13 +46,17 @@ const resolveCustomerBuyerId = async ({
   request,
   customer,
   cart,
-  buyer,
+  paymentConfig,
 }: {
   request: IncomingMessage
   customer: Customer | null
   cart: Cart
-  buyer: { id: string }
+  paymentConfig: PaymentConfig
 }) => {
+  let buyer = await getBuyer({ customer, cart, paymentConfig })
+  if (!buyer) {
+    buyer = await createBuyer({ customer, cart, paymentConfig })
+  }
   // Update CT customer and cart with buyer info
   if (customer) {
     const isMyCustomerCartUpdated = await updateMyCustomerCart({

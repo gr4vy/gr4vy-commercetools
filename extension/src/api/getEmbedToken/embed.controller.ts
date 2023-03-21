@@ -9,7 +9,7 @@ import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import { getCustomerWithCart, createEmbedToken } from "../../service"
-import { getLogger, getBuyer, createBuyer, resolveCustomerBuyerId } from "./../../utils"
+import { getLogger, resolveCustomerBuyerId } from "./../../utils"
 
 const logger = getLogger()
 
@@ -41,13 +41,9 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     if (!paymentConfig) {
       throw { message: "Payment configuration is missing or empty", statusCode: 400 }
     }
-
-    let buyer = await getBuyer({ customer, cart, paymentConfig })
-    if (!buyer) {
-      buyer = await createBuyer({ customer, cart, paymentConfig })
-    }
-    // Set the custom field
-    await resolveCustomerBuyerId({ request, customer, cart, buyer })
+    
+    // Resolve the customer buyer id in CT
+    await resolveCustomerBuyerId({ request, customer, cart, paymentConfig })
 
     const gr4vyBuyerId = customer?.gr4vyBuyerId ?? cart.gr4vyBuyerId
 
