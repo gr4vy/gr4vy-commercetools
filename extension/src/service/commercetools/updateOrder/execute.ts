@@ -2,12 +2,11 @@ import { IncomingMessage } from "http"
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { ApiClient } from "@gr4vy-ct/common"
+import { ApiClient, Constants } from "@gr4vy-ct/common"
 
 import { updateOrderMutation } from "./query"
 import { responseMapper } from "./mapper"
 import { escapedJSON } from "../../../utils"
-import c from "../../../config/constants"
 
 const updateOrder = async ({
   updatedOrder,
@@ -16,15 +15,18 @@ const updateOrder = async ({
   updatedOrder: any
   gr4vyTransactionId: string
 }): Promise<boolean> => {
+  const {
+    STATES: { CT },
+  } = Constants
   const apiClient: ApiClient = new ApiClient()
   apiClient.setBody({
     query: updateOrderMutation,
     variables: {
       version: updatedOrder.version,
       orderId: updatedOrder.id,
-      type: c.CTP_GR4VY_TRANSACTION_ID_FIELD.TYPE,
-      customFieldKey: c.CTP_GR4VY_TRANSACTION_ID_FIELD.KEY,
-      customFieldName: c.CTP_GR4VY_TRANSACTION_ID_FIELD.NAME,
+      type: CT.CUSTOM_FIELDS.GR4VY_TRANSACTION_ID.TYPE,
+      customFieldKey: CT.CUSTOM_FIELDS.GR4VY_TRANSACTION_ID.KEY,
+      customFieldName: CT.CUSTOM_FIELDS.GR4VY_TRANSACTION_ID.NAME,
       gr4vyTransactionId: escapedJSON(gr4vyTransactionId),
     },
   })
