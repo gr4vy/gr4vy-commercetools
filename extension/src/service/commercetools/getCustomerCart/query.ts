@@ -61,6 +61,11 @@ const getCustomerWithCartQuery = `
               currencyCode
               centAmount
             }
+            discounted {
+              value {
+                centAmount
+              }
+            }
           }
           productType {
             name
@@ -102,6 +107,7 @@ const getCustomerWithCartQuery = `
     country
     streetName
     streetNumber
+    additionalStreetInfo
     postalCode
     state
     building
