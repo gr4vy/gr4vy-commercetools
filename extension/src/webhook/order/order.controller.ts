@@ -3,12 +3,13 @@ import { ServerResponse } from "http"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getTransactionById, getOrderApiClient, updateStatus, updateOrderStatus } from "@gr4vy-ct/common"
+import {getTransactionById,getOrderApiClient,updateStatus,updateOrderStatus,listTransactionRefunds,addTransaction} from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import { getLogger } from "./../../utils"
+import c from "../../config/constants";
 
 const logger = getLogger()
 
@@ -90,6 +91,9 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       }
     }
 
+    let paymentVersionNumber = payment?.version
+
+    const allTransaction = payment?.transactions;
     const [transaction] = payment?.transactions || []
 
     if (!transaction) {
@@ -98,6 +102,24 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         statusCode: 400,
       }
     }
+
+    let transactionArray:any = [];
+    allTransaction.forEach( (transactionItem: any) => {
+
+      if (transactionItem?.custom) {
+        const {
+          custom: {customFieldsRaw},
+        } = transactionItem
+
+        if (customFieldsRaw && Array.isArray(customFieldsRaw)) {
+          customFieldsRaw.forEach((customField:any) => {
+            if (customField.name === c.CT_CUSTOM_FIELD_TRANSACTION_REFUND){
+              transactionArray.push(customField.value)
+            }
+          })
+        }
+      }
+    })
 
     const ctTransactionAmount = transaction?.amount?.centAmount
     const ctTransactionType = transaction?.type
@@ -112,6 +134,25 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
     if (gr4vyRefundedAmount) {
       //Create the transaction
+      const {items} = await listTransactionRefunds(gr4vyTransactionId)
+      if (!items) {
+        throw {
+          message: `Error in fetching gr4vy refund transaction for ID ${gr4vyTransactionId}`,
+          statusCode: 400,
+        }
+      }
+
+      if (items && Array.isArray(items)) {
+        await Promise.all(items.map(async (refundItem) => {
+          if (Array.isArray(transactionArray)) {
+            if(!(transactionArray.find(transactionArray => transactionArray === refundItem.id))) {
+              refundItem.paymentVersion = paymentVersionNumber
+              const isAdded = await addTransaction({order, refundItem})
+              paymentVersionNumber++
+            }
+          }
+        }))
+      }
     }
 
     const {orderState, orderPaymentState, transactionState} = await updateOrderStatus({orderId, status, transaction, ctTransactionType, gr4vyTransactionType})

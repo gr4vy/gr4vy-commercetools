@@ -19,6 +19,12 @@ const getOrderByIDQuery = `
                 currencyCode
                 centAmount
               }
+              custom {
+                customFieldsRaw {
+                  name
+                  value
+                }
+              }
             }
           }
         }

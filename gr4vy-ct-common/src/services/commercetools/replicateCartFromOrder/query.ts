@@ -11,4 +11,4 @@ mutation replicateCartFromOrder($orderId: String!){
   }
 }
 `
-export {replicateCartFromOrderQuery}
+export { replicateCartFromOrderQuery }

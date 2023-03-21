@@ -1,5 +1,7 @@
 export * from "./getCustomObjects"
 export * from "./getOrder"
+export * from "./getOrderById"
 export * from "./updateStatus"
 export * from "./replicateCartFromOrder"
 export * from "./getOrderApiClient"
+export * from "./addTransaction"

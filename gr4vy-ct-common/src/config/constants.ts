@@ -8,15 +8,22 @@ const AUTHORIZATION_FAILED = "authorization_failed"
 const AUTHORIZATION_VOIDED = 'authorization_voided'
 const AUTHORIZATION_VOID_PENDING = 'authorization_void_pending'
 
+const CT_REFUND_INITIAL = 'Initial'
+const CT_REFUND_PENDING = 'Pending'
+const CT_REFUND_SUCCESS = 'Success'
+const CT_REFUND_FAILURE = 'Failure'
 
 export const Constants = {
   CTP_GR4VY_PAYMENT_CONFIGURATION_CONTAINER: "ctp-gr4vy-configuration",
+  CT_REFUND_TRANSACTION_TYPE: "Refund",
+  PAYMENT_INTERACTION_ID: "gr4vy",
+  CT_CUSTOM_FIELD_TRANSACTION_REFUND: "gr4vyRefundId",
+
   //Locales
   defaultLocale: "en",
   STATES: {
     GR4VY: {
       TRANSACTION: {
-
         PROCESSING_FAILED: 'processing_failed',
         CAPTURE_DECLINED: 'capture_declined',
         CAPTURE_FAILED: 'capture_failed',
@@ -50,6 +57,9 @@ export const Constants = {
         PENDING: "Pending",
         FAILED: "Failed",
       },
+      ORDER_RETURN_PAYMENT: {
+        REFUNDED: "Refunded",
+      },
       TRANSACTION: {
         TYPES: {
           AUTHORIZATION: "Authorization",
@@ -58,6 +68,20 @@ export const Constants = {
         SUCCESS: "Success",
         PENDING: "Pending",
         FAILURE: "Failure",
+      },
+      CUSTOM_FIELDS: {
+        GR4VY_TRANSACTION_ID: {
+          NAME: "gr4vyTransactionId",
+          TYPE: "type",
+          KEY: "gr4vyTransactionId",
+        },
+      },
+      MESSAGE_TYPES: {
+        ORDER: {
+          DELIVERY_ADDED: "DeliveryAdded",
+          RETURN_INFO_ADDED: "ReturnInfoAdded",
+          ORDER_STATE_CHANGED: "OrderStateChanged",
+        },
       },
     },
     CT_GRAVY_MAPPING: {
@@ -112,5 +136,21 @@ export const Constants = {
       AUTHORIZATION_VOID_PENDING,
       AUTHORIZATION_VOIDED
     ]
-  }
+  },
+
+  CT_REFUND_INITIAL: "Initial",
+
+  GR4VY_REFUND_STATUS: {
+    GR4VY_REFUND_PROCESSING: 'processing',
+    GR4VY_REFUND_SUCCEEDED: 'succeeded',
+    GR4VY_REFUND_DECLINED: 'declined',
+    GR4VY_REFUND_FAILED: 'failed',
+    GR4VY_REFUND_VOIDED: 'voided'
+  },
+
+  GR4VY_REFUND_SUCCEEDED: CT_REFUND_SUCCESS,
+  GR4VY_REFUND_DECLINED: CT_REFUND_FAILURE,
+  GR4VY_REFUND_FAILED: CT_REFUND_FAILURE,
+  GR4VY_REFUND_VOIDED: CT_REFUND_FAILURE,
+  GR4VY_REFUND_PROCESSING: CT_REFUND_PENDING
 }
