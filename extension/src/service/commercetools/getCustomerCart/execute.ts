@@ -39,7 +39,8 @@ const setProductCategoryInResult = async (
   }
 ) => {
   // Prepare skus for the API call
-  const skus = result?.cartItems?.filter(cartItem => cartItem?.sku).map(cartItem => cartItem?.sku) || []
+  const skus =
+    result?.cartItems?.filter(cartItem => cartItem?.sku).map(cartItem => cartItem?.sku) || []
 
   if (!skus.length) {
     return result
@@ -72,7 +73,8 @@ const setProductCategoryInResult = async (
   })
 
   result.cartItems.forEach((cartItem: CartItem) => {
-    cartItem.categories = productCategoryMapper[cartItem.externalIdentifier] ?? []
+    const productId = cartItem.productId || ""
+    cartItem.categories = productCategoryMapper[productId] ?? []
   })
 }
 
