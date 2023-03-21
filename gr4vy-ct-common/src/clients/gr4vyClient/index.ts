@@ -1,6 +1,12 @@
 import fs from "fs"
 
-import { Client, BuyerRequest, ShippingDetailRequest, TransactionCaptureRequest } from "@gr4vy/node"
+import {
+  Client,
+  BuyerRequest,
+  ShippingDetailRequest,
+  TransactionCaptureRequest,
+  TransactionRefundRequest
+} from "@gr4vy/node"
 
 import { getLogger } from "../../utils"
 import {
@@ -9,6 +15,8 @@ import {
   BuyerParams,
   UpdateBuyerParams,
   UpdateBuyerShippingAddressParams,
+  TransactionRefundParams,
+  TransactionVoidParams,
   TransactionCaptureParams
 } from "./types"
 
@@ -98,6 +106,18 @@ export class Gr4vy {
     transactionCaptureRequest.amount = amount
     logger.debug("transactionCapture", {transactionId, transactionCaptureRequest})
     return this.client.captureTransaction(transactionId, transactionCaptureRequest)
+  }
+
+  transactionRefund({amount, transactionId}: TransactionRefundParams) {
+    const transactionRefundRequest = new TransactionRefundRequest()
+    transactionRefundRequest.amount = amount
+    logger.debug("transactionRefund", {transactionId, transactionRefundRequest})
+    return this.client.refundTransaction(transactionId, transactionRefundRequest)
+  }
+
+  transactionVoid({transactionId}: TransactionVoidParams) {
+    logger.debug("transactionVoid", transactionId)
+    return this.client.voidTransaction(transactionId)
   }
 
   getTransactionById(transactionId: string) {
