@@ -59,3 +59,12 @@ export declare type TransactionCaptureParams = {
   amount: number
   transactionId: string
 }
+
+export declare type TransactionRefundParams = {
+  amount: number,
+  transactionId: string
+}
+
+export declare type TransactionVoidParams = {
+  transactionId: string
+}
