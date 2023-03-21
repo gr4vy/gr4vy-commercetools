@@ -1,22 +1,19 @@
-import bunyan from "bunyan"
+import bunyan, { Stream } from "bunyan"
 
 let logger: bunyan
 
 const getLogger = () => {
+  const { LOGGER_TYPE, LOGGER_PATH } = process.env
+  const streams: Stream[] = [bunyan.DEBUG, bunyan.INFO, bunyan.ERROR].map(level => {
+    return {
+      level,
+      ...(LOGGER_TYPE === "file" ? { path: LOGGER_PATH } : { stream: process.stdout }),
+    }
+  })
   if (!logger)
     logger = bunyan.createLogger({
-      name: "ctp-gr4vy-notification-extension",
-      streams: [
-        {
-          level: "error",
-          path: "./log/app.log",
-        },
-        {
-          level: "info",
-          path: "./log/app.log",
-        },
-      ],
-      level: bunyan.INFO, //TODO: provide the config value param here
+      name: "ctp-gr4vy-notification-package",
+      streams,
     })
   return logger
 }

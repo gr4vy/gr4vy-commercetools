@@ -10,10 +10,9 @@ import cors from "../helper/headers"
 import { Request } from "./../types"
 import { isPostRequest, isMultiPartRequest, isOptionsRequest } from "./../helper"
 
-const logger = getLogger()
-
 const createServer = () => {
   return http.createServer(async (request: Request, response: ServerResponse) => {
+    const logger = getLogger()
     try {
       const requestUrl = request.url || "/"
       const parts = url.parse(requestUrl)
@@ -41,7 +40,6 @@ const createServer = () => {
         } else {
           await route(request, response)
         }
-        
       } else {
         ResponseHelper.setResponseError(response, {
           httpStatusCode: StatusCodes.NOT_FOUND,

@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 const responseMapper = (response: any) => {
   checkResponseError(response)
   return (
@@ -18,6 +19,7 @@ const responseMapperWithoutTransaction = (response: any) => {
 const checkResponseError = (response: any) => {
   if (response?.body?.errors) {
     throw {
+      // eslint-disable-next-line
       message: response?.body?.errors.map((e: any) => {
         return {
           description: e.message,

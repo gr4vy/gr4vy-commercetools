@@ -16,7 +16,6 @@ export const Constants = {
   STATES: {
     GR4VY: {
       TRANSACTION: {
-
         PROCESSING_FAILED: 'processing_failed',
         CAPTURE_DECLINED: 'capture_declined',
         CAPTURE_FAILED: 'capture_failed',
@@ -50,6 +49,9 @@ export const Constants = {
         PENDING: "Pending",
         FAILED: "Failed",
       },
+      ORDER_RETURN_PAYMENT: {
+        REFUNDED: "Refunded",
+      },
       TRANSACTION: {
         TYPES: {
           AUTHORIZATION: "Authorization",
@@ -58,6 +60,20 @@ export const Constants = {
         SUCCESS: "Success",
         PENDING: "Pending",
         FAILURE: "Failure",
+      },
+      CUSTOM_FIELDS: {
+        GR4VY_TRANSACTION_ID: {
+          NAME: "gr4vyTransactionId",
+          TYPE: "type",
+          KEY: "gr4vyTransactionId",
+        },
+      },
+      MESSAGE_TYPES: {
+        ORDER: {
+          DELIVERY_ADDED: "DeliveryAdded",
+          RETURN_INFO_ADDED: "ReturnInfoAdded",
+          ORDER_STATE_CHANGED: "OrderStateChanged",
+        },
       },
     },
     CT_GRAVY_MAPPING: {
