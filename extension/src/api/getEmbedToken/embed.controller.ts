@@ -9,7 +9,7 @@ import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import { getCustomerWithCart, createEmbedToken } from "../../service"
-import { getLogger, getBuyer, createBuyer, setCTCustomBuyerID } from "./../../utils"
+import { getLogger, getBuyer, createBuyer, resolveCustomerBuyerId } from "./../../utils"
 
 const logger = getLogger()
 
@@ -47,7 +47,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       buyer = await createBuyer({ customer, cart, paymentConfig })
     }
     // Set the custom field
-    await setCTCustomBuyerID({ request, customer, cart, buyer })
+    await resolveCustomerBuyerId({ request, customer, cart, buyer })
 
     const gr4vyBuyerId = customer?.gr4vyBuyerId ?? cart.gr4vyBuyerId
 

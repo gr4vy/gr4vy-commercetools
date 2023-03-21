@@ -42,7 +42,7 @@ const createBuyer = async ({
   return buyer
 }
 
-const setCTCustomBuyerID = async ({
+const resolveCustomerBuyerId = async ({
   request,
   customer,
   cart,
@@ -89,4 +89,4 @@ const setCTCustomBuyerID = async ({
   }
 }
 
-export { getBuyer, createBuyer, setCTCustomBuyerID }
+export { getBuyer, createBuyer, resolveCustomerBuyerId }
