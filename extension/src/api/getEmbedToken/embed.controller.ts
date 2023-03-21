@@ -8,15 +8,8 @@ import { getCustomObjects } from "@gr4vy-ct/common"
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
-import {
-  getCustomerWithCart,
-  createBuyer,
-  updateMyCustomerCart,
-  createEmbedToken,
-  updateMyCart,
-  getBuyer,
-} from "../../service"
-import { getLogger } from "./../../utils"
+import { getCustomerWithCart, createEmbedToken } from "../../service"
+import { getLogger, resolveCustomerBuyerId } from "./../../utils"
 
 const processRequest = async (request: Request, response: ServerResponse) => {
   const logger = getLogger()
@@ -47,73 +40,16 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     if (!paymentConfig) {
       throw { message: "Payment configuration is missing or empty", statusCode: 400 }
     }
+    
+    // Resolve the customer buyer id in CT
+    await resolveCustomerBuyerId({ request, customer, cart, paymentConfig })
 
-    let gr4vyBuyerId = customer?.gr4vyBuyerId ?? cart.gr4vyBuyerId
-
-    // create buyer in gr4vy if buyer id is not present
-    if (!gr4vyBuyerId) {
-      //if there is no gr4vy buyer Id against cart or customer, see if it is there in Gr4vy.
-      const userId = customer?.id ?? cart.anonymousId
-      const {
-        body: { items },
-      } = await getBuyer({ userId, paymentConfig })
-
-      let buyer
-      if (items.length == 0) {
-        const { body } = await createBuyer({ customer, cart, paymentConfig })
-        buyer = body
-        if (!buyer) {
-          throw { message: "Error in creating buyer in CTP for customer", statusCode: 400 }
-        }
-      } else {
-        buyer = items[0]
-      }
-
-      // Update CT customer and cart with buyer info
-      if (customer) {
-        const isMyCustomerCartUpdated = await updateMyCustomerCart({
-          request,
-          customer,
-          cart,
-          buyer,
-        })
-        if (!isMyCustomerCartUpdated) {
-          throw {
-            message: "Error in updating buyer id in CTP for registered customer and cart",
-            statusCode: 400,
-          }
-        }
-
-        // Set gr4vyBuyerId in customer
-        customer.gr4vyBuyerId = {
-          value: buyer.id,
-        }
-        gr4vyBuyerId = customer.gr4vyBuyerId
-      } else {
-        //Update Cart with buyer Id
-        const isMyCartUpdated = await updateMyCart({ request, cart, buyer })
-        if (!isMyCartUpdated) {
-          throw {
-            message: "Error in updating buyer id in CTP for guest cart",
-            statusCode: 400,
-          }
-        }
-
-        // Set gr4vyBuyerId in customer
-        cart.gr4vyBuyerId = {
-          value: buyer.id,
-        }
-
-        gr4vyBuyerId = cart.gr4vyBuyerId
-      }
-    }
+    const gr4vyBuyerId = customer?.gr4vyBuyerId ?? cart.gr4vyBuyerId
 
     // Omit specific keys
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { privateKey, ...restConfig } = paymentConfig
     const embedToken: string = await createEmbedToken({ customer, cart, paymentConfig, cartItems })
-
-    //TBD: If the embedToken generation fails maybe the buyer need to be created.
 
     const {
       totalPrice: { centAmount, currencyCode },
