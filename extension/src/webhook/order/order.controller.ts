@@ -67,6 +67,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       externalIdentifier: orderId,
       status,
       amount: gr4vyTransactionAmount,
+      refundedAmount: gr4vyRefundedAmount,
       intent: gr4vyTransactionType,
     } = gr4vyTransaction?.body || {}
 
@@ -107,6 +108,10 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         message: `Error in mismatch amounts for gr4vy and CT for order payment ID ${payment?.id}`,
         statusCode: 400,
       }
+    }
+
+    if (gr4vyRefundedAmount) {
+      //Create the transaction
     }
 
     const {orderState, orderPaymentState, transactionState} = await updateOrderStatus({orderId, status, transaction, ctTransactionType, gr4vyTransactionType})

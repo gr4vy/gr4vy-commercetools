@@ -1,3 +1,14 @@
+const CAPTURE_SUCCEEDED = "capture_succeeded"
+const AUTHORIZATION_SUCCEEDED = "authorization_succeeded"
+const PROCESSING = 'processing'
+const CAPTURE_PENDING = "capture_pending"
+const BUYER_APPROVAL_PENDING = 'buyer_approval_pending'
+const AUTHORIZATION_DECLINED = "authorization_declined"
+const AUTHORIZATION_FAILED = "authorization_failed"
+const AUTHORIZATION_VOIDED = 'authorization_voided'
+const AUTHORIZATION_VOID_PENDING = 'authorization_void_pending'
+
+
 export const Constants = {
   CTP_GR4VY_PAYMENT_CONFIGURATION_CONTAINER: "ctp-gr4vy-configuration",
   //Locales
@@ -5,25 +16,6 @@ export const Constants = {
   STATES: {
     GR4VY: {
       TRANSACTION: {
-        STATUS_GROUPS:{
-          PROCESS: {
-            PROCESSING: 'processing',
-            CAPTURE_PENDING: "capture_pending",
-            BUYER_APPROVAL_PENDING: 'buyer_approval_pending',
-          },
-
-          SUCCESS: {
-            CAPTURE_SUCCEEDED: "capture_succeeded",
-            AUTHORIZATION_SUCCEEDED: "authorization_succeeded",
-          },
-
-          CANCEL: {
-            AUTHORIZATION_DECLINED: "authorization_declined",
-            AUTHORIZATION_FAILED: "authorization_failed",
-            AUTHORIZATION_VOIDED: 'authorization_voided',
-            AUTHORIZATION_VOID_PENDING: 'authorization_void_pending',
-          },
-        },
 
         PROCESSING_FAILED: 'processing_failed',
         CAPTURE_DECLINED: 'capture_declined',
@@ -41,22 +33,6 @@ export const Constants = {
         BUYER_APPROVAL_FAILED: 'buyer_approval_failed',
         BUYER_APPROVAL_TIMEDOUT: 'buyer_approval_timedout',
 
-        STATUS_TYPE_GROUPS: {
-          AUTHORIZATION_GROUP: {
-            AUTHORIZATION_SUCCEEDED: "authorization_succeeded",
-            AUTHORIZATION_DECLINED: "authorization_declined",
-            AUTHORIZATION_FAILED: "authorization_failed",
-            AUTHORIZATION_VOIDED: 'authorization_voided',
-            AUTHORIZATION_VOID_PENDING: 'authorization_void_pending',
-          },
-          CAPTURE_GROUP: {
-            CAPTURE_SUCCEEDED: "capture_succeeded",
-            CAPTURE_PENDING: "capture_pending",
-          },
-          REFUND_GROUP: {
-
-          }
-        },
         TYPES: {
           AUTHORIZE: "authorize",
           CAPTURE: "capture",
@@ -117,4 +93,24 @@ export const Constants = {
       },
     }
   },
+
+  GR4VY_STATUS: {
+    SUCCESS_STATUS: [
+      CAPTURE_SUCCEEDED,
+      AUTHORIZATION_SUCCEEDED
+    ],
+
+    PROCESS_STATUS: [
+      PROCESSING,
+      CAPTURE_PENDING,
+      BUYER_APPROVAL_PENDING
+    ],
+
+    CANCEL_STATUS: [
+      AUTHORIZATION_DECLINED,
+      AUTHORIZATION_FAILED,
+      AUTHORIZATION_VOID_PENDING,
+      AUTHORIZATION_VOIDED
+    ]
+  }
 }

@@ -1,4 +1,4 @@
-import { Constants, successStatuses, processStatuses, cancelStatuses } from "../../config"
+import { Constants } from "../../config"
 import { UpdateOrderStatus } from "../types"
 
 const updateOrderStatus = async ({ orderId, status, transaction, ctTransactionType, gr4vyTransactionType }: UpdateOrderStatus) => {
@@ -7,6 +7,10 @@ const updateOrderStatus = async ({ orderId, status, transaction, ctTransactionTy
 
     const {
         STATES: { GR4VY, CT, CT_GRAVY_MAPPING },
+    } = Constants
+
+    const {
+        GR4VY_STATUS: { SUCCESS_STATUS, PROCESS_STATUS, CANCEL_STATUS },
     } = Constants
 
     //Check if the Gr4vy transaction type is matching with CT transaction type
@@ -27,11 +31,11 @@ const updateOrderStatus = async ({ orderId, status, transaction, ctTransactionTy
     }
 
     // Mapping Gr4vy status with CT mapping
-    if(successStatuses.find(successStatus => successStatus === status)) {
+    if(SUCCESS_STATUS.find(successStatus => successStatus === status)) {
         returnTransactionStatus = CT_GRAVY_MAPPING.SUCCESS
-    } else if (processStatuses.find(processStatus => processStatus === status)) {
+    } else if (PROCESS_STATUS.find(processStatus => processStatus === status)) {
         returnTransactionStatus = CT_GRAVY_MAPPING.PROCESS
-    } else if (cancelStatuses.find(cancelStatus => cancelStatus === status)) {
+    } else if (CANCEL_STATUS.find(cancelStatus => cancelStatus === status)) {
         returnTransactionStatus = CT_GRAVY_MAPPING.CANCEL
     } else {
         throw {
