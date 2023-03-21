@@ -9,6 +9,7 @@ import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import { getLogger } from "./../../utils"
+import { updateOrder } from "../../service"
 
 const processRequest = async (request: Request, response: ServerResponse) => {
   const logger = getLogger()
@@ -37,7 +38,6 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
     // Get gr4vy transaction by ID
     const gr4vyTransaction = await getTransactionById(gr4vyTransactionId)
-
     if (!gr4vyTransaction) {
       throw {
         message: `Error in fetching gr4vy transaction for ID ${gr4vyTransactionId}`,
@@ -156,6 +156,13 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       orderPaymentState,
       transactionState,
     })
+    const updatedOrder = await getOrder({ request, orderId })
+    const transactionIdResult = await updateOrder(
+        {
+          updatedOrder,
+          gr4vyTransactionId
+        }
+    )
 
     const responseData = {
       status: result,

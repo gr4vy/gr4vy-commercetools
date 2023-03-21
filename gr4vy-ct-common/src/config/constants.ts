@@ -37,6 +37,13 @@ export const Constants = {
         PENDING: "Pending",
         FAILURE: "Failure",
       },
+      CUSTOM_FIELDS: {
+        GR4VY_TRANSACTION_ID: {
+          NAME: "gr4vyTransactionId",
+          TYPE: "type",
+          KEY: "gr4vyTransactionId",
+        }
+      },
       MESSAGE_TYPES: {
         ORDER:{
           DELIVERY_ADDED:"DeliveryAdded",
