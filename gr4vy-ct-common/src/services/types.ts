@@ -46,10 +46,50 @@ export declare type Payment = {
   transactions: Transaction[]
 }
 
+export declare type OrderCustomFieldsRaw = {
+  name: string
+  value: string
+}
+
 export declare type Order = {
   id: string
   version: string
+  orderState: string
+  paymentState: string
   paymentInfo: {
     payments: Payment[]
+  },
+  returnInfo: [{
+    items: [{
+      id: string,
+      quantity: number,
+      type: string,
+      paymentState: string
+    }]
+  }],
+
+  totalPrice: {
+    type: string,
+    centAmount: number,
+    fractionDigits: number,
+    currencyCode: string
+  },
+
+  lineItems: [{
+    id: string
+    productId: string
+    quantity: number
+    totalPrice: {
+      centAmount: number
+    },
+    price: {
+      value: {
+        centAmount: number
+      }
+    }
+  }],
+
+  custom: {
+    customFieldsRaw: OrderCustomFieldsRaw[]
   }
 }

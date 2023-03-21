@@ -10,9 +10,8 @@ import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import { getLogger } from "./../../utils"
 
-const logger = getLogger()
-
 const processRequest = async (request: Request, response: ServerResponse) => {
+  const logger = getLogger()
   if (!isPostRequest(request)) {
     logger.debug(`Received non-POST request: ${request.method}. The request will not be processed!`)
     return ResponseHelper.setResponseError(response, {
