@@ -2,14 +2,14 @@ import { ApiClient } from "../../../clients/apiClient"
 import { getCustomObjectsByContainerQuery, variables } from "./query"
 import { responseMapper } from "./mapper"
 import { cache, keys } from "../../../cache"
-import { PaymentConfig } from '../../../services/types'
+import { PaymentConfig } from "../../../services/types"
 
 const getCustomObjects = async (): Promise<PaymentConfig> => {
   const cacheKey = keys.getGr4vyPaymentConfigCacheKey()
 
   if (cache.has(cacheKey)) {
-     const config: PaymentConfig = cache.get(cacheKey) || {} as PaymentConfig
-     return config;
+    const config: PaymentConfig = cache.get(cacheKey) || ({} as PaymentConfig)
+    return config
   }
   const apiClient: ApiClient = new ApiClient()
 

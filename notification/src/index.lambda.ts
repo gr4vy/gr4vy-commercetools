@@ -6,13 +6,12 @@ import { getLogger } from "./utils/logger.js"
 import { handleTransactionCapture, handleTransactionRefund, handleTransactionVoid } from "./handler"
 import { prepareRequestBody } from "./helper"
 
+// eslint-disable-next-line
 export const handler = async (event: any) => {
   const logger = getLogger()
-  logger.debug(
-      {
-        event: JSON.stringify(event)
-      }
-  )
+  logger.debug({
+    event: JSON.stringify(event),
+  })
   const body = prepareRequestBody(event)
 
   if (!body) {

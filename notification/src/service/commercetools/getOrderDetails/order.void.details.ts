@@ -3,7 +3,7 @@
 import { getOrderById } from "@gr4vy-ct/common"
 
 import { OrderVoidDetailsInterface } from "./interfaces"
-import {OrderDetails} from "./order.details";
+import { OrderDetails } from "./order.details"
 
 export class OrderVoidDetails extends OrderDetails implements OrderVoidDetailsInterface {
   voidAmount: number
@@ -33,7 +33,7 @@ export class OrderVoidDetails extends OrderDetails implements OrderVoidDetailsIn
       version,
       paymentId: payment?.id,
       paymentVersion: payment?.version,
-      paymentTransactionId: this.getTransactionId(order)
+      paymentTransactionId: this.getTransactionId(order),
     }
   }
 }

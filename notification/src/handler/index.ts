@@ -1,3 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { Constants } from "@gr4vy-ct/common"
+
 import {
   OrderCaptureDetails,
   captureOrder,
@@ -8,12 +12,8 @@ import {
   voidOrder,
 } from "./../service"
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import {getCustomObjects, ApiClient, Constants, getTransactionById} from "@gr4vy-ct/common"
-
 const {
-  STATES: { GR4VY, CT },
+  STATES: { CT },
 } = Constants
 
 async function handleTransactionCapture(body: { orderId: string }) {
@@ -71,13 +71,17 @@ async function handleTransactionRefund(body: { orderId: string; returnInfo: Refu
   }
 }
 
-async function handleTransactionVoid(body: { orderId: string, orderState: string, oldOrderState: string }) {
+async function handleTransactionVoid(body: {
+  orderId: string
+  orderState: string
+  oldOrderState: string
+}) {
   const orderState = body?.orderState
 
-  if(orderState != CT.ORDER.CANCELLED) {
+  if (orderState != CT.ORDER.CANCELLED) {
     return {
       orderVoidStatus: false,
-      message: `Order should be in Cancelled state to process void transaction. Current status is ${orderState}`
+      message: `Order should be in Cancelled state to process void transaction. Current status is ${orderState}`,
     }
   }
 
