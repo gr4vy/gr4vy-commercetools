@@ -12,9 +12,9 @@ import {
   updateBuyerDetails,
   updateCustomerCartAddress,
   manageBuyerShippingAddress,
-  getCustomerWithCart
+  getCustomerWithCart,
 } from "../../service"
-import { getLogger } from "./../../utils"
+import { getLogger, checkIfBuyerExists, createBuyerAndUpdateCT } from "./../../utils"
 
 const logger = getLogger()
 
@@ -33,9 +33,9 @@ const processRequest = async (request: Request, response: ServerResponse) => {
   }
 
   try {
-    const {locale} = request.body;
+    const { locale } = request.body
     //Get Active customer cart details
-    const {customer, cart} = await getCustomerWithCart(request, locale)
+    const { customer, cart } = await getCustomerWithCart(request, locale)
     if (customer?.gr4vyBuyerId?.value || cart?.gr4vyBuyerId?.value) {
       const paymentConfig = await getCustomObjects()
 
@@ -43,17 +43,29 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         throw { message: "Payment configuration is missing or empty", statusCode: 400 }
       }
 
+      const isBuyerExist = await checkIfBuyerExists({ customer, cart, paymentConfig })
+      if (!isBuyerExist) {
+        await createBuyerAndUpdateCT({ request, customer, cart, paymentConfig })
+      }
+
       // Update buyer details in Gr4vy
-      const { body: buyer } = await updateBuyerDetails({ customer, cart , paymentConfig})
+      const { body: buyer } = await updateBuyerDetails({ customer, cart, paymentConfig })
       if (!buyer) {
         throw { message: "Error in updating buyer in CTP for customer", statusCode: 400 }
       }
 
       //Create OR Update the Buyer Shipping Address
-      const { body: shippingDetail } = await manageBuyerShippingAddress({customer, cart, paymentConfig});
+      const { body: shippingDetail } = await manageBuyerShippingAddress({
+        customer,
+        cart,
+        paymentConfig,
+      })
 
       if (!shippingDetail) {
-        throw { message: "Error in updating buyer shipping address in CTP for customer", statusCode: 400 }
+        throw {
+          message: "Error in updating buyer shipping address in CTP for customer",
+          statusCode: 400,
+        }
       }
 
       if (shippingDetail?.id && cart.shippingAddress?.id) {
@@ -62,7 +74,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         }
 
         //Update Shipping Detail ID into the Shipping Address of the CT customer
-        const isUpdated = await updateCustomerCartAddress({customer, cart, paymentConfig})
+        const isUpdated = await updateCustomerCartAddress({ customer, cart, paymentConfig })
 
         if (!isUpdated) {
           throw {
@@ -72,16 +84,15 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         }
       }
 
-
       // create buyer in gr4vy if buyer id is not present
-      ResponseHelper.setResponseTo200(response, 'Successfully Updated the Buyer Details')
+      ResponseHelper.setResponseTo200(response, "Successfully Updated the Buyer Details")
     } else {
       throw { message: "Buyer ID is missing in CT data", statusCode: 400 }
     }
   } catch (e) {
     const errorStackTrace =
-        `Error updating buyer details in gr4vy request: Ending the process. ` +
-        `Error: ${JSON.stringify(e)}`
+      `Error updating buyer details in gr4vy request: Ending the process. ` +
+      `Error: ${JSON.stringify(e)}`
     logger.error(errorStackTrace)
 
     ResponseHelper.setResponseError(response, {
