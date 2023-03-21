@@ -14,7 +14,7 @@ import {
   manageBuyerShippingAddress,
   getCustomerWithCart,
 } from "../../service"
-import { getLogger, checkIfBuyerExists, createBuyerAndUpdateCT } from "./../../utils"
+import { getLogger } from "./../../utils"
 
 const logger = getLogger()
 
@@ -41,11 +41,6 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
       if (!paymentConfig) {
         throw { message: "Payment configuration is missing or empty", statusCode: 400 }
-      }
-
-      const isBuyerExist = await checkIfBuyerExists({ customer, cart, paymentConfig })
-      if (!isBuyerExist) {
-        await createBuyerAndUpdateCT({ request, customer, cart, paymentConfig })
       }
 
       // Update buyer details in Gr4vy

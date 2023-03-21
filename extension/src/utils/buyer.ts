@@ -1,42 +1,58 @@
 import { IncomingMessage } from "http"
 
-import { getBuyer, createBuyer, updateMyCustomerCart, updateMyCart } from "../service"
+import {
+  getBuyer as getGr4vyBuyer,
+  createBuyer as createGr4vyBuyer,
+  updateMyCustomerCart,
+  updateMyCart,
+} from "../service"
 import { Cart, Customer, PaymentConfig } from "../service/types"
 
-const checkIfBuyerExists = async ({
+const getBuyer = async ({
   customer,
   cart,
   paymentConfig,
 }: {
-  customer: Customer | null
-  cart: Cart
-  paymentConfig: PaymentConfig
-}): Promise<boolean> => {
-  //if there is no gr4vy buyer Id against cart or customer, see if it is there in Gr4vy.
-  const userId = customer?.id ?? cart.anonymousId
-  const {
-    body: { items },
-  } = await getBuyer({ userId, paymentConfig })
-
-  return !!items.length
-}
-
-const createBuyerAndUpdateCT = async ({
-  request,
-  customer,
-  cart,
-  paymentConfig,
-}: {
-  request: IncomingMessage
   customer: Customer | null
   cart: Cart
   paymentConfig: PaymentConfig
 }) => {
-  const { body: buyer } = await createBuyer({ customer, cart, paymentConfig })
+  //if there is no gr4vy buyer Id against cart or customer, see if it is there in Gr4vy.
+  const userId = customer?.id ?? cart.anonymousId
+  const {
+    body: { items },
+  } = await getGr4vyBuyer({ userId, paymentConfig })
+
+  return items.length > 0 ? items[0] : null
+}
+
+const createBuyer = async ({
+  customer,
+  cart,
+  paymentConfig,
+}: {
+  customer: Customer | null
+  cart: Cart
+  paymentConfig: PaymentConfig
+}) => {
+  const { body: buyer } = await createGr4vyBuyer({ customer, cart, paymentConfig })
   if (!buyer) {
     throw { message: "Error in creating buyer in CTP for customer", statusCode: 400 }
   }
+  return buyer
+}
 
+const setCTCustomBuyerID = async ({
+  request,
+  customer,
+  cart,
+  buyer,
+}: {
+  request: IncomingMessage
+  customer: Customer | null
+  cart: Cart
+  buyer: { id: string }
+}) => {
   // Update CT customer and cart with buyer info
   if (customer) {
     const isMyCustomerCartUpdated = await updateMyCustomerCart({
@@ -51,6 +67,7 @@ const createBuyerAndUpdateCT = async ({
         statusCode: 400,
       }
     }
+
     // Set gr4vyBuyerId in customer
     customer.gr4vyBuyerId = {
       value: buyer.id,
@@ -70,8 +87,6 @@ const createBuyerAndUpdateCT = async ({
       value: buyer.id,
     }
   }
-
-  return buyer
 }
 
-export { checkIfBuyerExists, createBuyerAndUpdateCT }
+export { getBuyer, createBuyer, setCTCustomBuyerID }
