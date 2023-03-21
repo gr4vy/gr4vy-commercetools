@@ -61,6 +61,11 @@ const getCustomerWithCartQuery = `
               currencyCode
               centAmount
             }
+            discounted {
+              value {
+                centAmount
+              }
+            }
           }
           productType {
             name
