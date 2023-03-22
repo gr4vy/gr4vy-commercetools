@@ -89,7 +89,6 @@ const getCartItem = (c: CartLineItem): CartItem => {
     taxedPrice,
     variant,
     price,
-    productId,
     //productType,
   } = c
 
@@ -122,7 +121,6 @@ const getCartItem = (c: CartLineItem): CartItem => {
     }
 
   return {
-    productId,
     name,
     quantity,
     unitAmount: price?.value?.centAmount - taxedPrice?.totalTax?.centAmount,
