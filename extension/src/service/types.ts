@@ -127,6 +127,7 @@ export declare type CartItem = {
   imageUrl?: string | null
   categories?: string[] | null
   productType: string | null
+  productId?: string
 }
 
 export declare type CustomerCartResult = {
