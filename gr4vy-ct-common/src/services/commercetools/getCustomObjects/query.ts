@@ -13,7 +13,7 @@ const getCustomObjectsByContainerQuery = `
             }
         }
     }
-`;
+`
 
 const variables = {
   containerName: Constants.CTP_GR4VY_PAYMENT_CONFIGURATION_CONTAINER,

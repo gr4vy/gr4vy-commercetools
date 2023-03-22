@@ -22,7 +22,7 @@ export declare type BuyerParams = {
 
 export declare type UpdateBuyerParams = {
   displayName?: string | null
-  externalIdentifier?: string | null,
+  externalIdentifier?: string | null
   billingDetails: {
     emailAddress?: string | null
     firstName?: string | null
@@ -57,5 +57,14 @@ export declare type UpdateBuyerShippingAddressParams = {
 
 export declare type TransactionCaptureParams = {
   amount: number
+  transactionId: string
+}
+
+export declare type TransactionRefundParams = {
+  amount: number
+  transactionId: string
+}
+
+export declare type TransactionVoidParams = {
   transactionId: string
 }
