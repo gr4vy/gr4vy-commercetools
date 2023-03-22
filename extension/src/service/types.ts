@@ -96,6 +96,11 @@ export declare type CartLineItem = {
       currencyCode: string
       centAmount: number
     }
+    discounted: {
+      value: {
+        centAmount: number
+      }
+    }
   }
   productType: {
     name: string

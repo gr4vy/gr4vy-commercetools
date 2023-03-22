@@ -92,17 +92,30 @@ const getCartItem = (c: CartLineItem): CartItem => {
     //productType,
   } = c
 
-  const discountedItemAmount =
-    Array.isArray(discountedPricePerQuantity) && discountedPricePerQuantity?.length > 0
-      ? discountedPricePerQuantity?.discountedPrice?.value?.centAmount
-      : null;
+  let discountItemAmount = 0;
+    let productDiscountAmount = 0;
 
+    const productPrice = price?.value?.centAmount;
+    const productDiscountPrice = price?.discounted?.value?.centAmount;
+    //calculate product level discount
+    if (productDiscountPrice) {
+        productDiscountAmount = (productPrice - productDiscountPrice) * quantity;
+    }
+
+    const discountedItemAmount =
+        Array.isArray(discountedPricePerQuantity) && discountedPricePerQuantity?.length > 0
+            ? discountedPricePerQuantity[0]?.discountedPrice?.value?.centAmount
+            : 0;
     //calculate total discount amount in all the quantity of items.
-    let discountItemAmount = 0;
-    if(discountedItemAmount) {
-      const totalItemAmount = price?.value?.centAmount * quantity;
-
-      discountItemAmount = totalItemAmount - discountedItemAmount;
+    if (discountedItemAmount) {
+        const totalItemAmount = price?.value?.centAmount * quantity;
+        discountItemAmount = totalItemAmount - discountedItemAmount;
+    }
+    //Calculate product level discount only if cart level discount is not present.
+    //If both cart level and product level discounts are active, discountedPricePerQuantity will
+    //contain the total of cart level and product level discount values
+    if (!discountedItemAmount && productDiscountAmount) {
+        discountItemAmount = discountItemAmount + productDiscountAmount
     }
 
   return {

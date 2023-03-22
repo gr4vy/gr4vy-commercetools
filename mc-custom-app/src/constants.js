@@ -5,3 +5,22 @@ import config from './gr4vy.config.json';
 export const entryPointUriPath = config.ENTRY_POINT;
 
 export const PERMISSIONS = entryPointUriPathToPermissionKeys(entryPointUriPath);
+
+export const gravyStatementDescriptorValidator = {
+  url: {
+    min: 1,
+    max: 13,
+  },
+  city: {
+    min: 1,
+    max: 13,
+  },
+  name: {
+    min: 5,
+    max: 22,
+  },
+  phone: {
+    min: 5,
+    max: 20,
+  },
+};
