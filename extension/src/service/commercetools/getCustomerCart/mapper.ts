@@ -97,17 +97,19 @@ const getCartItem = (c: CartLineItem): CartItem => {
 
     const productPrice = price?.value?.centAmount;
     const productDiscountPrice = price?.discounted?.value?.centAmount;
+
     //calculate product level discount
-    if (productDiscountPrice) {
+    if (productDiscountPrice != null) {
         productDiscountAmount = (productPrice - productDiscountPrice) * quantity;
     }
 
     const discountedItemAmount =
         Array.isArray(discountedPricePerQuantity) && discountedPricePerQuantity?.length > 0
             ? discountedPricePerQuantity[0]?.discountedPrice?.value?.centAmount
-            : 0;
+            : null;
+
     //calculate total discount amount in all the quantity of items.
-    if (discountedItemAmount) {
+    if (discountedItemAmount != null) {
         const totalItemAmount = price?.value?.centAmount * quantity;
         discountItemAmount = totalItemAmount - (discountedItemAmount * quantity);
     }
