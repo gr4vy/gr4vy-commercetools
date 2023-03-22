@@ -5,16 +5,15 @@ import { Order } from "@gr4vy-ct/common/src/services/types"
 
 import { OrderRefundDetailsInterface } from "./interfaces"
 import { RefundMessageObject } from "../../types"
-import {OrderDetails} from "./order.details";
+import { OrderDetails } from "./order.details"
 
 export class OrderRefundDetails extends OrderDetails implements OrderRefundDetailsInterface {
-
   refundAmount: number
 
   private refundObject: RefundMessageObject
 
   constructor(orderId: string, refundObject: RefundMessageObject) {
-    super(orderId);
+    super(orderId)
     this.refundObject = refundObject
   }
 
@@ -44,12 +43,16 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
       STATES: { CT },
     } = Constants
 
+    // eslint-disable-next-line
     order.returnInfo.forEach((returnInfo: { items: any[] }) => {
       returnInfo.items.forEach(returnItem => {
         this.refundObject.items.find(function (refundItem) {
-          if (refundItem.id == returnItem.id && returnItem.paymentState == CT.ORDER_RETURN_PAYMENT.REFUNDED) {
+          if (
+            refundItem.id == returnItem.id &&
+            returnItem.paymentState == CT.ORDER_RETURN_PAYMENT.REFUNDED
+          ) {
             throw new Error(
-                "Return Items contain some items those were already refunded - " + returnItem.id
+              "Return Items contain some items those were already refunded - " + returnItem.id
             )
           }
         })
@@ -71,7 +74,7 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
       version,
       paymentId: payment?.id,
       paymentVersion: payment?.version,
-      paymentTransactionId: this.getTransactionId(order)
+      paymentTransactionId: this.getTransactionId(order),
     }
   }
 }

@@ -4,8 +4,8 @@ export declare type Delivery = {
 }
 
 export declare type OrderUpdate = {
-  orderState: string,
-  paymentState: string,
+  orderState: string
+  paymentState: string
   version: string
   orderId: string
 }
@@ -32,51 +32,51 @@ export declare type Void = {
 export declare type PaymentConfig = {
   gr4vyId: string
   privateKey: string
-  environment?: 'production' | 'sandbox'
-  paymentSource?: 'installment' | 'moto' | 'recurring'
+  environment?: "production" | "sandbox"
+  paymentSource?: "installment" | "moto" | "recurring"
   requiredSecurityCode?: string | null
   theme: object
-  intent?: 'authorize' | 'capture' | 'approve'
+  intent?: "authorize" | "capture" | "approve"
   payment_type: string | null
   active: number | null
   debug?: boolean | null
   allowspecific: number | null //TBD: Change to string
-  paymentStore?: 'ask' | boolean
+  paymentStore?: "ask" | boolean
   metadata?: Record<string, string>
   customData?: string | null
 }
 
 export declare type TransactionCapture = {
-  capture: Capture,
+  capture: Capture
   paymentConfig: PaymentConfig
 }
 
 export declare type TransactionRefund = {
-  refund: Refund,
+  refund: Refund
   paymentConfig: PaymentConfig
 }
 
 export declare type TransactionVoid = {
-  voidTxion: Void,
+  voidTxion: Void
   paymentConfig: PaymentConfig
 }
 
 export declare type TrasactionRefundResponse = {
-  type: string,
+  type: string
   id: string
-  transaction_id: string,
-  status: string,
-  currency: string,
-  amount: number,
-  created_at: string,
+  transaction_id: string
+  status: string
+  currency: string
+  amount: number
+  created_at: string
   updated_at: string
 }
 
-export declare type RefundMessageObject= {
+export declare type RefundMessageObject = {
   items: [
     {
-      id: string,
-      lineItemId: string;
+      id: string
+      lineItemId: string
       quantity: number
     }
   ]

@@ -11,7 +11,7 @@ export const Constants = {
         AUTHORIZATION_DECLINED: "authorization_declined",
         AUTHORIZATION_FAILED: "authorization_failed",
         AUTHORIZATION_VOIDED: "authorization_voided",
-        REFUND_SUCCEEDED: "succeeded"
+        REFUND_SUCCEEDED: "succeeded",
       },
     },
     CT: {
@@ -26,7 +26,7 @@ export const Constants = {
         FAILED: "Failed",
       },
       ORDER_RETURN_PAYMENT: {
-        REFUNDED: "Refunded"
+        REFUNDED: "Refunded",
       },
       TRANSACTION: {
         TYPES: {
@@ -42,15 +42,15 @@ export const Constants = {
           NAME: "gr4vyTransactionId",
           TYPE: "type",
           KEY: "gr4vyTransactionId",
-        }
+        },
       },
       MESSAGE_TYPES: {
-        ORDER:{
-          DELIVERY_ADDED:"DeliveryAdded",
-          RETURN_INFO_ADDED:"ReturnInfoAdded",
-          ORDER_STATE_CHANGED:"OrderStateChanged"
-        }
-      }
+        ORDER: {
+          DELIVERY_ADDED: "DeliveryAdded",
+          RETURN_INFO_ADDED: "ReturnInfoAdded",
+          ORDER_STATE_CHANGED: "OrderStateChanged",
+        },
+      },
     },
   },
 }

@@ -1,9 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getOrderById } from "@gr4vy-ct/common"
+import { Constants } from "@gr4vy-ct/common"
 import { Order } from "@gr4vy-ct/common/src/services/types"
 
-import {OrderMainInterface} from "./interfaces"
+import { OrderMainInterface } from "./interfaces"
 
 class OrderDetails implements OrderMainInterface {
   orderId: string
@@ -17,10 +17,15 @@ class OrderDetails implements OrderMainInterface {
     this.orderId = orderId
   }
 
-  getTransactionId(order:Order) {
+  getTransactionId(order: Order) {
+    const {
+      STATES: { CT },
+    } = Constants
     const customFieldsRaw = order?.custom?.customFieldsRaw
-    const customFieldsItem = customFieldsRaw.find((fieldItem) => fieldItem.name === 'gr4vyTransactionId')
-    return customFieldsItem ? customFieldsItem.value : ''
+    const customFieldsItem = customFieldsRaw.find(
+      fieldItem => fieldItem.name === CT.CUSTOM_FIELDS.GR4VY_TRANSACTION_ID.KEY
+    )
+    return customFieldsItem ? customFieldsItem.value : ""
   }
 }
 
