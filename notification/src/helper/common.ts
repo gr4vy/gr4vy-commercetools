@@ -9,7 +9,11 @@ const prepareRequestBody = (event: { Records: any }) => {
     try {
       parsedBody = JSON.parse(body)
     } catch (e) {
-      return {}
+      if (e.message.includes('Unexpected token')) {
+        parsedBody = body
+      } else {
+        return {}
+      }
     }
     const typeId = parsedBody?.resource?.typeId
     if (typeId && typeId === "order") {
