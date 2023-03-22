@@ -3,7 +3,7 @@
 import { getOrderById } from "@gr4vy-ct/common"
 
 import { OrderDetailsInterface } from "./interfaces"
-import {OrderDetails} from "./order.details";
+import { OrderDetails } from "./order.details"
 
 class OrderCaptureDetails extends OrderDetails implements OrderDetailsInterface {
   totalAmount: number
@@ -32,7 +32,7 @@ class OrderCaptureDetails extends OrderDetails implements OrderDetailsInterface 
       version,
       paymentId: payment?.id,
       paymentVersion: payment?.version,
-      paymentTransactionId: this.getTransactionId(order)
+      paymentTransactionId: this.getTransactionId(order),
     }
   }
 }

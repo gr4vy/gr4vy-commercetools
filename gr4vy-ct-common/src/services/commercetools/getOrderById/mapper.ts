@@ -1,11 +1,12 @@
-import {Order} from "./../../types"
-
+import { Order } from "./../../types"
+// eslint-disable-next-line
 const responseMapper = async (
-    result: any
+  // eslint-disable-next-line
+  result: any
 ): Promise<{
-    order: Order
+  order: Order
 }> => {
-    return result?.body?.data?.order || {}
+  return result?.body?.data?.order || {}
 }
 
 export { responseMapper }

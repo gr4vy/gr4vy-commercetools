@@ -1,20 +1,20 @@
 export interface OrderMainInterface {
-    orderId: string
-    version: string
-    paymentVersion: number
-    currencyCode: string
-    paymentId: string
-    paymentTransactionId: string
+  orderId: string
+  version: string
+  paymentVersion: number
+  currencyCode: string
+  paymentId: string
+  paymentTransactionId: string
 }
 export interface OrderDetailsInterface extends OrderMainInterface {
-    totalAmount: number
+  totalAmount: number
 }
 
 export interface OrderRefundDetailsInterface extends OrderMainInterface {
-    refundAmount: number
+  refundAmount: number
 }
 
 export interface OrderVoidDetailsInterface extends OrderMainInterface {
-    voidAmount: number
-    currencyCode: string
+  voidAmount: number
+  currencyCode: string
 }

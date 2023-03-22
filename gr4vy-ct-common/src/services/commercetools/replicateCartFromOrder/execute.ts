@@ -1,9 +1,15 @@
-import {IncomingMessage} from "http"
-import {ApiClient} from "../../../clients/apiClient"
-import {replicateCartFromOrderQuery} from "./query"
-import {responseMapper} from "./mapper"
+import { IncomingMessage } from "http"
 
-const replicateCartFromOrder = async ({ orderId }: { request: IncomingMessage; orderId: string }) => {
+import { ApiClient } from "../../../clients/apiClient"
+import { replicateCartFromOrderQuery } from "./query"
+import { responseMapper } from "./mapper"
+
+const replicateCartFromOrder = async ({
+  orderId,
+}: {
+  request: IncomingMessage
+  orderId: string
+}) => {
   const apiClient: ApiClient = new ApiClient()
   apiClient.setBody({
     query: replicateCartFromOrderQuery,

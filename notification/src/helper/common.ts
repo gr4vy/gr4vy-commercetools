@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 const prepareRequestBody = (event: { Records: any }) => {
   if (!event || !event.Records) return {}
 
