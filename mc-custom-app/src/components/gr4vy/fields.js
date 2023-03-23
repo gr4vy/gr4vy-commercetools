@@ -255,7 +255,7 @@ export const formSections = [
             id: 'containerBackground',
             parent: 'colors',
             superParent: 'themeOptions',
-            title: 'Container Backgroung Color',
+            title: 'Container Background Color',
             type: 'colorPalette',
           },
           {
