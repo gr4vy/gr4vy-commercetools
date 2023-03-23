@@ -43,5 +43,5 @@
     },
     "shadows": { "focusRing": "0 0 0 2px #ffffff, 0 0 0 4px #4844ff" }
   },
-  "intent": "authorize"
+  "intent": "capture"
 }
