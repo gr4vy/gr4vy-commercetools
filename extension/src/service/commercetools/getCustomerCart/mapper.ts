@@ -89,6 +89,7 @@ const getCartItem = (c: CartLineItem): CartItem => {
     taxedPrice,
     variant,
     price,
+    productId,
     //productType,
   } = c
 
@@ -131,6 +132,7 @@ const getCartItem = (c: CartLineItem): CartItem => {
     imageUrl: Array.isArray(variant?.images) ? variant?.images[0]?.url : null,
     categories: null,
     productType: 'physical' || null,
+    productId,
   }
 }
 
