@@ -255,7 +255,7 @@ export const formSections = [
             id: 'containerBackground',
             parent: 'colors',
             superParent: 'themeOptions',
-            title: 'Container Backgroung Color',
+            title: 'Container Background Color',
             type: 'colorPalette',
           },
           {
@@ -406,7 +406,7 @@ export const formSections = [
             id: 'focusRing',
             parent: 'shadows',
             superParent: 'themeOptions',
-            title: 'Font Ring',
+            title: 'Focus Ring',
             type: 'text',
             tooltip: 'Surrounds an element that is currently focused',
           },

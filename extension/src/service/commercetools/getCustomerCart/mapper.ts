@@ -86,9 +86,10 @@ const getCartItem = (c: CartLineItem): CartItem => {
     name,
     quantity,
     discountedPricePerQuantity,
-    //taxedPrice,
+    taxedPrice,
     variant,
     price,
+    productId,
     //productType,
   } = c
 
@@ -97,19 +98,21 @@ const getCartItem = (c: CartLineItem): CartItem => {
 
     const productPrice = price?.value?.centAmount;
     const productDiscountPrice = price?.discounted?.value?.centAmount;
+
     //calculate product level discount
-    if (productDiscountPrice) {
+    if (productDiscountPrice != null) {
         productDiscountAmount = (productPrice - productDiscountPrice) * quantity;
     }
 
     const discountedItemAmount =
         Array.isArray(discountedPricePerQuantity) && discountedPricePerQuantity?.length > 0
             ? discountedPricePerQuantity[0]?.discountedPrice?.value?.centAmount
-            : 0;
+            : null;
+
     //calculate total discount amount in all the quantity of items.
-    if (discountedItemAmount) {
+    if (discountedItemAmount != null) {
         const totalItemAmount = price?.value?.centAmount * quantity;
-        discountItemAmount = totalItemAmount - discountedItemAmount;
+        discountItemAmount = totalItemAmount - (discountedItemAmount * quantity);
     }
     //Calculate product level discount only if cart level discount is not present.
     //If both cart level and product level discounts are active, discountedPricePerQuantity will
@@ -121,14 +124,15 @@ const getCartItem = (c: CartLineItem): CartItem => {
   return {
     name,
     quantity,
-    unitAmount: price?.value?.centAmount,
+    unitAmount: price?.value?.centAmount - taxedPrice?.totalTax?.centAmount,
     discountAmount: discountItemAmount,
-    //taxAmount: taxedPrice?.totalTax?.centAmount || null,
+    taxAmount: taxedPrice?.totalTax?.centAmount * quantity || null,
     externalIdentifier: id,
     sku: variant?.sku || null,
     imageUrl: Array.isArray(variant?.images) ? variant?.images[0]?.url : null,
     categories: null,
     productType: 'physical' || null,
+    productId,
   }
 }
 

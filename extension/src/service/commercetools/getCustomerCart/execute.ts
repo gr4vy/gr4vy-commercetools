@@ -72,7 +72,11 @@ const setProductCategoryInResult = async (
   })
 
   result.cartItems.forEach((cartItem: CartItem) => {
-    cartItem.categories = productCategoryMapper[cartItem.externalIdentifier] ?? []
+    const productId = cartItem.productId || ""
+    cartItem.categories = productCategoryMapper[productId] ?? []
+    
+    //Delete productId from the response
+    delete cartItem.productId
   })
 }
 

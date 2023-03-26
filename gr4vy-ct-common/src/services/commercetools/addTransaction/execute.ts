@@ -34,7 +34,30 @@ const addTransaction = async ({
     refundState = Constants.GR4VY_REFUND_PROCESSING
   }
 
-  apiClient.setBody({
+  const hhh = {
+    payments:[{
+      paymentId:""
+    },{
+      paymentId:""
+    }]
+  }
+
+  const variableObject =
+    {
+      paymentId: "84876d97-e1c4-494a-87bd-c31bddd9a9df",
+      paymentVersion: "4",
+      transactionType: Constants.CT_REFUND_TRANSACTION_TYPE,
+      refundAmount: "10",
+      transactionCurrency: "EUR",
+      interactionId: Constants.PAYMENT_INTERACTION_ID,
+      state: refundState,
+      typeKey: Constants.CT_CUSTOM_FIELD_TRANSACTION_REFUND,
+      refundId: escapedJSON("twst-test-test")
+    }
+
+
+
+  /*apiClient.setBody({
     query: updatePaymentMutation,
     variables: {
       paymentId: payment?.id,
@@ -47,7 +70,13 @@ const addTransaction = async ({
       typeKey: Constants.CT_CUSTOM_FIELD_TRANSACTION_REFUND,
       refundId: escapedJSON(refundItem.id)
     },
+  })*/
+
+  apiClient.setBody({
+    query: updatePaymentMutation,
+    variables: hhh
   })
+
 console.log('refundState')
   console.log(refundState)
   return 'success'
