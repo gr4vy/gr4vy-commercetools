@@ -91,6 +91,11 @@ const getCustomerWithCartQuery = `
             centAmount
             currencyCode
           }
+          discountedPrice{
+            value{
+              centAmount
+            }
+          }
           shippingMethodName
         }
       }
