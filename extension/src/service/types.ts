@@ -84,6 +84,7 @@ export declare type CartLineItem = {
   }
   quantity: number
   discountedPricePerQuantity: {
+    quantity: number
     discountedPrice: {
       value: {
         currencyCode: string
