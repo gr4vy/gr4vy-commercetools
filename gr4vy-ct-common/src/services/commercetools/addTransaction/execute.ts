@@ -1,17 +1,11 @@
 import { ApiClient } from "../../../clients/apiClient"
-import { updatePaymentMutation } from "./query"
+import { getMutationQuery, prepareTransactionQuery } from "./query"
 import { responseMapper } from "./mapper"
 import { Order, RefundItem } from "./../../types"
 import { Constants } from "./../../../config"
 import { escapedJSON } from "./../../../utils"
 
-const addTransaction = async ({
-  order,
-  refundItem
-}: {
-  order: Order,
-  refundItem: RefundItem
-}) => {
+const addTransaction = async ({ order, refundItem }: { order: Order; refundItem: RefundItem }) => {
   const apiClient: ApiClient = new ApiClient()
 
   const [payment] = order?.paymentInfo?.payments || []
@@ -34,28 +28,31 @@ const addTransaction = async ({
     refundState = Constants.GR4VY_REFUND_PROCESSING
   }
 
-  const hhh = {
-    payments:[{
-      paymentId:""
-    },{
-      paymentId:""
-    }]
+  const variables = {
+    payments: [
+      {
+        paymentId: "84876d97-e1c4-494a-87bd-c31bddd9a9df",
+        paymentVersion: "4",
+        transactionType: Constants.CT_REFUND_TRANSACTION_TYPE,
+        refundAmount: "10",
+        transactionCurrency: "EUR",
+        interactionId: Constants.PAYMENT_INTERACTION_ID,
+        state: refundState,
+        typeKey: Constants.CT_CUSTOM_FIELD_TRANSACTION_REFUND,
+        refundId: escapedJSON("twst-test-test"),
+      },
+    ],
   }
 
-  const variableObject =
-    {
-      paymentId: "84876d97-e1c4-494a-87bd-c31bddd9a9df",
-      paymentVersion: "4",
-      transactionType: Constants.CT_REFUND_TRANSACTION_TYPE,
-      refundAmount: "10",
-      transactionCurrency: "EUR",
-      interactionId: Constants.PAYMENT_INTERACTION_ID,
-      state: refundState,
-      typeKey: Constants.CT_CUSTOM_FIELD_TRANSACTION_REFUND,
-      refundId: escapedJSON("twst-test-test")
-    }
+  let transactionQueries = ""
+  for (const [index, variable] of variables.payments.entries()) {
+    transactionQueries += prepareTransactionQuery(index, variable)
+  }
 
-
+  apiClient.setBody({
+    query: getMutationQuery(transactionQueries),
+    variables: {},
+  })
 
   /*apiClient.setBody({
     query: updatePaymentMutation,
@@ -72,14 +69,9 @@ const addTransaction = async ({
     },
   })*/
 
-  apiClient.setBody({
-    query: updatePaymentMutation,
-    variables: hhh
-  })
-
-console.log('refundState')
-  console.log(refundState)
-  return 'success'
+  // console.log("refundState")
+  // console.log(refundState)
+  return "success"
   //return responseMapper(await apiClient.getData())
 }
 

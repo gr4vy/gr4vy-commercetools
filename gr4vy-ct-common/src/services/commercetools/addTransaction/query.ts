@@ -1,26 +1,24 @@
 // GraphQL query to update payment by adding the new transaction
-const updatePaymentMutation = `
-mutation (
-    $variableObject                                                                                                                                                                                                                                                                   
-){
-  updatePayment(
-    id:$paymentId,
-    version: $paymentVersion,
+
+export const prepareTransactionQuery = (index: number, variable: any) => {
+  const query = `addTransaction${index}: updatePayment(
+    id: ${variable.paymentId},
+    version: ${variable.paymentVersion},
     actions: {
       addTransaction: {
         transaction: {
-          type: $transactionType
+          type: ${variable.transactionType}
           amount: {
-            centAmount: $refundAmount
-            currencyCode: $transactionCurrency
+            centAmount: ${variable.refundAmount}
+            currencyCode: ${variable.transactionCurrency}
           }   
-          interactionId: $interactionId
-          state: $state
+          interactionId: ${variable.interactionId}
+          state: ${variable.state}
           custom: {
-            typeKey: $typeKey
+            typeKey: ${variable.typeKey}
             fields: {
-              name: $typeKey
-              value: $refundId
+              name: ${variable.typeKey}
+              value: ${variable.refundId}
             }
           }
         }
@@ -28,9 +26,17 @@ mutation (
     }
   ){
     id
-  }
+  }`
+  return query
 }
-`
 
-export { updatePaymentMutation }
+const getMutationQuery = (transactionQueries: string) => {
+  const updatePaymentMutation = `
+  mutation {
+    ${transactionQueries}
+  }
+  `
+  return updatePaymentMutation
+}
 
+export { getMutationQuery }
