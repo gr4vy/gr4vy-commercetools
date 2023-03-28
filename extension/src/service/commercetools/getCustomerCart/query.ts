@@ -49,6 +49,7 @@ const getCustomerWithCartQuery = `
           }
           quantity
           discountedPricePerQuantity {
+            quantity
             discountedPrice {
               value {
                 currencyCode
