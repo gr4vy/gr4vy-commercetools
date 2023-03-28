@@ -213,6 +213,25 @@ const Gr4vy = () => {
         }
       }
 
+      // ---------------Removing unwanted keys from payload - GROPT-189--------------
+      for (let theme of Object.keys(values?.themeOptions)) {
+        if (
+          values?.themeOptions[theme] === undefined ||
+          Object.keys(values?.themeOptions[theme]).length === 0
+        ) {
+          delete values?.themeOptions[theme];
+        } else {
+          for (let key of Object.keys(values?.themeOptions[theme])) {
+            if (
+              values?.themeOptions[theme][key] === undefined ||
+              values?.themeOptions[theme][key].length === 0
+            ) {
+              delete values?.themeOptions[theme][key];
+            }
+          }
+        }
+      }
+
       saveCustomObject({
         ...values,
       });
