@@ -3,7 +3,7 @@ import { mutationQuery, mutationQueryWithoutTransaction } from "./query"
 import { responseMapper, responseMapperWithoutTransaction } from "./mapper"
 import { Order } from "./../../types"
 
-const updateStatus = async ({
+const resolveStatus = async ({
   order,
   orderState,
   orderPaymentState,
@@ -55,4 +55,4 @@ const updateStatus = async ({
   }
 }
 
-export { updateStatus }
+export { resolveStatus }

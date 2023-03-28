@@ -101,6 +101,12 @@ export declare type Order = {
   }
 }
 
+export declare type RefundItems = [
+  RefundItem
+]
+
+
+
 export declare type RefundItem = {
   type: string
   id: string

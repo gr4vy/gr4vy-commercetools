@@ -1,24 +1,34 @@
 // GraphQL query to update payment by adding the new transaction
-
-export const prepareTransactionQuery = (index: number, variable: any) => {
-  const query = `addTransaction${index}: updatePayment(
-    id: ${variable.paymentId},
-    version: ${variable.paymentVersion},
+const updatePaymentMutation = `
+mutation (
+    $paymentId:String!, 
+    $paymentVersion:Long!, 
+    $transactionType: TransactionType!,
+    $refundAmount: Long!,
+    $transactionCurrency: Currency!
+    $interactionId: String
+    $state: TransactionState
+    $typeKey: String!
+    $refundId: String!                                                                                                                                                                                                                                                                         
+){
+  updatePayment(
+    id:$paymentId,
+    version: $paymentVersion,
     actions: {
       addTransaction: {
         transaction: {
-          type: ${variable.transactionType}
+          type: $transactionType
           amount: {
-            centAmount: ${variable.refundAmount}
-            currencyCode: ${variable.transactionCurrency}
+            centAmount: $refundAmount
+            currencyCode: $transactionCurrency
           }   
-          interactionId: ${variable.interactionId}
-          state: ${variable.state}
+          interactionId: $interactionId
+          state: $state
           custom: {
-            typeKey: ${variable.typeKey}
+            typeKey: $typeKey
             fields: {
-              name: ${variable.typeKey}
-              value: ${variable.refundId}
+              name: $typeKey
+              value: $refundId
             }
           }
         }
@@ -26,17 +36,8 @@ export const prepareTransactionQuery = (index: number, variable: any) => {
     }
   ){
     id
-  }`
-  return query
-}
-
-const getMutationQuery = (transactionQueries: string) => {
-  const updatePaymentMutation = `
-  mutation {
-    ${transactionQueries}
   }
-  `
-  return updatePaymentMutation
 }
+`
 
-export { getMutationQuery }
+export { updatePaymentMutation }

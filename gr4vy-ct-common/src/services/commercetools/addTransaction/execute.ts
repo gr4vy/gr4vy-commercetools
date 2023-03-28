@@ -1,5 +1,5 @@
 import { ApiClient } from "../../../clients/apiClient"
-import { getMutationQuery, prepareTransactionQuery } from "./query"
+import { updatePaymentMutation } from "./query"
 import { responseMapper } from "./mapper"
 import { Order, RefundItem } from "./../../types"
 import { Constants } from "./../../../config"
@@ -28,33 +28,7 @@ const addTransaction = async ({ order, refundItem }: { order: Order; refundItem:
     refundState = Constants.GR4VY_REFUND_PROCESSING
   }
 
-  const variables = {
-    payments: [
-      {
-        paymentId: "84876d97-e1c4-494a-87bd-c31bddd9a9df",
-        paymentVersion: "4",
-        transactionType: Constants.CT_REFUND_TRANSACTION_TYPE,
-        refundAmount: "10",
-        transactionCurrency: "EUR",
-        interactionId: Constants.PAYMENT_INTERACTION_ID,
-        state: refundState,
-        typeKey: Constants.CT_CUSTOM_FIELD_TRANSACTION_REFUND,
-        refundId: escapedJSON("twst-test-test"),
-      },
-    ],
-  }
-
-  let transactionQueries = ""
-  for (const [index, variable] of variables.payments.entries()) {
-    transactionQueries += prepareTransactionQuery(index, variable)
-  }
-
   apiClient.setBody({
-    query: getMutationQuery(transactionQueries),
-    variables: {},
-  })
-
-  /*apiClient.setBody({
     query: updatePaymentMutation,
     variables: {
       paymentId: payment?.id,
@@ -67,12 +41,9 @@ const addTransaction = async ({ order, refundItem }: { order: Order; refundItem:
       typeKey: Constants.CT_CUSTOM_FIELD_TRANSACTION_REFUND,
       refundId: escapedJSON(refundItem.id)
     },
-  })*/
+  })
 
-  // console.log("refundState")
-  // console.log(refundState)
-  return "success"
-  //return responseMapper(await apiClient.getData())
+  return responseMapper(await apiClient.getData())
 }
 
 export { addTransaction }

@@ -3,7 +3,7 @@ import { ServerResponse } from "http"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {getTransactionById,getOrderApiClient,updateStatus,updateOrderStatus,listTransactionRefunds,addTransaction} from "@gr4vy-ct/common"
+import {getTransactionById,getOrderApiClient,resolveStatus,updateOrderStatus,listTransactionRefunds,addTransaction} from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
@@ -134,7 +134,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
     if (gr4vyRefundedAmount) {
       //Create the transaction
-      const {items} = await listTransactionRefunds(gr4vyTransactionId)
+      const { items } = await listTransactionRefunds(gr4vyTransactionId)
       if (!items) {
         throw {
           message: `Error in fetching gr4vy refund transaction for ID ${gr4vyTransactionId}`,
@@ -143,21 +143,22 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       }
 
       if (items && Array.isArray(items)) {
-        await Promise.all(items.map(async (refundItem) => {
-          if (Array.isArray(transactionArray)) {
-            if(!(transactionArray.find(transactionArray => transactionArray === refundItem.id))) {
-              refundItem.paymentVersion = paymentVersionNumber
-              const isAdded = await addTransaction({order, refundItem})
-              paymentVersionNumber++
-            }
+
+        const addTransactions = Array.isArray(items) ? items.map((refundItem) => {
+          if(!transactionArray.includes(refundItem.id)){
+            refundItem.paymentVersion = paymentVersionNumber
+            paymentVersionNumber++
+            return addTransaction({order, refundItem})
           }
-        }))
+        }) : []
+
+        Promise.all(addTransactions).then().catch()
       }
     }
 
     const {orderState, orderPaymentState, transactionState} = await updateOrderStatus({orderId, status, transaction, ctTransactionType, gr4vyTransactionType})
 
-    const result = await updateStatus({
+    const result = await resolveStatus({
       order,
       orderState,
       orderPaymentState,

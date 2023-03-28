@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-const responseMapper = (response: any) => {
+const responseMapper = (response: any):boolean => {
   return !!response?.body?.data?.updatePayment
 }
 
