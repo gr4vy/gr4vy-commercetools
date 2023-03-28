@@ -11,4 +11,5 @@ export default {
   defaultLocale: "en",
   // Guest user
   CT_GUEST_USER: "ct_guest_user",
+  CT_CUSTOM_FIELD_TRANSACTION_REFUND: "gr4vyRefundId"
 }

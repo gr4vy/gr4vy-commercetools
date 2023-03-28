@@ -145,6 +145,11 @@ export class Gr4vy {
     return this.client.getTransaction(transactionId)
   }
 
+  listTransactionRefunds(transactionId: string) {
+    logger.debug("listTransactionRefunds", transactionId)
+    return this.client.listTransactionRefunds(transactionId)
+  }
+
   listBuyer(userId: string) {
     logger.debug("listBuyer", userId)
     const result = this.client.listBuyers(userId, 1)
