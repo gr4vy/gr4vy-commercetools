@@ -83,7 +83,7 @@ export declare type CartLineItem = {
     }
   }
   quantity: number
-  discountedPricePerQuantity: {
+  discountedPricePerQuantity: [{
     quantity: number
     discountedPrice: {
       value: {
@@ -91,7 +91,7 @@ export declare type CartLineItem = {
         centAmount: number
       }
     }
-  }
+  }]
   price: {
     value: {
       currencyCode: string

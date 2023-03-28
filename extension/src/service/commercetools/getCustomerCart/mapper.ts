@@ -107,7 +107,7 @@ const getCartItem = (c: CartLineItem): CartItem => {
     let cartDiscountedItemAmount = 0;
     let cartDiscountActive = false;
 
-    if(Array.isArray(discountedPricePerQuantity) && discountedPricePerQuantity?.length > 0){
+    if(discountedPricePerQuantity?.length > 0){
       cartDiscountActive = true;
       discountedPricePerQuantity.forEach(
           function (item) {
