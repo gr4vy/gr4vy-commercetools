@@ -3,7 +3,7 @@ import { ServerResponse } from "http"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getTransactionById, getOrderApiClient, resolveStatus, updateOrderStatus, listTransactionRefunds, addTransaction, } from "@gr4vy-ct/common"
+import { getTransactionById, getOrderById, resolveStatus, updateOrderStatus, listTransactionRefunds, addTransaction, } from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
@@ -73,7 +73,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     } = gr4vyTransaction?.body || {}
 
     // Get order payment and transaction details
-    const order = await getOrderApiClient({ orderId })
+    const order = await getOrderById(orderId)
 
     if (!order) {
       throw {
