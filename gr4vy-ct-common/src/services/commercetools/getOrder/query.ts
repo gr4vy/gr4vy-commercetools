@@ -10,6 +10,10 @@ query ($orderId: String) {
           payments {
             id
             version
+            interfaceId
+            paymentMethodInfo {
+              paymentInterface
+            }
             transactions {
               id
               type
