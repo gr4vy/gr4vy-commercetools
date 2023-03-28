@@ -3,13 +3,13 @@ import { ServerResponse } from "http"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {getTransactionById,getOrderApiClient,resolveStatus,updateOrderStatus,listTransactionRefunds,addTransaction} from "@gr4vy-ct/common"
+import { getTransactionById, getOrderApiClient, resolveStatus, updateOrderStatus, listTransactionRefunds, addTransaction, } from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import { getLogger } from "./../../utils"
-import c from "../../config/constants";
+import c from "../../config/constants"
 
 const logger = getLogger()
 
@@ -30,14 +30,14 @@ const processRequest = async (request: Request, response: ServerResponse) => {
   try {
     const { type: webhookEventType, target } = request.body
 
-    if (!webhookEventType || (webhookEventType && webhookEventType !== 'event')) {
+    if (!webhookEventType || (webhookEventType && webhookEventType !== "event")) {
       throw {
         message: `A Webhook request was received with an invalid entity type - ${webhookEventType}`,
         statusCode: 422,
       }
     }
 
-    if (!target || (target.type && target.type !== 'transaction')) {
+    if (!target || (target.type && target.type !== "transaction")) {
       throw {
         message: `A Webhook request was received with an invalid entity target type - ${target?.type}`,
         statusCode: 422,
@@ -93,7 +93,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
     let paymentVersionNumber = payment?.version
 
-    const allTransaction = payment?.transactions;
+    const allTransaction = payment?.transactions
     const [transaction] = payment?.transactions || []
 
     if (!transaction) {
@@ -103,17 +103,16 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       }
     }
 
-    let transactionArray:any = [];
-    allTransaction.forEach( (transactionItem: any) => {
-
+    const transactionArray: any = []
+    allTransaction.forEach((transactionItem: any) => {
       if (transactionItem?.custom) {
         const {
-          custom: {customFieldsRaw},
+          custom: { customFieldsRaw },
         } = transactionItem
 
         if (customFieldsRaw && Array.isArray(customFieldsRaw)) {
-          customFieldsRaw.forEach((customField:any) => {
-            if (customField.name === c.CT_CUSTOM_FIELD_TRANSACTION_REFUND){
+          customFieldsRaw.forEach((customField: any) => {
+            if (customField.name === c.CT_CUSTOM_FIELD_TRANSACTION_REFUND) {
               transactionArray.push(customField.value)
             }
           })
@@ -143,20 +142,33 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       }
 
       if (items && Array.isArray(items)) {
+        const addTransactions = Array.isArray(items)
+          ? items.map(refundItem => {
+              if (!transactionArray.includes(refundItem.id)) {
+                refundItem.paymentVersion = paymentVersionNumber
+                paymentVersionNumber++
+                return addTransaction({ order, refundItem })
+              }
+            })
+          : []
 
-        const addTransactions = Array.isArray(items) ? items.map((refundItem) => {
-          if(!transactionArray.includes(refundItem.id)){
-            refundItem.paymentVersion = paymentVersionNumber
-            paymentVersionNumber++
-            return addTransaction({order, refundItem})
-          }
-        }) : []
-
-        Promise.all(addTransactions).then().catch()
+        await Promise.all(addTransactions)
+          .then(result => {
+            logger.debug("Created CT transactions successfully", result)
+          })
+          .catch(error => {
+            logger.error("Error has occured while creating CT transactions", error)
+          })
       }
     }
 
-    const {orderState, orderPaymentState, transactionState} = await updateOrderStatus({orderId, status, transaction, ctTransactionType, gr4vyTransactionType})
+    const { orderState, orderPaymentState, transactionState } = await updateOrderStatus({
+      orderId,
+      status,
+      transaction,
+      ctTransactionType,
+      gr4vyTransactionType,
+    })
 
     const result = await resolveStatus({
       order,
@@ -172,8 +184,8 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     ResponseHelper.setResponseTo200(response, responseData)
   } catch (e) {
     const errorStackTrace =
-        `Error during parsing update payment request: Ending the process. ` +
-        `Error: ${JSON.stringify(e)}`
+      `Error during parsing update payment request: Ending the process. ` +
+      `Error: ${JSON.stringify(e)}`
     logger.error(errorStackTrace)
 
     ResponseHelper.setResponseError(response, {
