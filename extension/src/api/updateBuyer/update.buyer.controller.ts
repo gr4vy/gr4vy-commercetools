@@ -78,8 +78,11 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         }
       }
 
-      // create buyer in gr4vy if buyer id is not present
-      ResponseHelper.setResponseTo200(response, "Successfully Updated the Buyer Details")
+      const responseData = {
+        shippingDetailsId: shippingDetail?.id
+      }
+
+      ResponseHelper.setResponseTo200(response, responseData)
     } else {
       throw { message: "Buyer ID is missing in CT data", statusCode: 400 }
     }
