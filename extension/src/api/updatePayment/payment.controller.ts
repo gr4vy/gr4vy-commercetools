@@ -3,7 +3,7 @@ import { ServerResponse } from "http"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getTransactionById, getOrder, updateStatus, Constants } from "@gr4vy-ct/common"
+import { getTransactionById, getOrder, resolveStatus, Constants } from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
@@ -147,7 +147,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         }
     }
 
-    const hasStatusUpdated = await updateStatus({
+    const hasStatusUpdated = await resolveStatus({
       order,
       orderState,
       orderPaymentState,
