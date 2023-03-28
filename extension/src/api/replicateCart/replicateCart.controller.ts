@@ -3,7 +3,7 @@ import { ServerResponse } from "http"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getOrder, updateStatus, replicateCartFromOrder, Constants } from "@gr4vy-ct/common"
+import { getOrder, resolveStatus, replicateCartFromOrder, Constants } from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
@@ -52,7 +52,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     const transactionState = CT.TRANSACTION.FAILURE
 
     //Cancel order
-    await updateStatus({
+    await resolveStatus({
       order,
       orderState,
       orderPaymentState,
