@@ -60,4 +60,17 @@ const mutationQuery = `
   }
 `
 
-export { mutationQuery }
+const mutationQueryWithoutTransaction = `
+    mutation(
+        $orderId: String, 
+        $orderState: OrderState!,
+        $orderVersion:Long!,
+        $orderPaymentState: PaymentState!,
+        $orderPaymentVersion:Long!
+    ){
+        ${changeOrderState}
+        ${changePaymentState}
+    }
+`
+
+export { mutationQuery, mutationQueryWithoutTransaction }

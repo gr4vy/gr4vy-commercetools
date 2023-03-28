@@ -2,8 +2,8 @@
 const getOrderDetailsQuery = `
     query ($orderId: String!) {
       order(id: $orderId) {
-        version
         id
+        version
         orderNumber
         orderState
         paymentState
@@ -22,9 +22,24 @@ const getOrderDetailsQuery = `
         }
         paymentInfo{
           payments {
-                interfaceId
-                id
-                version
+            id
+            version
+            interfaceId
+            transactions {
+              id
+              type
+              state
+              amount {
+                currencyCode
+                centAmount
+              }
+              custom {
+                customFieldsRaw {
+                  name
+                  value
+                }
+              }
+            }
           }
         }
         returnInfo{ 

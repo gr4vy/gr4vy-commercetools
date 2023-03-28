@@ -34,6 +34,7 @@ export type StatementDescriptor = {
 export declare type Transaction = {
   id: string
   type: string
+  state: string
   amount: {
     currencyCode: string
     centAmount: number
@@ -98,4 +99,20 @@ export declare type Order = {
   custom: {
     customFieldsRaw: OrderCustomFieldsRaw[]
   }
+}
+
+export declare type RefundItems = [
+  RefundItem
+]
+
+
+
+export declare type RefundItem = {
+  type: string
+  id: string
+  transactionId: string
+  status: string
+  currency: string
+  amount: string
+  paymentVersion: string
 }
