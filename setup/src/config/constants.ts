@@ -15,7 +15,11 @@ export default {
         GR4VY_REFUND_ID_KEY: "gr4vyRefundId",
         GR4VY_REFUND_ID_FIELD_DEF_NAME: "gr4vyRefundId",
         GR4VY_REFUND_ID_FIELD_DEF_LABEL: "Gr4vy Refund Id",
-        GR4VY_REFUND_ID_NAME_DESC: "Additional field to transaction: Gr4vy Refund Id"
+        GR4VY_REFUND_ID_NAME_DESC: "Additional field to transaction: Gr4vy Refund Id",
+        GR4VY_RESPONSE_ID_KEY: "gr4vyTransactionResponse",
+        GR4VY_RESPONSE_ID_FIELD_DEF_NAME: "gr4vyTransactionResponse",
+        GR4VY_RESPONSE_ID_FIELD_DEF_LABEL: "Gr4vy Transaction Response",
+        GR4VY_RESPONSE_ID_NAME_DESC: "Additional field to transaction: Gr4vy Transaction Response"
       }
     },
     SUBSCRIPTION:{
