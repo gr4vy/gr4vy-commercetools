@@ -9,7 +9,7 @@ import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import { getLogger } from "./../../utils"
-import { updateOrder } from "../../service"
+import { updateOrderWithPayment } from "../../service"
 
 const processRequest = async (request: Request, response: ServerResponse) => {
   const logger = getLogger()
@@ -37,8 +37,8 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     }
 
     // Get gr4vy transaction by ID
-    const gr4vyTransaction = await getTransactionById(gr4vyTransactionId)
-    if (!gr4vyTransaction) {
+    const gr4vyTransactionResult = await getTransactionById(gr4vyTransactionId)
+    if (!gr4vyTransactionResult) {
       throw {
         message: `Error in fetching gr4vy transaction for ID ${gr4vyTransactionId}`,
         statusCode: 400,
@@ -46,11 +46,8 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     }
 
     // Fetch order id from the transaction
-    const {
-      externalIdentifier: orderId,
-      status,
-      amount: gr4vyTransactionAmount,
-    } = gr4vyTransaction?.body || {}
+    const gr4vyTransaction = gr4vyTransactionResult?.body || {}
+    const { externalIdentifier: orderId, status, amount: gr4vyTransactionAmount } = gr4vyTransaction
 
     // Get order payment and transaction details
     const order = await getOrder({ request, orderId })
@@ -150,22 +147,24 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         }
     }
 
-    const result = await updateStatus({
+    const hasStatusUpdated = await updateStatus({
       order,
       orderState,
       orderPaymentState,
       transactionState,
     })
+    // Get updated order
     const updatedOrder = await getOrder({ request, orderId })
-    const transactionIdResult = await updateOrder(
-        {
-          updatedOrder,
-          gr4vyTransactionId
-        }
-    )
+    // Create custom field in CT for order to save Gr4vy transaction id
+    // Update payment info in CT based on Gr4vy transaction
+    const hasPaymentInfoUpdated = await updateOrderWithPayment({
+      updatedOrder,
+      gr4vyTransaction,
+    })
 
     const responseData = {
-      status: result,
+      order: updatedOrder.id,
+      isUpdated: !!hasStatusUpdated && !!hasPaymentInfoUpdated,
     }
 
     ResponseHelper.setResponseTo200(response, responseData)
