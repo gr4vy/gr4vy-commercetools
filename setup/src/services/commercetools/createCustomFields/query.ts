@@ -88,28 +88,64 @@ const createCustomFieldGr4vyRefundId = `
   }
 `
 
+const createCustomFieldGr4vyTransactionResponse = `
+  createCustomFieldGr4vyTransactionResponse: createTypeDefinition(    
+    draft:{
+      key: $responseId
+      name:{
+        locale: $locale
+        value: $responseIdDescription
+      }
+      resourceTypeIds: $responseIdResourceTypeIds
+      fieldDefinitions:{
+        type:{
+          String:{
+            dummy:"string"
+          }
+        }
+        name:$responseIdName
+        required:false
+        label:{
+          locale: $locale
+          value: $responseIdLabel
+        }
+        inputHint:SingleLine      
+      }
+    }
+  ){
+    id
+    version
+  }
+`
+
 const createCustomFieldsMutationQuery = `
 mutation createCustomField (
   $buyerId:String!,
   $transactionId: String!,
   $refundId: String!,
+  $responseId: String!,
   $locale: Locale!,
   $buyerIdName:String!,
   $transactionIdName:String!,
   $refundIdName:String!,
+  $responseIdName:String!,
   $buyerIdLabel:String!,
   $transactionIdLabel:String!,
   $refundIdLabel:String!,
+  $responseIdLabel:String!,
   $buyerIdDescription:String!,
   $transactionIdDescription:String!,
   $refundIdDescription:String!,
+  $responseIdDescription:String!,
   $buyerIdResourceTypeIds:[String!]!,
   $transactionIdResourceTypeIds:[String!]!,
-  $refundIdResourceTypeIds:[String!]!
+  $refundIdResourceTypeIds:[String!]!,
+  $responseIdResourceTypeIds:[String!]!
   ){
   ${createCustomFieldGr4vyBuyerId},
   ${createCustomFieldGr4vyTransactionId},
-  ${createCustomFieldGr4vyRefundId}
+  ${createCustomFieldGr4vyRefundId},
+  ${createCustomFieldGr4vyTransactionResponse}
 }
 `
 export {createCustomFieldsMutationQuery}
