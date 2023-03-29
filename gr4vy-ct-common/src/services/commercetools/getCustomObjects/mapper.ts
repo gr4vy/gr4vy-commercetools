@@ -11,15 +11,23 @@ const responseMapper = (response: any): PaymentConfig => {
   )
   //parse the configuration and cast to type.
   const config: PaymentConfig = JSON.parse(JSON.stringify(result.value)) as PaymentConfig
-  console.log("Debug", JSON.stringify(config))
   cleanup(config)
   return config
 }
 
 const cleanup = (config: PaymentConfig) => {
-  config.metadata = config?.customData
-    ? { ct_custom_data: config?.customData }
-    : { ct_custom_data: "default" }
+
+  //validate if metadata config has a valid json string. otherwise use default.
+  let metadata = { ct_custom_data: "default" };
+  if(config?.customData) {
+    try {
+      metadata = JSON.parse(config?.customData);
+    }
+    catch(e) {
+      console.log("Error parsing meta data.", config?.customData);
+    }
+  }
+  config.metadata = metadata;
 
   //validate phone number in statement descriptor
   const phoneNumber = config?.statementDescriptor?.phoneNumber
