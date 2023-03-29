@@ -78,6 +78,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         }
       }
 
+      //return data to be used by onBeforeTransaction of Embed.
       const responseData = {
         shippingDetailsId: shippingDetail?.id
       }
