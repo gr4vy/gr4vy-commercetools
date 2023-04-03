@@ -2,61 +2,59 @@
 // @ts-ignore
 import { Constants } from "@gr4vy-ct/common"
 
+import { OrderCaptureDetails, OrderRefundDetails, OrderVoidDetails } from "./../model"
+import { captureOrder, refundOrder, voidOrder } from "./../service"
 import {
-  OrderCaptureDetails,
-  captureOrder,
-  OrderRefundDetails,
-  RefundMessageObject,
-  refundOrder,
-  OrderVoidDetails,
-  voidOrder,
-} from "./../service"
+  CaptureOrderDetailsInterface,
+  OrderRefundDetailsInterface,
+  OrderVoidDetailsInterface,
+} from "../model/order/interfaces"
 
 const {
   STATES: { CT },
 } = Constants
 
-async function handleTransactionCapture(body: { orderId: string }) {
-  const { orderId } = body
-  const orderDetail: OrderCaptureDetails = new OrderCaptureDetails(orderId)
+// eslint-disable-next-line
+async function handleTransactionCapture(event: any) {
+  const orderCaptureDetails: OrderCaptureDetails = new OrderCaptureDetails(event)
 
   //Load order details from Commercetools
-  const order = await orderDetail.execute()
-  if (!order) {
+  const orderCapture: CaptureOrderDetailsInterface = await orderCaptureDetails.execute()
+  if (!orderCapture) {
     return {
       orderCaptureStatus: false,
-      message: `Error during fetching order details from CT for order: ${orderId}`,
+      message: `Error during fetching order details from CT`,
     }
   }
-
-  const captureStatus = await captureOrder(order)
+  const { orderId } = orderCapture
+  const captureStatus = await captureOrder(orderCapture)
   if (!captureStatus) {
     return {
       orderCaptureStatus: false,
-      message: `Error during changing capture order from CT for order: ${orderId}`,
+      message: `Error during capture order from CT for order: ${orderId}`,
     }
   }
 
   return {
     orderCaptureStatus: captureStatus,
-    orderId: order.orderId,
+    orderId: orderCapture.orderId,
   }
 }
 
-async function handleTransactionRefund(body: { orderId: string; returnInfo: RefundMessageObject }) {
-  const { orderId, returnInfo } = body
-  const orderRefundDetail: OrderRefundDetails = new OrderRefundDetails(orderId, returnInfo)
+// eslint-disable-next-line
+async function handleTransactionRefund(event: any) {
+  const orderRefundDetail: OrderRefundDetails = new OrderRefundDetails(event)
 
   //Load order details from Commercetools
-  const order = await orderRefundDetail.execute()
-  if (!order) {
+  const orderRefund: OrderRefundDetailsInterface = await orderRefundDetail.execute()
+  if (!orderRefund) {
     return {
       orderRefundStatus: false,
-      message: `Error during fetching order details from CT for order: ${orderId}`,
+      message: `Error during fetching order details from CT`,
     }
   }
-
-  const refundStatus = await refundOrder(order, returnInfo)
+  const { orderId } = orderRefund
+  const refundStatus = await refundOrder(orderRefund, orderRefundDetail.refundObject)
   if (!refundStatus) {
     return {
       orderRefundStatus: false,
@@ -66,38 +64,32 @@ async function handleTransactionRefund(body: { orderId: string; returnInfo: Refu
 
   return {
     orderRefundStatus: refundStatus,
-    refundDetails: order,
-    orderId: order.orderId,
+    refundDetails: orderRefund,
+    orderId: orderRefund.orderId,
   }
 }
 
-async function handleTransactionVoid(body: {
-  orderId: string
-  orderState: string
-  oldOrderState: string
-}) {
-  const orderState = body?.orderState
+// eslint-disable-next-line
+async function handleTransactionVoid(event: any) {
+  const orderVoidDetail: OrderVoidDetails = new OrderVoidDetails(event)
+  //Load order details from Commercetools
+  const orderVoid: OrderVoidDetailsInterface = await orderVoidDetail.execute()
+  if (!orderVoid) {
+    return {
+      orderVoidStatus: false,
+      message: `Error during fetching order details from CT`,
+    }
+  }
 
+  const orderState = orderVoid.orderState
   if (orderState != CT.ORDER.CANCELLED) {
     return {
       orderVoidStatus: false,
       message: `Order should be in Cancelled state to process void transaction. Current status is ${orderState}`,
     }
   }
-
-  const { orderId } = body
-  const orderVoidDetail: OrderVoidDetails = new OrderVoidDetails(orderId)
-
-  //Load order details from Commercetools
-  const order = await orderVoidDetail.execute()
-  if (!order) {
-    return {
-      orderVoidStatus: false,
-      message: `Error during fetching order details from CT for order: ${orderId}`,
-    }
-  }
-
-  const voidStatus = await voidOrder(order)
+  const { orderId } = orderVoidDetail
+  const voidStatus = await voidOrder(orderVoid)
   if (!voidStatus) {
     return {
       orderVoidStatus: false,
@@ -107,7 +99,7 @@ async function handleTransactionVoid(body: {
 
   return {
     orderVoidStatus: voidStatus,
-    orderId: order.orderId,
+    orderId: orderVoid.orderId,
   }
 }
 

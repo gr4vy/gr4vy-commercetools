@@ -9,7 +9,8 @@ mutation (
     $interactionId: String
     $state: TransactionState
     $typeKey: String!
-    $refundId: String!                                                                                                                                                                                                                                                                         
+    $refundId: String!
+    $timestamp:DateTime!
 ){
   updatePayment(
     id:$paymentId,
@@ -17,6 +18,7 @@ mutation (
     actions: {
       addTransaction: {
         transaction: {
+          timestamp: $timestamp
           type: $transactionType
           amount: {
             centAmount: $refundAmount
@@ -40,4 +42,32 @@ mutation (
 }
 `
 
-export { updatePaymentMutation }
+const updateRefundMutation = `
+mutation (
+    $paymentId:String!, 
+    $paymentVersion:Long!, 
+    $transactionId: String!,
+    $state: TransactionState!,
+    $timestamp:DateTime!
+){
+  updatePayment(
+    id:$paymentId,
+    version: $paymentVersion,
+    actions: [{
+      changeTransactionState: {
+        transactionId: $transactionId
+        state: $state
+      }
+    },{
+      changeTransactionTimestamp:{
+        transactionId: $transactionId
+        timestamp: $timestamp
+      }
+    }]
+  ){
+    id
+  }
+}
+`
+
+export { updatePaymentMutation, updateRefundMutation }

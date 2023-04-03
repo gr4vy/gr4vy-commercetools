@@ -7,7 +7,6 @@ import { isPostRequest } from "./../../helper/methods"
 import { Request } from "./../../types"
 import { getLogger } from "./../../utils"
 import { handleTransactionVoid } from "../../handler"
-import { prepareRequestBody } from "../../helper"
 
 const processRequest = async (request: Request, response: ServerResponse) => {
   const logger = getLogger()
@@ -28,17 +27,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     }
 
     const { event } = request.body
-    const body = await prepareRequestBody(event)
-    const { orderId } = body
-
-    if (!orderId) {
-      throw {
-        message: `Required parameter orderId is missing or empty`,
-        statusCode: 400,
-      }
-    }
-
-    const transactionVoidResult = await handleTransactionVoid(body)
+    const transactionVoidResult = await handleTransactionVoid(event)
     ResponseHelper.setResponseTo200(response, transactionVoidResult)
   } catch (e) {
     ResponseHelper.setResponseError(response, {

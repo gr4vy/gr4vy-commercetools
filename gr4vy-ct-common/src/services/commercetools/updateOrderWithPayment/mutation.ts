@@ -1,4 +1,8 @@
-const mutation = (shouldIncludeInterfaceId: boolean, shouldIncludeInterface: boolean) => `
+const mutation = (
+  shouldIncludeInterfaceId: boolean,
+  shouldIncludeInterface: boolean,
+  shouldUpdateCTTransactionState: boolean
+) => `
 mutation (
   $orderId: String!,
   $version: Long!,
@@ -14,8 +18,13 @@ mutation (
   ${shouldIncludeInterface ? `$interface: String!,` : ``}
   $interfaceCode: String!,
   $interfaceText: String!,
-  $transactionId: String!,
-  $timestamp:DateTime!
+  $orderState: OrderState!,
+  $orderPaymentState: PaymentState!,
+  ${
+    shouldUpdateCTTransactionState
+      ? `$transactionId: String!, $timestamp: DateTime!, $transactionState: TransactionState!,`
+      : ``
+  }
 ) {
   # Order update action
   updateOrder: updateOrder(
@@ -31,6 +40,16 @@ mutation (
           name:$customFieldName
           value:$gr4vyTransactionId
         }
+      }
+    }, 
+    {
+      changeOrderState: {
+        orderState: $orderState
+      }
+    },
+    {
+      changePaymentState: {
+        paymentState: $orderPaymentState
       }
     }]
   ){
@@ -88,11 +107,23 @@ mutation (
           `
           : ``
       }
-      {
-        changeTransactionTimestamp:{
-          transactionId:$transactionId,
-          timestamp:$timestamp
-        }
+      ${
+        shouldUpdateCTTransactionState
+          ? `
+        {
+          changeTransactionTimestamp:{
+            transactionId:$transactionId,
+            timestamp:$timestamp
+          }
+        },
+        {
+          changeTransactionState:{
+            transactionId :$transactionId,
+            state: $transactionState
+          }
+        },
+        `
+          : ``
       }
     ]
   ) {

@@ -1,17 +1,17 @@
 const CAPTURE_SUCCEEDED = "capture_succeeded"
 const AUTHORIZATION_SUCCEEDED = "authorization_succeeded"
-const PROCESSING = 'processing'
+const PROCESSING = "processing"
 const CAPTURE_PENDING = "capture_pending"
-const BUYER_APPROVAL_PENDING = 'buyer_approval_pending'
+const BUYER_APPROVAL_PENDING = "buyer_approval_pending"
 const AUTHORIZATION_DECLINED = "authorization_declined"
 const AUTHORIZATION_FAILED = "authorization_failed"
-const AUTHORIZATION_VOIDED = 'authorization_voided'
-const AUTHORIZATION_VOID_PENDING = 'authorization_void_pending'
+const AUTHORIZATION_VOIDED = "authorization_voided"
+const AUTHORIZATION_VOID_PENDING = "authorization_void_pending"
 
-const CT_REFUND_INITIAL = 'Initial'
-const CT_REFUND_PENDING = 'Pending'
-const CT_REFUND_SUCCESS = 'Success'
-const CT_REFUND_FAILURE = 'Failure'
+const CT_REFUND_INITIAL = "Initial"
+const CT_REFUND_PENDING = "Pending"
+const CT_REFUND_SUCCESS = "Success"
+const CT_REFUND_FAILURE = "Failure"
 
 export const Constants = {
   CTP_GR4VY_PAYMENT_CONFIGURATION_CONTAINER: "ctp-gr4vy-configuration",
@@ -24,31 +24,34 @@ export const Constants = {
   STATES: {
     GR4VY: {
       TRANSACTION: {
-        AUTHORIZATION_SUCCEEDED:AUTHORIZATION_SUCCEEDED,
+        AUTHORIZATION_SUCCEEDED: AUTHORIZATION_SUCCEEDED,
         CAPTURE_PENDING: CAPTURE_PENDING,
         CAPTURE_SUCCEEDED: CAPTURE_SUCCEEDED,
+        PROCESSING: PROCESSING,
+        BUYER_APPROVAL_PENDING: BUYER_APPROVAL_PENDING,
         AUTHORIZATION_DECLINED: AUTHORIZATION_DECLINED,
         AUTHORIZATION_FAILED: AUTHORIZATION_FAILED,
-        PROCESSING_FAILED: 'processing_failed',
-        CAPTURE_DECLINED: 'capture_declined',
-        CAPTURE_FAILED: 'capture_failed',
-        AUTHORIZATION_PENDING: 'authorization_pending',
-        AUTHORIZATION_EXPIRED: 'authorization_expired',
-        AUTHORIZATION_VOID_DECLINED: 'authorization_void_declined',
-        AUTHORIZATION_VOID_FAILED: 'authorization_void_failed',
-        REFUND_SUCCEEDED: 'refund_succeeded',
-        REFUND_PENDING: 'refund_pending',
-        REFUND_DECLINED: 'refund_declined',
-        REFUND_FAILED: 'refund_failed',
-        BUYER_APPROVAL_SUCCEEDED: 'buyer_approval_succeeded',
-        BUYER_APPROVAL_DECLINED: 'buyer_approval_declined',
-        BUYER_APPROVAL_FAILED: 'buyer_approval_failed',
-        BUYER_APPROVAL_TIMEDOUT: 'buyer_approval_timedout',
-
+        AUTHORIZATION_VOIDED: AUTHORIZATION_VOIDED,
+        AUTHORIZATION_VOID_PENDING: AUTHORIZATION_VOID_PENDING,
+        PROCESSING_FAILED: "processing_failed",
+        CAPTURE_DECLINED: "capture_declined",
+        CAPTURE_FAILED: "capture_failed",
+        AUTHORIZATION_PENDING: "authorization_pending",
+        AUTHORIZATION_EXPIRED: "authorization_expired",
+        AUTHORIZATION_VOID_DECLINED: "authorization_void_declined",
+        AUTHORIZATION_VOID_FAILED: "authorization_void_failed",
+        REFUND_SUCCEEDED: "succeeded",
+        REFUND_PENDING: "refund_pending",
+        REFUND_DECLINED: "refund_declined",
+        REFUND_FAILED: "refund_failed",
+        BUYER_APPROVAL_SUCCEEDED: "buyer_approval_succeeded",
+        BUYER_APPROVAL_DECLINED: "buyer_approval_declined",
+        BUYER_APPROVAL_FAILED: "buyer_approval_failed",
+        BUYER_APPROVAL_TIMEDOUT: "buyer_approval_timedout",
         TYPES: {
           AUTHORIZE: "authorize",
           CAPTURE: "capture",
-        }
+        },
       },
     },
     CT: {
@@ -56,6 +59,7 @@ export const Constants = {
         OPEN: "Open",
         CONFIRMED: "Confirmed",
         CANCELLED: "Cancelled",
+        COMPLETE: "Complete"
       },
       ORDERPAYMENT: {
         PAID: "Paid",
@@ -93,69 +97,62 @@ export const Constants = {
       PROCESS: {
         orderState: "Open",
         orderPaymentState: "Pending",
-        transactionState: "Pending"
+        transactionState: "Pending",
       },
       SUCCESS: {
         orderState: "Confirmed",
         orderPaymentState: "Paid",
-        transactionState: "Success"
+        transactionState: "Success",
       },
       CANCEL: {
         orderState: "Cancelled",
         orderPaymentState: "Failed",
-        transactionState: "Failure"
+        transactionState: "Failure",
       },
       REFUND_PROCESS: {
         order: "Confirmed",
         payment: "Initial",
-        transaction: "Pending"
+        transaction: "Pending",
       },
       REFUND_SUCCESS: {
         order: "Completed",
         payment: "Refunded",
-        transaction: "Success"
+        transaction: "Success",
       },
       REFUND_CANCEL: {
         order: "Confirmed",
         payment: "Not Refunded",
-        transaction: "Failure"
+        transaction: "Failure",
       },
-    }
+    },
   },
 
   GR4VY_STATUS: {
-    SUCCESS_STATUS: [
-      CAPTURE_SUCCEEDED,
-      AUTHORIZATION_SUCCEEDED
-    ],
+    SUCCESS_STATUS: [CAPTURE_SUCCEEDED, AUTHORIZATION_SUCCEEDED],
 
-    PROCESS_STATUS: [
-      PROCESSING,
-      CAPTURE_PENDING,
-      BUYER_APPROVAL_PENDING
-    ],
+    PROCESS_STATUS: [PROCESSING, CAPTURE_PENDING, BUYER_APPROVAL_PENDING],
 
     CANCEL_STATUS: [
       AUTHORIZATION_DECLINED,
       AUTHORIZATION_FAILED,
       AUTHORIZATION_VOID_PENDING,
-      AUTHORIZATION_VOIDED
-    ]
+      AUTHORIZATION_VOIDED,
+    ],
   },
 
   CT_REFUND_INITIAL: "Initial",
 
   GR4VY_REFUND_STATUS: {
-    GR4VY_REFUND_PROCESSING: 'processing',
-    GR4VY_REFUND_SUCCEEDED: 'succeeded',
-    GR4VY_REFUND_DECLINED: 'declined',
-    GR4VY_REFUND_FAILED: 'failed',
-    GR4VY_REFUND_VOIDED: 'voided'
+    GR4VY_REFUND_PROCESSING: "processing",
+    GR4VY_REFUND_SUCCEEDED: "succeeded",
+    GR4VY_REFUND_DECLINED: "declined",
+    GR4VY_REFUND_FAILED: "failed",
+    GR4VY_REFUND_VOIDED: "voided",
   },
 
   GR4VY_REFUND_SUCCEEDED: CT_REFUND_SUCCESS,
   GR4VY_REFUND_DECLINED: CT_REFUND_FAILURE,
   GR4VY_REFUND_FAILED: CT_REFUND_FAILURE,
   GR4VY_REFUND_VOIDED: CT_REFUND_FAILURE,
-  GR4VY_REFUND_PROCESSING: CT_REFUND_PENDING
+  GR4VY_REFUND_PROCESSING: CT_REFUND_PENDING,
 }

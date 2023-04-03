@@ -34,13 +34,13 @@ export const handler = async (event: any) => {
   try {
     switch (body.type) {
       case CT.MESSAGE_TYPES.ORDER.DELIVERY_ADDED:
-        await handleTransactionCapture(body)
+        await handleTransactionCapture(event)
         break
       case CT.MESSAGE_TYPES.ORDER.RETURN_INFO_ADDED:
-        await handleTransactionRefund(body)
+        await handleTransactionRefund(event)
         break
       case CT.MESSAGE_TYPES.ORDER.ORDER_STATE_CHANGED:
-        await handleTransactionVoid(body)
+        await handleTransactionVoid(event)
         break
       default:
         throw new Error(`Error during identify type of notification. Received type: ${body.type}`)
