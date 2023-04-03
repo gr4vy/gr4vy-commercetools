@@ -102,7 +102,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       }
     }
 
-    const ctTransactionAmount = transaction?.amount?.centAmount
+    const ctTransactionAmount = order?.taxedPrice?.totalGross?.centAmount
     const ctTransactionType = transaction?.type
     const ctTransactionId = transaction?.id
 

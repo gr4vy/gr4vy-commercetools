@@ -27,6 +27,26 @@ export declare type Cart = {
     currencyCode: string
     centAmount: number
   }
+  taxedShippingPrice: {
+    totalTax: {
+      currencyCode: string
+      centAmount: number
+    }
+    totalGross: {
+      currencyCode: string
+      centAmount: number
+    }
+  }
+  taxedPrice: {
+    totalTax: {
+      currencyCode: string
+      centAmount: number
+    }
+    totalGross: {
+      currencyCode: string
+      centAmount: number
+    }
+  }
   lineItems: CartLineItem
   country: string
   locale: string
@@ -81,6 +101,13 @@ export declare type CartLineItem = {
       currencyCode: string
       centAmount: number
     }
+    totalGross: {
+      currencyCode: string
+      centAmount: number
+    }
+  }
+  taxRate: {
+    includedInPrice: boolean
   }
   quantity: number
   discountedPricePerQuantity: [{

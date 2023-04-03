@@ -52,7 +52,9 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     const embedToken: string = await createEmbedToken({ customer, cart, paymentConfig, cartItems })
 
     const {
-      totalPrice: { centAmount, currencyCode },
+      taxedPrice: {
+        totalGross: { centAmount, currencyCode },
+      },
       country,
       locale: cartLocale,
     } = cart
@@ -72,7 +74,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
   } catch (e) {
     const errorStackTrace =
       `Error during parsing creating embed token request: Ending the process. ` +
-      `Error: ${JSON.stringify(e)}`
+      `Error: ${e}`
     logger.error(errorStackTrace)
 
     ResponseHelper.setResponseError(response, {
