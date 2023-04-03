@@ -17,6 +17,7 @@ query ($orderId: String) {
             transactions {
               id
               type
+              state
               amount {
                 currencyCode
                 centAmount
