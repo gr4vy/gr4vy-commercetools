@@ -9,7 +9,6 @@ const responseMapper = async (
   cartItems: CartItem[]
 }> => {
   const { customer, activeCart: cart } = result?.body?.data?.me || {}
-
   if (customer?.custom) {
     const {
       custom: { customFieldsRaw },
@@ -62,15 +61,22 @@ const responseMapper = async (
 
   //Add Shipping as an item to the cart Items.
   if (cart?.shippingInfo) {
-    const shippingItem: CartItem = {
-      name: cart.shippingInfo?.shippingMethodName,
-      quantity: 1,
-      unitAmount: cart.shippingInfo.discountedPrice?.value.centAmount??cart.shippingInfo.price?.centAmount,
-      productType: 'shipping_fee',
-      externalIdentifier: cart.shippingInfo?.shippingMethodName,
-    };
+    const shippingUnitAmount =
+        cart.shippingInfo.discountedPrice?.value.centAmount ?? (cart.shippingInfo.price?.centAmount ?? 0)
+    const shippingTax = cart?.taxedShippingPrice?.totalTax?.centAmount ?? 0
+    const shippingTotal = shippingUnitAmount + shippingTax
+    if (shippingTotal > 0) {
+      const shippingItem: CartItem = {
+        name: cart.shippingInfo?.shippingMethodName,
+        quantity: 1,
+        unitAmount: shippingUnitAmount,
+        productType: "shipping_fee",
+        taxAmount: shippingTax,
+        externalIdentifier: cart.shippingInfo?.shippingMethodName,
+      }
 
-    cartItems.push(shippingItem);
+      cartItems.push(shippingItem)
+    }
   }
 
   return {
@@ -87,6 +93,7 @@ const getCartItem = (c: CartLineItem): CartItem => {
     quantity,
     discountedPricePerQuantity,
     taxedPrice,
+    taxRate,
     variant,
     price,
     productId,
@@ -98,6 +105,8 @@ const getCartItem = (c: CartLineItem): CartItem => {
 
     const productPrice = price?.value?.centAmount;
     const productDiscountPrice = price?.discounted?.value?.centAmount;
+    const taxedPriceAmount = taxedPrice?.totalTax?.centAmount
+    const isTaxIncludedInPrice = taxRate?.includedInPrice
 
     //calculate product level discount
     if (productDiscountPrice != null) {
@@ -117,7 +126,7 @@ const getCartItem = (c: CartLineItem): CartItem => {
     }
     //calculate total discount amount in all the quantity of items.
     if (cartDiscountActive) {
-        const totalItemAmount = price?.value?.centAmount * quantity;
+        const totalItemAmount = productPrice * quantity;
         discountItemAmount = totalItemAmount - (cartDiscountedItemAmount);
     }
     //Calculate product level discount only if cart level discount is not present.
@@ -130,9 +139,9 @@ const getCartItem = (c: CartLineItem): CartItem => {
   return {
     name,
     quantity,
-    unitAmount: price?.value?.centAmount - taxedPrice?.totalTax?.centAmount,
+    unitAmount: isTaxIncludedInPrice ? productPrice - taxedPriceAmount : productPrice,
     discountAmount: discountItemAmount,
-    taxAmount: taxedPrice?.totalTax?.centAmount * quantity || null,
+    taxAmount: isTaxIncludedInPrice ? taxedPriceAmount * quantity : taxedPriceAmount || null,
     externalIdentifier: id,
     sku: variant?.sku || null,
     imageUrl: Array.isArray(variant?.images) ? variant?.images[0]?.url : null,
