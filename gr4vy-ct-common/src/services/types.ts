@@ -44,6 +44,10 @@ export declare type Transaction = {
 export declare type Payment = {
   id: string
   version: string
+  interfaceId: string
+  paymentMethodInfo: {
+    paymentInterface: string
+  }
   transactions: Transaction[]
 }
 
@@ -120,11 +124,7 @@ export declare type Order = {
   }
 }
 
-export declare type RefundItems = [
-  RefundItem
-]
-
-
+export declare type RefundItems = [RefundItem]
 
 export declare type RefundItem = {
   type: string
@@ -134,4 +134,20 @@ export declare type RefundItem = {
   currency: string
   amount: string
   paymentVersion: string
+}
+
+export declare type Gr4vyTransactionResponse = {
+  id: string
+  paymentService: {
+    method: string
+    displayName: string
+  }
+  rawResponseCode: string | null
+  rawResponseDescription: string | null
+}
+
+export declare type UpdateOrderWithPaymentResponse = {
+  hasOrderWithPaymentUpdated: boolean
+  updateOrder: { id: string; version: string }
+  updatePayment: { id: string; version: string }
 }

@@ -15,7 +15,7 @@ export interface OrderRefundDetailsInterface extends OrderMainInterface {
 }
 
 export interface OrderVoidDetailsInterface extends OrderMainInterface {
-  orderState: string;
+  orderState: string
   voidAmount: number
   currencyCode: string
 }

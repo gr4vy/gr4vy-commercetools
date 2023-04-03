@@ -7,7 +7,7 @@ import { captureOrder, refundOrder, voidOrder } from "./../service"
 import {
   CaptureOrderDetailsInterface,
   OrderRefundDetailsInterface,
-  OrderVoidDetailsInterface
+  OrderVoidDetailsInterface,
 } from "../model/order/interfaces"
 
 const {
@@ -46,7 +46,7 @@ async function handleTransactionRefund(event: any) {
   const orderRefundDetail: OrderRefundDetails = new OrderRefundDetails(event)
 
   //Load order details from Commercetools
-  const orderRefund:OrderRefundDetailsInterface = await orderRefundDetail.execute()
+  const orderRefund: OrderRefundDetailsInterface = await orderRefundDetail.execute()
   if (!orderRefund) {
     return {
       orderRefundStatus: false,
@@ -73,7 +73,7 @@ async function handleTransactionRefund(event: any) {
 async function handleTransactionVoid(event: any) {
   const orderVoidDetail: OrderVoidDetails = new OrderVoidDetails(event)
   //Load order details from Commercetools
-  const orderVoid:OrderVoidDetailsInterface = await orderVoidDetail.execute()
+  const orderVoid: OrderVoidDetailsInterface = await orderVoidDetail.execute()
   if (!orderVoid) {
     return {
       orderVoidStatus: false,

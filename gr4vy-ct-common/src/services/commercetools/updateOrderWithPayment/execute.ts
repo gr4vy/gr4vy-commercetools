@@ -1,37 +1,50 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { ApiClient, Constants, Order } from "@gr4vy-ct/common"
-
+import { ApiClient } from "../../../clients/apiClient"
+import { Order, Gr4vyTransactionResponse, UpdateOrderWithPaymentResponse } from "./../../types"
+import { Constants } from "./../../../config"
 import { mutation } from "./mutation"
 import { responseMapper } from "./mapper"
 import { escapedJSON } from "../../../utils"
 
 const updateOrderWithPayment = async ({
-  updatedOrder,
+  order,
+  orderState,
+  orderPaymentState,
+  transactionState,
   gr4vyTransaction,
 }: {
-  updatedOrder: Order
-  gr4vyTransaction: any
-}): Promise<boolean> => {
+  order: Order
+  orderState: string
+  orderPaymentState: string
+  transactionState: string
+  gr4vyTransaction: Gr4vyTransactionResponse
+}): Promise<UpdateOrderWithPaymentResponse> => {
   const {
     defaultLocale,
     STATES: { CT },
   } = Constants
-  const apiClient: ApiClient = new ApiClient()
-  const [payment] = updatedOrder?.paymentInfo?.payments || []
-  const [transaction] = payment?.transactions || []
 
+  const apiClient: ApiClient = new ApiClient()
+
+  const [payment] = order?.paymentInfo?.payments || []
+  const [transaction] = payment?.transactions || []
   const { id, paymentService, rawResponseCode, rawResponseDescription } = gr4vyTransaction || {}
 
-  const shouldIncludeInterfaceId = !payment.interfaceId
-  const shouldIncludeInterface = !payment.paymentMethodInfo.paymentInterface
+  const shouldIncludeInterfaceId = !payment?.interfaceId
+  const shouldIncludeInterface = !payment?.paymentMethodInfo?.paymentInterface
+  const shouldUpdateCTTransactionState = !(transactionState === transaction?.state)
 
   apiClient.setBody({
-    query: mutation(shouldIncludeInterfaceId, shouldIncludeInterface),
+    query: mutation(
+      shouldIncludeInterfaceId,
+      shouldIncludeInterface,
+      shouldUpdateCTTransactionState
+    ),
     variables: {
       // For order custom field
-      version: updatedOrder.version,
-      orderId: updatedOrder.id,
+      version: order.version,
+      orderId: order.id,
       type: CT.CUSTOM_FIELDS.GR4VY_TRANSACTION_ID.TYPE,
       customFieldKey: CT.CUSTOM_FIELDS.GR4VY_TRANSACTION_ID.KEY,
       customFieldName: CT.CUSTOM_FIELDS.GR4VY_TRANSACTION_ID.NAME,
@@ -43,9 +56,9 @@ const updateOrderWithPayment = async ({
       methodInfoLocale: defaultLocale,
       methodInfoName: paymentService.method,
       // Interface code
-      interfaceCode: rawResponseCode,
+      interfaceCode: rawResponseCode || "",
       // Interface Text
-      interfaceText: rawResponseDescription,
+      interfaceText: rawResponseDescription || "",
       // Interface
       interface: paymentService.displayName,
       // Interface Id as Gr4vy transaction ID
@@ -53,6 +66,10 @@ const updateOrderWithPayment = async ({
       // Timestamp
       transactionId: transaction.id,
       timestamp: new Date().toISOString(),
+      // Order statuses
+      orderState,
+      orderPaymentState,
+      transactionState,
     },
   })
   return responseMapper(await apiClient.getData())

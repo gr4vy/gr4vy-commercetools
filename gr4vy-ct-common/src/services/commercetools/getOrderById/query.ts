@@ -38,6 +38,9 @@ const getOrderDetailsQuery = `
             id
             version
             interfaceId
+            paymentMethodInfo {
+              paymentInterface
+            }
             transactions {
               id
               type
