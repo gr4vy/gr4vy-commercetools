@@ -1,10 +1,15 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { ApiClient } from "@gr4vy-ct/common"
+import { ApiClient, Constants, getOrderById } from "@gr4vy-ct/common"
+import { Order } from "@gr4vy-ct/common/src/services/types"
 
 import { updateRefundOrderMutation } from "./query"
 import { responseMapper } from "./mapper"
 import { OrderUpdateForRefund, RefundMessageObject } from "./../../types"
+
+const {
+  STATES: { CT },
+} = Constants
 
 const updateRefundOrder = async (
   {
@@ -30,6 +35,23 @@ const updateRefundOrder = async (
       "}{repl}{/repl}"
     updateRefunOrderMutationQuery = updateRefunOrderMutationQuery.replace(findFor, replaceValue)
   })
+  const orderId = orderUpdateForRefund.orderId
+  const order = await getOrderById(orderId)
+  console.log(JSON.stringify(order))
+  if (order && isFullyRefundedOrder(order)) {
+    const replaceValueForOrderState =
+      "\n{" +
+      "\nchangeOrderState:{\n" +
+      "orderState:" +
+      CT.ORDER.COMPLETE +
+      "\n" +
+      "}\n" +
+      "}{repl}{/repl}"
+    updateRefunOrderMutationQuery = updateRefunOrderMutationQuery.replace(
+      findFor,
+      replaceValueForOrderState
+    )
+  }
   updateRefunOrderMutationQuery = updateRefunOrderMutationQuery.replace(findFor, "")
 
   if (updateRefunOrderMutationQuery.length) {
@@ -45,5 +67,34 @@ const updateRefundOrder = async (
   }
   return false
 }
+function isFullyRefundedOrder(order: Order): boolean {
+  const totalLineItemsQty: { [key: string]: number } = {}
+  order.lineItems.forEach(function (lineItem) {
+    if (totalLineItemsQty[lineItem.id]) {
+      totalLineItemsQty[lineItem.id] += lineItem.quantity
+    } else {
+      totalLineItemsQty[lineItem.id] = lineItem.quantity
+    }
+  })
 
+  const totalReturnItemsQty: { [key: string]: number } = {}
+  order.returnInfo.forEach(returnInfo => {
+    returnInfo.items.forEach(returnItem => {
+      if (totalReturnItemsQty[returnItem.lineItemId]) {
+        totalReturnItemsQty[returnItem.lineItemId] += returnItem.quantity
+      } else {
+        totalReturnItemsQty[returnItem.lineItemId] = returnItem.quantity
+      }
+    })
+  })
+
+  for (const lineItemId in totalLineItemsQty) {
+    const qtyOrdered = totalLineItemsQty[lineItemId]
+    const qtyAlreadyReturned = totalReturnItemsQty[lineItemId] ?? 0
+    if (qtyAlreadyReturned < qtyOrdered) {
+      return false
+    }
+  }
+  return true
+}
 export { updateRefundOrder }

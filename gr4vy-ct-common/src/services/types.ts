@@ -52,6 +52,30 @@ export declare type OrderCustomFieldsRaw = {
   value: string
 }
 
+export declare type discountedPricePerQuantity = {
+  fullRefunded: boolean
+  partiallyRefunded: boolean
+  balanceQty: number
+  quantity: number
+  discountedPrice: {
+    value: {
+      centAmount: number
+    }
+  }
+}
+
+export declare type OrderReturnInfoItems = {
+  id: string
+  lineItemId: string
+  quantity: number
+  type: string
+  paymentState: string
+}
+
+export declare type OrderReturnInfo = {
+  items: OrderReturnInfoItems[]
+}
+
 export declare type Order = {
   id: string
   version: string
@@ -60,18 +84,7 @@ export declare type Order = {
   paymentInfo: {
     payments: Payment[]
   }
-  returnInfo: [
-    {
-      items: [
-        {
-          id: string
-          quantity: number
-          type: string
-          paymentState: string
-        }
-      ]
-    }
-  ]
+  returnInfo: OrderReturnInfo[]
 
   totalPrice: {
     type: string
@@ -92,7 +105,13 @@ export declare type Order = {
         value: {
           centAmount: number
         }
+        discounted: {
+          value: {
+            centAmount: number
+          }
+        }
       }
+      discountedPricePerQuantity:discountedPricePerQuantity[]
     }
   ]
 

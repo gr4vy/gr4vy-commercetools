@@ -6,18 +6,18 @@ import { transactionCapture, updateOrder } from "./../../../service"
 import { OrderUpdate } from "../../types"
 import { addTransactionCapture } from "./query"
 import { responseMapper } from "./mapper"
-import { OrderDetailsInterface } from "./../getOrderDetails/interfaces"
+import { CaptureOrderDetailsInterface } from "./../../../model/order/interfaces"
 
-const captureOrder = async (orderDetails: OrderDetailsInterface) => {
-  if (orderDetails.totalAmount <= 0) {
+const captureOrder = async (captureOrderDetails: CaptureOrderDetailsInterface) => {
+  if (captureOrderDetails.totalAmount <= 0) {
     throw new Error("There is an error - Total amount to capture is invalid or zero")
   }
   const {
     STATES: { GR4VY, CT },
   } = Constants
 
-  const gr4vyTransactionId = orderDetails.paymentTransactionId
-  const capture = { amount: orderDetails.totalAmount, transactionId: gr4vyTransactionId }
+  const gr4vyTransactionId = captureOrderDetails.paymentTransactionId
+  const capture = { amount: captureOrderDetails.totalAmount, transactionId: gr4vyTransactionId }
   const paymentConfig = await getCustomObjects()
 
   // Get gr4vy transaction by ID
@@ -49,19 +49,19 @@ const captureOrder = async (orderDetails: OrderDetailsInterface) => {
     apiClient.setBody({
       query: addTransactionCapture,
       variables: {
-        version: orderDetails.paymentVersion,
-        paymentId: orderDetails.paymentId,
-        amount: orderDetails.totalAmount,
-        currencyCode: orderDetails.currencyCode,
-        transactionId: orderDetails.paymentTransactionId,
+        version: captureOrderDetails.paymentVersion,
+        paymentId: captureOrderDetails.paymentId,
+        amount: captureOrderDetails.totalAmount,
+        currencyCode: captureOrderDetails.currencyCode,
+        transactionId: captureOrderDetails.paymentTransactionId,
         timeStamp: transactionDate,
       },
     })
     const orderCaptureTransactionAdded = await responseMapper(await apiClient.getData())
     if (orderCaptureTransactionAdded) {
       const orderUpdate: OrderUpdate = {
-        orderId: orderDetails.orderId,
-        version: orderDetails.version,
+        orderId: captureOrderDetails.orderId,
+        version: captureOrderDetails.version,
         orderState: CT.ORDER.CONFIRMED,
         paymentState: CT.ORDERPAYMENT.PAID,
       }

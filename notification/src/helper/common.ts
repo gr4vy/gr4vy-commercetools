@@ -9,7 +9,7 @@ const prepareRequestBody = (event: { Records: any }) => {
     try {
       parsedBody = JSON.parse(body)
     } catch (e) {
-      if (e.message.includes('Unexpected token')) {
+      if (e.message.includes("Unexpected token")) {
         parsedBody = body
       } else {
         return {}

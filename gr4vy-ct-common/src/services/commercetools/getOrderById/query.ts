@@ -18,6 +18,19 @@ const getOrderDetailsQuery = `
             value{
               centAmount
             }
+            discounted{
+              value{
+                centAmount
+              }
+            }
+          }
+          discountedPricePerQuantity{
+            quantity
+            discountedPrice{
+              value{
+                centAmount
+              }
+            }
           }
         }
         paymentInfo{
@@ -44,10 +57,15 @@ const getOrderDetailsQuery = `
         }
         returnInfo{ 
           items{ 
-            id 
-            quantity 
-            type
-            paymentState
+            ... on LineItemReturnItem {
+              type
+              lineItemId
+              id
+              quantity
+              comment
+              shipmentState
+              paymentState
+            }
           } 
         } 
         totalPrice{

@@ -1,4 +1,3 @@
-export * from "./getOrderDetails"
 export * from "./updateOrder"
 export * from "./captureOrder"
 export * from "./refundOrder"

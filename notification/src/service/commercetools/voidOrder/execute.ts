@@ -5,7 +5,7 @@ import { getCustomObjects, ApiClient, Constants, getTransactionById } from "@gr4
 import { transactionVoid } from "./../../../service"
 import { addTransactionVoid } from "./query"
 import { responseMapper } from "./mapper"
-import { OrderVoidDetailsInterface } from "../getOrderDetails/interfaces"
+import { OrderVoidDetailsInterface } from "./../../../model/order/interfaces"
 
 const voidOrder = async (orderVoidDetails: OrderVoidDetailsInterface) => {
   const {

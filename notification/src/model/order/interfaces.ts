@@ -6,7 +6,7 @@ export interface OrderMainInterface {
   paymentId: string
   paymentTransactionId: string
 }
-export interface OrderDetailsInterface extends OrderMainInterface {
+export interface CaptureOrderDetailsInterface extends OrderMainInterface {
   totalAmount: number
 }
 
@@ -15,6 +15,7 @@ export interface OrderRefundDetailsInterface extends OrderMainInterface {
 }
 
 export interface OrderVoidDetailsInterface extends OrderMainInterface {
+  orderState: string;
   voidAmount: number
   currencyCode: string
 }

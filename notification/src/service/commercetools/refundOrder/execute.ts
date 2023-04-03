@@ -6,7 +6,7 @@ import { transactionRefund, updateRefundOrder } from "./../../../service"
 import { OrderUpdateForRefund, RefundMessageObject } from "../../types"
 import { addTransactionRefund } from "./query"
 import { responseMapper } from "./mapper"
-import { OrderRefundDetailsInterface } from "../getOrderDetails/interfaces"
+import { OrderRefundDetailsInterface } from "./../../../model/order/interfaces"
 
 const refundOrder = async (
   orderRefundDetails: OrderRefundDetailsInterface,

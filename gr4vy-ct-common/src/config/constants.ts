@@ -36,7 +36,8 @@ export const Constants = {
         AUTHORIZATION_EXPIRED: 'authorization_expired',
         AUTHORIZATION_VOID_DECLINED: 'authorization_void_declined',
         AUTHORIZATION_VOID_FAILED: 'authorization_void_failed',
-        REFUND_SUCCEEDED: 'refund_succeeded',
+        AUTHORIZATION_VOIDED: "authorization_voided",
+        REFUND_SUCCEEDED: 'succeeded',
         REFUND_PENDING: 'refund_pending',
         REFUND_DECLINED: 'refund_declined',
         REFUND_FAILED: 'refund_failed',
@@ -56,6 +57,7 @@ export const Constants = {
         OPEN: "Open",
         CONFIRMED: "Confirmed",
         CANCELLED: "Cancelled",
+        COMPLETE: "Complete"
       },
       ORDERPAYMENT: {
         PAID: "Paid",

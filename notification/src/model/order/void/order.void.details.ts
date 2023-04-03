@@ -1,30 +1,16 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { getOrderById } from "@gr4vy-ct/common"
-
-import { OrderVoidDetailsInterface } from "./interfaces"
-import { OrderDetails } from "./order.details"
+import { OrderVoidDetailsInterface } from "../interfaces"
+import { OrderDetails } from "../order.details"
 
 export class OrderVoidDetails extends OrderDetails implements OrderVoidDetailsInterface {
   voidAmount: number
-
+  orderState: string
   async execute() {
     const orderId = this.orderId
 
-    // Fetch order details from Commercetools
-    const order = await getOrderById(orderId)
+    const order = await super.execute()
 
-    if (!order) {
-      return
-    }
-
-    const { version, totalPrice, paymentInfo } = order
-
+    const { version, totalPrice, paymentInfo, orderState } = order
     const [payment] = paymentInfo?.payments || []
-
-    if (!payment?.id) {
-      return
-    }
 
     return {
       orderId,
@@ -34,6 +20,7 @@ export class OrderVoidDetails extends OrderDetails implements OrderVoidDetailsIn
       paymentId: payment?.id,
       paymentVersion: payment?.version,
       paymentTransactionId: this.getTransactionId(order),
+      orderState: orderState,
     }
   }
 }

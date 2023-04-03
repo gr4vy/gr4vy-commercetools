@@ -56,7 +56,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       )
     }
 
-    const transactionRefundResult = await handleTransactionRefund(body)
+    const transactionRefundResult = await handleTransactionRefund(event)
     ResponseHelper.setResponseTo200(response, transactionRefundResult)
   } catch (e) {
     ResponseHelper.setResponseError(response, {
