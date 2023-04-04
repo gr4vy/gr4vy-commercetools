@@ -77,6 +77,19 @@ const getOrderDetailsQuery = `
           fractionDigits
           currencyCode
         }
+        taxedPrice{
+          taxPortions{
+            rate
+          }
+          totalNet{
+            currencyCode
+            centAmount
+          }
+          totalGross {
+            currencyCode
+            centAmount
+          }
+        }
         custom{
           customFieldsRaw{
             name

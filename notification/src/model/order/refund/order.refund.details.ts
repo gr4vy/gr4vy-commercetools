@@ -179,7 +179,10 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
         totalRefundAmount += refundItemLineItem.price.value.centAmount * refundItem.quantity
       }
     })
-    return totalRefundAmount
+
+    const taxRate = order?.taxedPrice?.taxPortions[0]?.rate ?? 0
+    totalRefundAmount = totalRefundAmount + (totalRefundAmount * taxRate)
+    return Math.floor(totalRefundAmount)
   }
 
   async execute() {

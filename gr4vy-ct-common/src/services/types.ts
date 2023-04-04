@@ -97,6 +97,20 @@ export declare type Order = {
     currencyCode: string
   }
 
+  taxedPrice: {
+    taxPortions: [{
+      rate: number
+    }]
+    totalNet: {
+      currencyCode: string
+      centAmount: number
+    }
+    totalGross: {
+      currencyCode: string
+      centAmount: number
+    }
+  }
+
   lineItems: [
     {
       id: string
