@@ -32,6 +32,9 @@ const getOrderDetailsQuery = `
               }
             }
           }
+          taxRate {
+             includedInPrice
+          }
         }
         paymentInfo{
           payments {

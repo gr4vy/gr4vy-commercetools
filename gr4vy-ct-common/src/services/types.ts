@@ -133,6 +133,9 @@ export declare type Order = {
         }
       }
       discountedPricePerQuantity:discountedPricePerQuantity[]
+      taxRate: {
+        includedInPrice: boolean
+      }
     }
   ]
 

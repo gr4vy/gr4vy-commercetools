@@ -119,14 +119,15 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
     return discountedPricePerQuantity
   }
 
-  splitTaxOnLineItems (taxAmount:number, totalQty:number) {
-    return [...Array(totalQty)].map((_,i) =>
-        0|taxAmount/totalQty+(+(i < taxAmount%totalQty)))
+  splitTaxOnLineItems(taxAmount: number, totalQty: number) {
+    return [...Array(totalQty)].map(
+      (_, i) => 0 | (taxAmount / totalQty + +(i < taxAmount % totalQty))
+    )
   }
   getRefundAmount(refundObject: RefundMessageObject, order: Order): number {
     let totalRefundAmount = 0
     let totalQtyToReturn = 0
-    let totalQtyOrdered = 0;
+    let totalQtyOrdered = 0
 
     refundObject.items.forEach(refundItem => {
       let discountIncluded = false
@@ -188,26 +189,32 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
       }
     })
 
+    let taxIncluded = false
     order.lineItems.forEach(function (lineItem) {
+      taxIncluded = lineItem.taxRate.includedInPrice
       totalQtyOrdered += lineItem.quantity
     })
 
     const taxAmount = order?.taxedPrice?.taxPortions[0]?.amount?.centAmount ?? 0
+    if (taxIncluded || !taxAmount) {
+      return totalRefundAmount
+    }
+
     const taxSplitOnTotalQtyOrdered = this.splitTaxOnLineItems(taxAmount, totalQtyOrdered)
-    let currentReturnItemIds: string[] = [];
+    const currentReturnItemIds: string[] = []
     refundObject.items.forEach(refundItem => {
       currentReturnItemIds.push(refundItem.id)
     })
     order.returnInfo.forEach(function (returnInfoItem) {
       returnInfoItem.items.forEach(function (returnItem) {
         if (currentReturnItemIds.indexOf(returnItem.id) == -1) {
-          for (let i=1; i<=returnItem.quantity; i++) {
+          for (let i = 1; i <= returnItem.quantity; i++) {
             taxSplitOnTotalQtyOrdered.shift()
           }
         }
       })
     })
-    for (let i=1; i<=totalQtyToReturn; i++) {
+    for (let i = 1; i <= totalQtyToReturn; i++) {
       const taxToAdd = taxSplitOnTotalQtyOrdered.shift()
       if (taxToAdd) {
         totalRefundAmount += taxToAdd
