@@ -31,6 +31,26 @@ const getCustomerWithCartQuery = `
           currencyCode
           centAmount
         }
+        taxedShippingPrice{
+          totalGross{
+            currencyCode
+            centAmount
+          }
+          totalTax{
+            currencyCode
+            centAmount
+          }
+        }
+        taxedPrice{
+          totalTax {
+            currencyCode
+            centAmount
+          }
+          totalGross{
+            currencyCode
+            centAmount
+          }
+        }
         custom {
           customFieldsRaw {
             name
@@ -46,6 +66,13 @@ const getCustomerWithCartQuery = `
               currencyCode
               centAmount
             }
+            totalGross{
+              currencyCode
+              centAmount
+            }
+          }
+          taxRate {
+            includedInPrice
           }
           quantity
           discountedPricePerQuantity {

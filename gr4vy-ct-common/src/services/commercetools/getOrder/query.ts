@@ -6,6 +6,11 @@ query ($orderId: String) {
       order(id:$orderId){
         id
         version
+        taxedPrice {
+          totalGross {
+            centAmount
+          }
+        }
         paymentInfo {
           payments {
             id

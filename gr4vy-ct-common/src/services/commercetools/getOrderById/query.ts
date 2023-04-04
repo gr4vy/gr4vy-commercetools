@@ -7,6 +7,11 @@ const getOrderDetailsQuery = `
         orderNumber
         orderState
         paymentState
+        taxedPrice {
+          totalGross {
+            centAmount
+          }
+        }
         lineItems{
           id
           productId

@@ -25,7 +25,9 @@ export const createEmbedToken = async ({
   })
 
   const {
-    totalPrice: { centAmount, currencyCode },
+    taxedPrice: {
+      totalGross: { centAmount, currencyCode },
+    },
   } = cart
 
   const params: any = {
