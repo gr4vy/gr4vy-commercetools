@@ -80,6 +80,9 @@ const getOrderDetailsQuery = `
         taxedPrice{
           taxPortions{
             rate
+            amount{
+              centAmount
+            }
           }
           totalNet{
             currencyCode

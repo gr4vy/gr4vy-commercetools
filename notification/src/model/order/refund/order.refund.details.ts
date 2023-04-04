@@ -119,8 +119,15 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
     return discountedPricePerQuantity
   }
 
+  splitTaxOnLineItems (taxAmount:number, totalQty:number) {
+    return [...Array(totalQty)].map((_,i) =>
+        0|taxAmount/totalQty+(+(i < taxAmount%totalQty)))
+  }
   getRefundAmount(refundObject: RefundMessageObject, order: Order): number {
     let totalRefundAmount = 0
+    let totalQtyToReturn = 0
+    let totalQtyOrdered = 0;
+
     refundObject.items.forEach(refundItem => {
       let discountIncluded = false
       const refundItemLineItem = order.lineItems.find(
@@ -133,6 +140,7 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
         )
       }
       let returnQty = refundItem.quantity
+      totalQtyToReturn += returnQty
       let discountedPricePerQuantity = refundItemLineItem?.discountedPricePerQuantity
       if (
         discountedPricePerQuantity &&
@@ -180,9 +188,32 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
       }
     })
 
-    const taxRate = order?.taxedPrice?.taxPortions[0]?.rate ?? 0
-    totalRefundAmount = totalRefundAmount + (totalRefundAmount * taxRate)
-    return Math.floor(totalRefundAmount)
+    order.lineItems.forEach(function (lineItem) {
+      totalQtyOrdered += lineItem.quantity
+    })
+
+    const taxAmount = order?.taxedPrice?.taxPortions[0]?.amount?.centAmount ?? 0
+    const taxSplitOnTotalQtyOrdered = this.splitTaxOnLineItems(taxAmount, totalQtyOrdered)
+    let currentReturnItemIds: string[] = [];
+    refundObject.items.forEach(refundItem => {
+      currentReturnItemIds.push(refundItem.id)
+    })
+    order.returnInfo.forEach(function (returnInfoItem) {
+      returnInfoItem.items.forEach(function (returnItem) {
+        if (currentReturnItemIds.indexOf(returnItem.id) == -1) {
+          for (let i=1; i<=returnItem.quantity; i++) {
+            taxSplitOnTotalQtyOrdered.shift()
+          }
+        }
+      })
+    })
+    for (let i=1; i<=totalQtyToReturn; i++) {
+      const taxToAdd = taxSplitOnTotalQtyOrdered.shift()
+      if (taxToAdd) {
+        totalRefundAmount += taxToAdd
+      }
+    }
+    return totalRefundAmount
   }
 
   async execute() {
