@@ -1,5 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http"
 import fs from "fs"
+import path from "path"
 
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 import formidable from "formidable"
@@ -53,7 +54,7 @@ const processRequest = async (request: IncomingMessage, response: ServerResponse
             ],
           })
         }
-        ResponseHelper.setResponseTo200(response, { newPath })
+        ResponseHelper.setResponseTo200(response, { newPath: path.basename(newPath) })
       })
     })
   } catch (e) {
