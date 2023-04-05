@@ -85,11 +85,7 @@ export declare type Order = {
   version: string
   orderState: string
   paymentState: string
-  taxedPrice: {
-    totalGross: {
-      centAmount: number
-    }
-  }
+  
   paymentInfo: {
     payments: Payment[]
   }
