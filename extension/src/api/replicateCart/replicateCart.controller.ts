@@ -49,6 +49,8 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
     const orderState = CT.ORDER.CANCELLED
     const orderPaymentState = CT.ORDERPAYMENT.FAILED
+    const interfaceText = CT.ORDERPAYMENT.FAILED
+    const interfaceCode = CT.ORDERPAYMENT.FAILED
     const transactionState = CT.TRANSACTION.FAILURE
 
     //Cancel order
@@ -57,6 +59,8 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       orderState,
       orderPaymentState,
       transactionState,
+      interfaceText,
+      interfaceCode
     })
 
     //Replicate cart from order
