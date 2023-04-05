@@ -59,7 +59,7 @@ export const Constants = {
         OPEN: "Open",
         CONFIRMED: "Confirmed",
         CANCELLED: "Cancelled",
-        COMPLETE: "Complete"
+        COMPLETE: "Complete",
       },
       ORDERPAYMENT: {
         PAID: "Paid",
@@ -74,6 +74,7 @@ export const Constants = {
           AUTHORIZATION: "Authorization",
           CHARGE: "Charge",
         },
+        INITIAL: "Initial",
         SUCCESS: "Success",
         PENDING: "Pending",
         FAILURE: "Failure",
@@ -140,7 +141,7 @@ export const Constants = {
     ],
   },
 
-  CT_REFUND_INITIAL: "Initial",
+  CT_REFUND_INITIAL,
 
   GR4VY_REFUND_STATUS: {
     GR4VY_REFUND_PROCESSING: "processing",

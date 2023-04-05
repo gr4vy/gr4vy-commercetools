@@ -230,4 +230,12 @@ export declare type CtShippingInfo = {
       currencyCode: string
     }
   }
+  taxRate?: {
+    includedInPrice: boolean
+  }
+  taxedPrice?: {
+    totalNet: {
+      centAmount: number
+    }
+  }
 }

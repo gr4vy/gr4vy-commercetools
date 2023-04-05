@@ -61,20 +61,26 @@ const responseMapper = async (
 
   //Add Shipping as an item to the cart Items.
   if (cart?.shippingInfo) {
-    const shippingUnitAmount =
+    let shippingTotal = 0;
+    const shippingPrice =
         cart.shippingInfo.discountedPrice?.value.centAmount ?? (cart.shippingInfo.price?.centAmount ?? 0)
-    const shippingTax = cart?.taxedShippingPrice?.totalTax?.centAmount ?? 0
-    const shippingTotal = shippingUnitAmount + shippingTax
+    const shippingTaxIncludedInPrice = cart.shippingInfo.taxRate?.includedInPrice
+    const shippingTotalTax = cart?.taxedShippingPrice?.totalTax?.centAmount ?? 0
+    const shippingTotalNet = cart.shippingInfo.taxedPrice?.totalNet.centAmount ?? 0
+    if (shippingTaxIncludedInPrice) {
+      shippingTotal = shippingTotalNet + shippingTotalTax;
+    } else {
+      shippingTotal = shippingPrice + shippingTotalTax
+    }
     if (shippingTotal > 0) {
       const shippingItem: CartItem = {
         name: cart.shippingInfo?.shippingMethodName,
         quantity: 1,
-        unitAmount: shippingUnitAmount,
+        unitAmount: shippingTaxIncludedInPrice ? shippingTotalNet : shippingPrice,
         productType: "shipping_fee",
-        taxAmount: shippingTax,
+        taxAmount: shippingTotalTax,
         externalIdentifier: cart.shippingInfo?.shippingMethodName,
       }
-
       cartItems.push(shippingItem)
     }
   }

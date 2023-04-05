@@ -124,6 +124,14 @@ const getCustomerWithCartQuery = `
               centAmount
             }
           }
+          taxRate {
+            includedInPrice
+          }
+          taxedPrice {
+            totalNet {
+              centAmount
+            }
+          }
           shippingMethodName
         }
       }

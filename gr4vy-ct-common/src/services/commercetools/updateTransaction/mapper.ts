@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-const responseMapper = (response: any):boolean => {
+const responseMapper = (response: any): boolean => {
   if (response?.body?.errors) {
     throw {
       // eslint-disable-next-line
