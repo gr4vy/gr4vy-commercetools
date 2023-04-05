@@ -97,7 +97,17 @@ export declare type Order = {
     fractionDigits: number
     currencyCode: string
   }
-
+  shippingInfo: {
+    taxRate: {
+      amount: number
+      includedInPrice: boolean
+    }
+  }
+  taxedShippingPrice: {
+    totalTax: {
+      centAmount: number
+    }
+  }
   taxedPrice: {
     taxPortions: [{
       rate: number
