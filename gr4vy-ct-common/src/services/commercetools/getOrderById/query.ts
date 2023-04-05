@@ -85,6 +85,17 @@ const getOrderDetailsQuery = `
           fractionDigits
           currencyCode
         }
+        shippingInfo{
+          taxRate{
+            amount
+            includedInPrice
+          }
+        }
+        taxedShippingPrice{
+          totalTax{
+            centAmount
+          }
+        }
         taxedPrice{
           taxPortions{
             rate

@@ -195,11 +195,16 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
       totalQtyOrdered += lineItem.quantity
     })
 
-    const taxAmount = order?.taxedPrice?.taxPortions[0]?.amount?.centAmount ?? 0
+    let taxAmount = order?.taxedPrice?.taxPortions[0]?.amount?.centAmount ?? 0
     if (taxIncluded || !taxAmount) {
       return totalRefundAmount
     }
 
+    const shippingTaxIncludedInPrice = order.shippingInfo.taxRate?.includedInPrice
+    const shippingTotalTax = order?.taxedShippingPrice?.totalTax?.centAmount ?? 0
+    if (!shippingTaxIncludedInPrice) {
+      taxAmount -= shippingTotalTax
+    }
     const taxSplitOnTotalQtyOrdered = this.splitTaxOnLineItems(taxAmount, totalQtyOrdered)
     const currentReturnItemIds: string[] = []
     refundObject.items.forEach(refundItem => {
