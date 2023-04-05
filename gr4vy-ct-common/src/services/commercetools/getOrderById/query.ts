@@ -37,6 +37,9 @@ const getOrderDetailsQuery = `
               }
             }
           }
+          taxRate {
+             includedInPrice
+          }
         }
         paymentInfo{
           payments {
@@ -81,6 +84,22 @@ const getOrderDetailsQuery = `
           centAmount
           fractionDigits
           currencyCode
+        }
+        taxedPrice{
+          taxPortions{
+            rate
+            amount{
+              centAmount
+            }
+          }
+          totalNet{
+            currencyCode
+            centAmount
+          }
+          totalGross {
+            currencyCode
+            centAmount
+          }
         }
         custom{
           customFieldsRaw{

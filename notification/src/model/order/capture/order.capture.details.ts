@@ -7,12 +7,12 @@ class OrderCaptureDetails extends OrderDetails implements CaptureOrderDetailsInt
   async execute() {
     const orderId = this.orderId
     const order = await super.execute()
-    const { version, totalPrice, paymentInfo } = order
+    const { version, taxedPrice, paymentInfo } = order
     const [payment] = paymentInfo?.payments || []
     return {
       orderId,
-      currencyCode: totalPrice.currencyCode,
-      totalAmount: totalPrice.centAmount,
+      currencyCode: taxedPrice.totalGross.currencyCode,
+      totalAmount: taxedPrice.totalGross.centAmount,
       version,
       paymentId: payment?.id,
       paymentVersion: payment?.version,

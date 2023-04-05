@@ -9,13 +9,13 @@ export class OrderVoidDetails extends OrderDetails implements OrderVoidDetailsIn
 
     const order = await super.execute()
 
-    const { version, totalPrice, paymentInfo, orderState } = order
+    const { version, taxedPrice, paymentInfo, orderState } = order
     const [payment] = paymentInfo?.payments || []
 
     return {
       orderId,
-      currencyCode: totalPrice.currencyCode,
-      voidAmount: totalPrice.centAmount,
+      currencyCode: taxedPrice.totalGross.currencyCode,
+      voidAmount: taxedPrice.totalGross.centAmount,
       version,
       paymentId: payment?.id,
       paymentVersion: payment?.version,

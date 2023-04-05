@@ -102,6 +102,23 @@ export declare type Order = {
     currencyCode: string
   }
 
+  taxedPrice: {
+    taxPortions: [{
+      rate: number
+      amount: {
+        centAmount: number
+      }
+    }]
+    totalNet: {
+      currencyCode: string
+      centAmount: number
+    }
+    totalGross: {
+      currencyCode: string
+      centAmount: number
+    }
+  }
+
   lineItems: [
     {
       id: string
@@ -121,6 +138,9 @@ export declare type Order = {
         }
       }
       discountedPricePerQuantity:discountedPricePerQuantity[]
+      taxRate: {
+        includedInPrice: boolean
+      }
     }
   ]
 
