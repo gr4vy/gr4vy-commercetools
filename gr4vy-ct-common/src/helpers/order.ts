@@ -44,13 +44,6 @@ export const prepareCTStatuses = (
         transactionState: CT.TRANSACTION.PENDING,
       }
     case GR4VY.TRANSACTION.CAPTURE_SUCCEEDED:
-      // if (ctTransactionType !== CT.TRANSACTION.TYPES.CHARGE) {
-      //   throw {
-      //     message: `Error mismatch transaction type for transaction ID ${ctTransactionId}`,
-      //     statusCode: 400,
-      //   }
-      // }
-
       return {
         orderState:
           gr4vyCapturedAmount === gr4vyRefundedAmount ? CT.ORDER.COMPLETE : CT.ORDER.CONFIRMED,

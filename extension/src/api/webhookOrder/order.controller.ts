@@ -105,12 +105,12 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     const ctTransactionId = transaction?.id
 
     // Double check if the amount are equal
-    // if (gr4vyTransactionAmount !== ctTransactionAmount) {
-    //   throw {
-    //     message: `Error in mismatch amounts for gr4vy and CT for order payment ID ${payment?.id}`,
-    //     statusCode: 400,
-    //   }
-    // }
+    if (gr4vyTransactionAmount !== ctTransactionAmount) {
+      throw {
+        message: `Error in mismatch amounts for gr4vy and CT for order payment ID ${payment?.id}`,
+        statusCode: 400,
+      }
+    }
 
     // Preparing order and payment statuses to update
     const { orderState, orderPaymentState, transactionState } = await prepareCTStatuses(
