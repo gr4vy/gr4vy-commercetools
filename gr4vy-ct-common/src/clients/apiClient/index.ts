@@ -6,7 +6,7 @@ export class ApiClient {
   gClient: GraphQLClient
   projectKey: string
   query: string
-  variables = {} as { [key: string]: string }
+  variables = {} as { [key: string]: string | number }
 
   constructor() {
     this.gClient = new GraphQLClient()
@@ -23,7 +23,7 @@ export class ApiClient {
     this.projectKey = env.CTP_PROJECT_KEY as string
   }
 
-  setBody({ query, variables }: { query: string; variables: { [key: string]: string } }) {
+  setBody({ query, variables }: { query: string; variables: { [key: string]: string | number } }) {
     this.query = query
     this.variables = variables
   }

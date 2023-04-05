@@ -3,13 +3,12 @@ import { ServerResponse } from "http"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getTransactionById, getOrderById, updateOrderWithPayment, prepareCTStatuses, listTransactionRefunds, addTransaction, Order, updateRefund } from "@gr4vy-ct/common"
+import { Constants, getTransactionById, getOrderById, updateOrderWithPayment, prepareCTStatuses, listTransactionRefunds, addTransaction, Order, updateTransaction } from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import { getLogger } from "./../../utils"
-import c from "../../config/constants"
 
 const logger = getLogger()
 
@@ -71,7 +70,6 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       amount: gr4vyTransactionAmount,
       capturedAmount: gr4vyCapturedAmount,
       refundedAmount: gr4vyRefundedAmount,
-      intent: gr4vyTransactionType,
     } = gr4vyTransaction
 
     // Get order payment and transaction details
@@ -107,12 +105,12 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     const ctTransactionId = transaction?.id
 
     // Double check if the amount are equal
-    if (gr4vyTransactionAmount !== ctTransactionAmount) {
-      throw {
-        message: `Error in mismatch amounts for gr4vy and CT for order payment ID ${payment?.id}`,
-        statusCode: 400,
-      }
-    }
+    // if (gr4vyTransactionAmount !== ctTransactionAmount) {
+    //   throw {
+    //     message: `Error in mismatch amounts for gr4vy and CT for order payment ID ${payment?.id}`,
+    //     statusCode: 400,
+    //   }
+    // }
 
     // Preparing order and payment statuses to update
     const { orderState, orderPaymentState, transactionState } = await prepareCTStatuses(
@@ -125,7 +123,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
     // Create custom field in CT for order to save Gr4vy transaction id
     // Update payment info in CT based on Gr4vy transaction
-    const { hasOrderWithPaymentUpdated, updatePayment } = await updateOrderWithPayment({
+    const { hasOrderWithPaymentUpdated } = await updateOrderWithPayment({
       order,
       orderState,
       orderPaymentState,
@@ -133,14 +131,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       gr4vyTransaction,
     })
 
-    if (gr4vyRefundedAmount) {
-      await handleRefundTransactions({
-        order,
-        paymentVersionNumber: updatePayment.version,
-        payment,
-        gr4vyTransactionId,
-      })
-    }
+    await handleTransactions(orderId, gr4vyTransaction)
 
     const responseData = {
       order: order.id,
@@ -166,14 +157,86 @@ const processRequest = async (request: Request, response: ServerResponse) => {
   }
 }
 
-const handleRefundTransactions = async ({
+const handleTransactions = async (orderId: Order, gr4vyTransaction: any) => {
+  // Get latest order payment and transaction details
+  const order = await getOrderById(orderId)
+
+  const [payment] = order?.paymentInfo?.payments || []
+
+  if (!payment) {
+    throw {
+      message: `Error in fetching payment for order ID ${orderId}`,
+      statusCode: 400,
+    }
+  }
+
+  let paymentVersion = payment.version
+  const ctTransactions = payment?.transactions || []
+  const { id: gr4vyTransactionId, status, intent, amount, capturedAmount, refundedAmount } = gr4vyTransaction
+  
+  const transactionMapper: any = {
+    Authorization: "authorize",
+    Refund: "capture",
+    Charge: "capture",
+  }
+
+  const existingCTTransactionTypes = ctTransactions.map(
+    (t: { type: string }) => transactionMapper[t.type]
+  )
+
+  for (const transaction of ctTransactions) {
+    if (transactionMapper[transaction.type] === intent) {
+      const { transactionState } = await prepareCTStatuses(
+        status,
+        transaction.type,
+        transaction.id,
+        capturedAmount,
+        refundedAmount
+      )
+      if (transactionState !== transaction.state) {
+        const { version } = await updateTransaction({
+          payment,
+          paymentVersion,
+          transaction,
+          transactionState,
+        })
+        paymentVersion = version
+      }
+    } else {
+      if (!existingCTTransactionTypes.includes(intent)) {
+        const { version } = await addTransaction({
+          isRefund: false,
+          order,
+          status,
+          paymentVersion,
+          transactionType: transaction.type === "authorize" ? "Authorization" : "Charge",
+          amount: amount,
+          currency: transaction?.amount.currencyCode,
+          customValue: gr4vyTransactionId,
+        })
+        paymentVersion = version
+      }
+    }
+  }
+
+  if(refundedAmount > 0){
+    await createRefundTransactions({
+      order,
+      paymentVersion,
+      payment,
+      gr4vyTransactionId,
+    })
+  }
+}
+
+const createRefundTransactions = async ({
   order,
-  paymentVersionNumber,
+  paymentVersion,
   payment,
   gr4vyTransactionId,
 }: {
   order: Order
-  paymentVersionNumber: number
+  paymentVersion: number
   payment: { transactions: any }
   gr4vyTransactionId: string
 }) => {
@@ -188,7 +251,6 @@ const handleRefundTransactions = async ({
   const ctTransactions = payment?.transactions
 
   const ctCustomRefundIds: string[] = []
-  const ctCustomRefundInfo: any = {}
 
   for (const transaction of ctTransactions) {
     if (transaction?.custom) {
@@ -198,45 +260,29 @@ const handleRefundTransactions = async ({
 
       if (customFieldsRaw && Array.isArray(customFieldsRaw)) {
         customFieldsRaw.forEach(customField => {
-          if (customField.name === c.CT_CUSTOM_FIELD_TRANSACTION_REFUND) {
+          if (customField.name === Constants.CT_CUSTOM_FIELD_TRANSACTION_REFUND) {
             ctCustomRefundIds.push(customField.value)
-            ctCustomRefundInfo[customField.value] = {
-              transactionId: transaction.id,
-              ctStatus: transaction.state,
-            }
           }
         })
       }
     }
   }
 
-  //Manage refund transactions
-  if (items && Array.isArray(items)) {
-    const createCTRefundTransactions = Array.isArray(items)
-      ? items.map(async refundItem => {
-          refundItem.paymentVersion = paymentVersionNumber
-          if (!ctCustomRefundIds.includes(refundItem.id)) {
-            paymentVersionNumber++
-            return addTransaction({ order, refundItem })
-          } else {
-            const { transactionId, ctStatus } = ctCustomRefundInfo[refundItem.id]
-            const hasUpdatedRefund = await updateRefund({
-              order,
-              refundItem,
-              values: {
-                transactionId,
-                ctStatus,
-                status: refundItem.status,
-              },
-            })
-            if (hasUpdatedRefund) {
-              paymentVersionNumber++
-            }
-          }
-        })
-      : []
-
-    await Promise.all(createCTRefundTransactions)
+  for(const refundItem of items){
+    if (!ctCustomRefundIds.includes(refundItem.id)) {
+      const { status, currency, amount } = refundItem
+      const { version } = await addTransaction({
+        isRefund: true,
+        order,
+        status,
+        paymentVersion,
+        transactionType: "Refund",
+        amount,
+        currency,
+        customValue: refundItem.id,
+      })
+      paymentVersion = version
+    }
   }
 }
 
