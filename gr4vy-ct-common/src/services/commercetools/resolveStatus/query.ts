@@ -31,12 +31,21 @@ const changeTransactionState = `
   changeTransactionState: updatePayment(
     id:$paymentId,
     version:$paymentVersion,
-    actions:{
+    actions:[{
       changeTransactionState: {
         transactionId :$transactionId,
         state: $transactionState
       }
-    }
+    },{
+      setStatusInterfaceText:{
+        interfaceText:$interfaceText
+      }
+    },
+      {
+        setStatusInterfaceCode:{
+          interfaceCode:$interfaceCode
+        }
+      }]
   ){
     id
   }
@@ -52,7 +61,9 @@ const mutationQuery = `
     $paymentId: String!,
     $paymentVersion:Long!,
     $transactionId:String!,
-    $transactionState: TransactionState!
+    $transactionState: TransactionState!,
+    $interfaceText: String!,
+    $interfaceCode: String!
   ){
     ${changeOrderState}
     ${changePaymentState}

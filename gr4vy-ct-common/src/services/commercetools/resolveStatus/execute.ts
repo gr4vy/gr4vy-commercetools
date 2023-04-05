@@ -8,11 +8,15 @@ const resolveStatus = async ({
   orderState,
   orderPaymentState,
   transactionState,
+  interfaceText,
+  interfaceCode
 }: {
   order: Order
   orderState: string
   orderPaymentState: string
   transactionState: string
+  interfaceText: string
+  interfaceCode: string
 }) => {
   const apiClient: ApiClient = new ApiClient()
 
@@ -30,6 +34,8 @@ const resolveStatus = async ({
         orderVersion: order.version,
         orderPaymentState,
         orderPaymentVersion: order.version + 1,
+        interfaceText,
+        interfaceCode
       },
     })
 
@@ -48,6 +54,8 @@ const resolveStatus = async ({
         paymentVersion: payment?.version,
         transactionId: transaction?.id,
         transactionState,
+        interfaceText,
+        interfaceCode
       },
     })
 

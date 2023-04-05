@@ -85,11 +85,7 @@ export declare type Order = {
   version: string
   orderState: string
   paymentState: string
-  taxedPrice: {
-    totalGross: {
-      centAmount: number
-    }
-  }
+  
   paymentInfo: {
     payments: Payment[]
   }
@@ -100,6 +96,33 @@ export declare type Order = {
     centAmount: number
     fractionDigits: number
     currencyCode: string
+  }
+  shippingInfo: {
+    taxRate: {
+      amount: number
+      includedInPrice: boolean
+    }
+  }
+  taxedShippingPrice: {
+    totalTax: {
+      centAmount: number
+    }
+  }
+  taxedPrice: {
+    taxPortions: [{
+      rate: number
+      amount: {
+        centAmount: number
+      }
+    }]
+    totalNet: {
+      currencyCode: string
+      centAmount: number
+    }
+    totalGross: {
+      currencyCode: string
+      centAmount: number
+    }
   }
 
   lineItems: [
@@ -121,6 +144,9 @@ export declare type Order = {
         }
       }
       discountedPricePerQuantity:discountedPricePerQuantity[]
+      taxRate: {
+        includedInPrice: boolean
+      }
     }
   ]
 
