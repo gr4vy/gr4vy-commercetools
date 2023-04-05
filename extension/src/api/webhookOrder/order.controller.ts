@@ -27,6 +27,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
   }
 
   try {
+    logger.debug("request body", request.body)
     const { type: webhookEventType, target } = request.body
 
     if (!webhookEventType || (webhookEventType && webhookEventType !== "event")) {
