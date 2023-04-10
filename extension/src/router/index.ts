@@ -6,6 +6,7 @@ import updatePaymentController from "../api/updatePayment/payment.controller"
 import replicateCartController from "../api/replicateCart/replicateCart.controller"
 import webhookOrder from "../api/webhookOrder/order.controller"
 import clearCacheController from "../api/clearCache/cache.controller"
+import taxcalculationController from "../api/changeTaxCalculationMode/taxcalculationmode.controller"
 
 const routes = {
   "/": healthController.processRequest,
@@ -17,6 +18,7 @@ const routes = {
   "/replicateCart": replicateCartController.processRequest,
   "/webhookOrder": webhookOrder.processRequest,
   "/cache/clear": clearCacheController.processRequest,
+  "/taxcalculationmode": taxcalculationController.processRequest,
 }
 
 export { routes }

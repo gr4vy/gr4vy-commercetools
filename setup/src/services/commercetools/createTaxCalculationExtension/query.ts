@@ -6,6 +6,11 @@ const extension = `
       destination: {
         HTTP: {
           url: $extensionUrl
+          authentication: {
+            AuthorizationHeader: {
+              headerValue: "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=="
+            }
+          }
         }
       }
       triggers: [{

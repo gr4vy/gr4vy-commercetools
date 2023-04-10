@@ -34,7 +34,7 @@ export default {
       KEY: "gr4vy-subscription"
     },
     EXTENSION:{
-      KEY: "gr4vy-extension-test-1"
+      KEY: "gr4vy-extension"
     }
   }
 }
