@@ -5,12 +5,14 @@ import { ServerResponse } from "http"
 
 import { Request } from "./../../types"
 import { getLogger } from "./../../utils"
+import ResponseHelper from "../../helper/response";
 
 const logger = getLogger()
 
 const processRequest = async (request: Request, response: ServerResponse) => {
   logger.debug("taxcalculationmode request body", request.body)
 
+  ResponseHelper.setResponseTo200(response, { cartId: "" })
 }
 
 export default { processRequest }
