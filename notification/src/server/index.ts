@@ -1,9 +1,11 @@
 import http, { ServerResponse } from "http"
 import url from "url"
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { getLogger } from "@gr4vy-ct/common"
 import { StatusCodes } from "http-status-codes"
 
-import { getLogger } from "./../utils"
 import { routes } from "./../router"
 import ResponseHelper from "./../helper/response"
 import cors from "../helper/headers"

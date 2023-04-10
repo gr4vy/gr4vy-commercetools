@@ -3,16 +3,22 @@ import { ServerResponse } from "http"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { Constants, getTransactionById, getOrderById, updateOrderWithPayment, prepareCTStatuses, listTransactionRefunds, addTransaction, Order, updateTransaction } from "@gr4vy-ct/common"
+import { getLogger, Constants, getTransactionById, getOrderById, updateOrderWithPayment, prepareCTStatuses, listTransactionRefunds, addTransaction, Order, updateTransaction } from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
-import { getLogger } from "./../../utils"
-
-const logger = getLogger()
 
 const processRequest = async (request: Request, response: ServerResponse) => {
+  const logger = getLogger()
+
+  // Log the request
+  logger.info({
+    method: request.method,
+    url: request.url,
+    headers: request.headers,
+  })
+  
   if (!isPostRequest(request)) {
     logger.debug(`Received non-POST request: ${request.method}. The request will not be processed!`)
     return ResponseHelper.setResponseError(response, {
@@ -28,6 +34,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
   try {
     logger.debug("request body", request.body)
+
     const { type: webhookEventType, target } = request.body
 
     if (!webhookEventType || (webhookEventType && webhookEventType !== "event")) {
@@ -144,7 +151,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     const errorStackTrace =
       `Error during parsing update payment request: Ending the process. ` +
       `Error: ${JSON.stringify(e)}`
-    logger.error(errorStackTrace)
+    logger.debug(errorStackTrace)
 
     ResponseHelper.setResponseError(response, {
       httpStatusCode: e.statusCode || 500,
