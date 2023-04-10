@@ -13,7 +13,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
   const logger = getLogger()
 
   // Log the request
-  logger.info({
+  logger.debug({
     method: request.method,
     url: request.url,
     headers: request.headers,
