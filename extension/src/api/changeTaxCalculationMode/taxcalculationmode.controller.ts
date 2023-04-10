@@ -9,7 +9,7 @@ import { getLogger } from "./../../utils"
 const logger = getLogger()
 
 const processRequest = async (request: Request, response: ServerResponse) => {
-  logger.debug(`changeTaxcalculationMode:: createCartResponse `, JSON.stringify(request))
+  logger.debug("taxcalculationmode request body", request.body)
 
 }
 
