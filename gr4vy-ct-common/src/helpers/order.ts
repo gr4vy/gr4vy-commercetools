@@ -17,12 +17,6 @@ export const prepareCTStatuses = (
 
   switch (gr4vyTransactionStatus) {
     case GR4VY.TRANSACTION.AUTHORIZATION_SUCCEEDED:
-      if (ctTransactionType !== CT.TRANSACTION.TYPES.AUTHORIZATION) {
-        throw {
-          message: `Error mismatch transaction type for transaction ID ${ctTransactionId}`,
-          statusCode: 400,
-        }
-      }
       return {
         orderState: CT.ORDER.CONFIRMED,
         orderPaymentState: CT.ORDERPAYMENT.PAID,
@@ -32,12 +26,6 @@ export const prepareCTStatuses = (
     case GR4VY.TRANSACTION.CAPTURE_PENDING:
     case GR4VY.TRANSACTION.PROCESSING:
     case GR4VY.TRANSACTION.BUYER_APPROVAL_PENDING:
-      if (ctTransactionType !== CT.TRANSACTION.TYPES.CHARGE) {
-        throw {
-          message: `Error mismatch transaction type for transaction ID ${ctTransactionId}`,
-          statusCode: 400,
-        }
-      }
       return {
         orderState: CT.ORDER.OPEN,
         orderPaymentState: CT.ORDERPAYMENT.PENDING,
@@ -54,21 +42,16 @@ export const prepareCTStatuses = (
     case GR4VY.TRANSACTION.AUTHORIZATION_FAILED:
     case GR4VY.TRANSACTION.AUTHORIZATION_VOIDED:
     case GR4VY.TRANSACTION.AUTHORIZATION_VOID_PENDING:
-      if (ctTransactionType !== CT.TRANSACTION.TYPES.AUTHORIZATION) {
-        throw {
-          message: `Error mismatch transaction type for transaction ID ${ctTransactionId}`,
-          statusCode: 400,
-        }
-      }
       return {
         orderState: CT.ORDER.CANCELLED,
         orderPaymentState: CT.ORDERPAYMENT.FAILED,
         transactionState: CT.TRANSACTION.FAILURE,
       }
     default:
-      throw {
-        message: `Error during prearing CT order statuses for transaction ID ${ctTransactionId}`,
-        statusCode: 400,
+      return {
+        orderState: CT.ORDER.CANCELLED,
+        orderPaymentState: CT.ORDERPAYMENT.FAILED,
+        transactionState: CT.TRANSACTION.FAILURE,
       }
   }
 }

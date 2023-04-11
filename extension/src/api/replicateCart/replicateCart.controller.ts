@@ -3,7 +3,7 @@ import { ServerResponse } from "http"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getLogger, getOrder, resolveStatus, replicateCartFromOrder, Constants } from "@gr4vy-ct/common"
+import { getLogger, getOrder, resolveStatus, replicateCartFromOrder, Constants, prepareCTStatuses, updateOrderWithPayment } from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
@@ -26,7 +26,8 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         ],
       })
     }
-    const { orderId } = request.body
+
+    const { orderId, transaction: gr4vyTransaction } = request.body
     if (!orderId) {
       throw {
         message: `Required parameter orderId is missing or empty`,
@@ -41,26 +42,62 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         statusCode: 400,
       }
     }
-
+    
     const {
       STATES: { CT },
     } = Constants
 
-    const orderState = CT.ORDER.CANCELLED
-    const orderPaymentState = CT.ORDERPAYMENT.FAILED
-    const interfaceText = CT.ORDERPAYMENT.FAILED
-    const interfaceCode = CT.ORDERPAYMENT.FAILED
-    const transactionState = CT.TRANSACTION.FAILURE
+    const {
+      id,
+      status,
+      intent,
+      type,
+      capturedAmount: gr4vyCapturedAmount,
+      refundedAmount: gr4vyRefundedAmount,
+      rawResponseCode,
+      rawResponseDescription,
+    } = gr4vyTransaction || {}
 
-    //Cancel order
-    await resolveStatus({
-      order,
-      orderState,
-      orderPaymentState,
-      transactionState,
-      interfaceText,
-      interfaceCode
-    })
+    const haveTransactionInfo = !!(id && status && type && intent)
+    
+    if (haveTransactionInfo) {
+      // Update payment info
+      const [payment] = order?.paymentInfo?.payments || []
+      const [transaction] = payment?.transactions || []
+      const { type: ctTransactionType, id: ctTransactionId } = transaction || {}
+      const { orderState, orderPaymentState, transactionState } = prepareCTStatuses(
+        status,
+        ctTransactionType,
+        ctTransactionId,
+        gr4vyCapturedAmount,
+        gr4vyRefundedAmount
+      )
+
+      await updateOrderWithPayment({
+        order,
+        orderState,
+        orderPaymentState,
+        transactionState,
+        gr4vyTransaction,
+      })
+
+    } else {
+      //Cancel order
+      const orderState = CT.ORDER.CANCELLED
+      const orderPaymentState = CT.ORDERPAYMENT.FAILED
+      const transactionState = CT.TRANSACTION.FAILURE
+      const interfaceText = rawResponseDescription || CT.ORDERPAYMENT.FAILED
+      const interfaceCode = rawResponseCode || CT.ORDERPAYMENT.FAILED
+      
+      await resolveStatus({
+        order,
+        orderState,
+        orderPaymentState,
+        transactionState,
+        interfaceText,
+        interfaceCode,
+      })
+    }
 
     //Replicate cart from order
     const replicateCartResult = await replicateCartFromOrder({ orderId })

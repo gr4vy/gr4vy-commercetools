@@ -1,34 +1,24 @@
 // GraphQL mutation to update status
 
-const changeOrderState = `
-  changeOrderState: updateOrder(
-    id:$orderId,
+const updateOrder = `
+  updateOrder: updateOrder(
+    id: $orderId,
     version: $orderVersion,
-    actions: {
-      changeOrderState: {
-        orderState: $orderState
-      }
-    }
-  ) {
-    id
-  }
-`
-
-const changePaymentState = `
-  changePaymentState: updateOrder(
-    id:$orderId,
-    version: $orderPaymentVersion,
-    actions: {
+    actions: [{
       changePaymentState: {
         paymentState: $orderPaymentState
       }
-    }
+    },{
+      changeOrderState: {
+        orderState: $orderState
+      }
+    }]
   ) {
     id
   }
 `
-const changeTransactionState = `
-  changeTransactionState: updatePayment(
+const updatePayment = `
+  updatePayment: updatePayment(
     id:$paymentId,
     version:$paymentVersion,
     actions:[{
@@ -41,11 +31,16 @@ const changeTransactionState = `
         interfaceText:$interfaceText
       }
     },
-      {
-        setStatusInterfaceCode:{
-          interfaceCode:$interfaceCode
-        }
-      }]
+    {
+      setStatusInterfaceCode:{
+        interfaceCode:$interfaceCode
+      }
+    },{
+      changeTransactionTimestamp:{
+        transactionId: $transactionId,
+        timestamp:$timestamp
+      }
+    }]
   ){
     id
   }
@@ -57,17 +52,16 @@ const mutationQuery = `
     $orderState: OrderState!,
     $orderVersion:Long!,
     $orderPaymentState: PaymentState!,
-    $orderPaymentVersion:Long!,
     $paymentId: String!,
     $paymentVersion:Long!,
     $transactionId:String!,
     $transactionState: TransactionState!,
     $interfaceText: String!,
-    $interfaceCode: String!
+    $interfaceCode: String!,
+    $timestamp: DateTime!,
   ){
-    ${changeOrderState}
-    ${changePaymentState}
-    ${changeTransactionState}
+    ${updateOrder}
+    ${updatePayment}
   }
 `
 
@@ -77,10 +71,8 @@ const mutationQueryWithoutTransaction = `
         $orderState: OrderState!,
         $orderVersion:Long!,
         $orderPaymentState: PaymentState!,
-        $orderPaymentVersion:Long!
     ){
-        ${changeOrderState}
-        ${changePaymentState}
+        ${updateOrder}
     }
 `
 

@@ -9,7 +9,7 @@ const resolveStatus = async ({
   orderPaymentState,
   transactionState,
   interfaceText,
-  interfaceCode
+  interfaceCode,
 }: {
   order: Order
   orderState: string
@@ -33,14 +33,12 @@ const resolveStatus = async ({
         orderState,
         orderVersion: order.version,
         orderPaymentState,
-        orderPaymentVersion: order.version + 1,
         interfaceText,
-        interfaceCode
+        interfaceCode,
       },
     })
 
     return responseMapperWithoutTransaction(await apiClient.getData())
-
   } else {
     apiClient.setBody({
       query: mutationQuery,
@@ -49,13 +47,14 @@ const resolveStatus = async ({
         orderState,
         orderVersion: order.version,
         orderPaymentState,
-        orderPaymentVersion: order.version + 1,
         paymentId: payment?.id,
         paymentVersion: payment?.version,
         transactionId: transaction?.id,
         transactionState,
         interfaceText,
-        interfaceCode
+        interfaceCode,
+        // Timestamp
+        timestamp: new Date().toISOString(),
       },
     })
 

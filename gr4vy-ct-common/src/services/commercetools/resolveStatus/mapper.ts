@@ -1,19 +1,12 @@
 // eslint-disable-next-line
 const responseMapper = (response: any) => {
   checkResponseError(response)
-  return (
-    !!response?.body?.data?.changeOrderState &&
-    !!response?.body?.data?.changePaymentState &&
-    !!response?.body?.data?.changeTransactionState
-  )
+  return !!response?.body?.data?.updateOrder && !!response?.body?.data?.updatePayment
 }
 
 const responseMapperWithoutTransaction = (response: any) => {
   checkResponseError(response)
-  return (
-      !!response?.body?.data?.changeOrderState &&
-      !!response?.body?.data?.changePaymentState
-  )
+  return !!response?.body?.data?.updateOrder
 }
 
 const checkResponseError = (response: any) => {
