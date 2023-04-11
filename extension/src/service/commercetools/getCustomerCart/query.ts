@@ -21,6 +21,7 @@ const getCustomerWithCartQuery = `
         version
         customerId
         anonymousId
+        taxCalculationMode
         billingAddress {
           ...addressFields
         }

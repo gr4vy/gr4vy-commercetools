@@ -1,3 +1,5 @@
+import {TaxCalculationMode} from "@commercetools/platform-sdk/dist/declarations/src";
+
 export declare type Customer = {
   id: string
   firstName: string
@@ -23,6 +25,7 @@ export declare type Cart = {
   version: string
   customerId: string | null
   anonymousId: string
+  taxCalculationMode: TaxCalculationMode
   totalPrice: {
     currencyCode: string
     centAmount: number
