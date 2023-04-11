@@ -9,6 +9,14 @@ const responseMapper = async (
   cartItems: CartItem[]
 }> => {
   const { customer, activeCart: cart } = result?.body?.data?.me || {}
+
+  const cartTaxCalculationMode = cart?.taxCalculationMode
+  if (cartTaxCalculationMode == 'LineItemLevel') {
+    throw new Error(
+        "TaxCalculationMode should be set to 'UnitPriceLevel'"
+    )
+  }
+
   if (customer?.custom) {
     const {
       custom: { customFieldsRaw },
@@ -113,6 +121,8 @@ const getCartItem = (c: CartLineItem): CartItem => {
     const productDiscountPrice = price?.discounted?.value?.centAmount;
     const taxedPriceAmount = taxedPrice?.totalTax?.centAmount
     const isTaxIncludedInPrice = taxRate?.includedInPrice
+    const taxedUnitPrice = taxedPriceAmount/quantity
+    const productPriceExclTax = Math.round(productPrice - taxedUnitPrice)
 
     //calculate product level discount
     if (productDiscountPrice != null) {
@@ -145,9 +155,9 @@ const getCartItem = (c: CartLineItem): CartItem => {
   return {
     name,
     quantity,
-    unitAmount: isTaxIncludedInPrice ? productPrice - taxedPriceAmount : productPrice,
+    unitAmount: isTaxIncludedInPrice ? productPriceExclTax : productPrice,
     discountAmount: discountItemAmount,
-    taxAmount: isTaxIncludedInPrice ? taxedPriceAmount * quantity : taxedPriceAmount || null,
+    taxAmount: taxedPriceAmount || null,
     externalIdentifier: id,
     sku: variant?.sku || null,
     imageUrl: Array.isArray(variant?.images) ? variant?.images[0]?.url : null,
