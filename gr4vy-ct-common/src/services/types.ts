@@ -147,6 +147,14 @@ export declare type Order = {
       taxRate: {
         includedInPrice: boolean
       }
+      taxedPrice: {
+        totalNet: {
+          centAmount: number
+        }
+        totalGross: {
+          centAmount: number
+        }
+      }
     }
   ]
 
