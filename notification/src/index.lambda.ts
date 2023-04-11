@@ -1,8 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { Constants } from "@gr4vy-ct/common"
+import { getLogger, Constants } from "@gr4vy-ct/common"
 
-import { getLogger } from "./utils/logger.js"
 import { handleTransactionCapture, handleTransactionRefund, handleTransactionVoid } from "./handler"
 import { prepareRequestBody } from "./helper"
 
