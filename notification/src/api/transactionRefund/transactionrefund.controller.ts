@@ -1,11 +1,13 @@
 import { ServerResponse } from "http"
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { getLogger } from "@gr4vy-ct/common"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 
 import ResponseHelper from "../../helper/response"
 import { isPostRequest } from "../../helper/methods"
 import { Request } from "../../types"
-import { getLogger } from "../../utils"
 import { handleTransactionRefund } from "../../handler"
 import { prepareRequestBody } from "../../helper"
 

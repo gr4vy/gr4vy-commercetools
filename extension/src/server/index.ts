@@ -2,8 +2,10 @@ import http, { ServerResponse } from "http"
 import url from "url"
 
 import { StatusCodes } from "http-status-codes"
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { getLogger } from "@gr4vy-ct/common"
 
-import { getLogger } from "./../utils"
 import { routes } from "./../router"
 import ResponseHelper from "./../helper/response"
 import cors from "../helper/headers"
@@ -47,7 +49,7 @@ const createServer = () => {
         })
       }
     } catch (e) {
-      logger.error(e, `Unexpected error when processing URL ${request.url}`)
+      logger.debug(e, `Unexpected error when processing URL ${request.url}`)
       ResponseHelper.setResponseError(response, {
         httpStatusCode: StatusCodes.INTERNAL_SERVER_ERROR,
         message: e.message,

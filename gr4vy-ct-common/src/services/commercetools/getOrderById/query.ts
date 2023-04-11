@@ -40,6 +40,14 @@ const getOrderDetailsQuery = `
           taxRate {
              includedInPrice
           }
+          taxedPrice{
+            totalNet{
+              centAmount
+            }
+            totalGross{
+              centAmount
+            }
+          }
         }
         paymentInfo{
           payments {
