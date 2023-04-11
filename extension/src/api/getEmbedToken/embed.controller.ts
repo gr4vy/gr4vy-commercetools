@@ -3,13 +3,13 @@ import { ServerResponse } from "http"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getCustomObjects } from "@gr4vy-ct/common"
+import { getCustomObjects, getLogger } from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import { getCustomerWithCart, createEmbedToken } from "../../service"
-import { getLogger, resolveCustomerBuyerId } from "./../../utils"
+import { resolveCustomerBuyerId } from "./../../utils"
 
 const processRequest = async (request: Request, response: ServerResponse) => {
   const logger = getLogger()
@@ -75,7 +75,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     const errorStackTrace =
       `Error during parsing creating embed token request: Ending the process. ` +
       `Error: ${e}`
-    logger.error(errorStackTrace)
+    logger.debug(errorStackTrace)
 
     ResponseHelper.setResponseError(response, {
       httpStatusCode: e.statusCode || 500,

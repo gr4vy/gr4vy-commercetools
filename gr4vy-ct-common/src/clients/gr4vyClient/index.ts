@@ -20,14 +20,14 @@ import {
   TransactionCaptureParams,
 } from "./types"
 
-const logger = getLogger()
-
 export class Gr4vy {
   client: Client
+  logger: any
 
   constructor({ gr4vyId, privateKey, environment, debug }: Options) {
     privateKey = String(fs.readFileSync(process.env.GR4VY_PRIVATE_KEY_PATH + privateKey))
 
+    this.logger = getLogger()
     this.client = new Client({
       gr4vyId,
       privateKey,
@@ -44,7 +44,7 @@ export class Gr4vy {
     metadata,
     cartItems,
   }: EmbedParams) {
-    logger.debug("getEmbedToken", {
+    this.logger.debug("getEmbedToken", {
       amount,
       currency,
       buyerExternalIdentifier,
@@ -66,7 +66,7 @@ export class Gr4vy {
     const buyerRequest = new BuyerRequest()
     buyerRequest.displayName = displayName
     buyerRequest.externalIdentifier = externalIdentifier
-    logger.debug("createBuyer", buyerRequest)
+    this.logger.debug("createBuyer", buyerRequest)
     return this.client.addBuyer(buyerRequest)
   }
 
@@ -80,7 +80,7 @@ export class Gr4vy {
     buyerRequest.displayName = displayName
     buyerRequest.externalIdentifier = externalIdentifier
     buyerRequest.billingDetails = billingDetails
-    logger.debug("updateBuyer", buyerRequest)
+    this.logger.debug("updateBuyer", buyerRequest)
     return this.client.updateBuyer(gr4vyBuyerId, buyerRequest)
   }
 
@@ -98,7 +98,7 @@ export class Gr4vy {
     shippingRequest.emailAddress = emailAddress
     shippingRequest.phoneNumber = phoneNumber
     shippingRequest.address = address
-    logger.debug("addBuyerShippingDetail", { gr4vyBuyerId, shippingRequest })
+    this.logger.debug("addBuyerShippingDetail", { gr4vyBuyerId, shippingRequest })
     return this.client.addBuyerShippingDetail(gr4vyBuyerId, shippingRequest)
   }
 
@@ -117,41 +117,41 @@ export class Gr4vy {
     shippingRequest.emailAddress = emailAddress
     shippingRequest.phoneNumber = phoneNumber
     shippingRequest.address = address
-    logger.debug("updateBuyerShippingDetail", { gr4vyBuyerId, buyerShippingId, shippingRequest })
+    this.logger.debug("updateBuyerShippingDetail", { gr4vyBuyerId, buyerShippingId, shippingRequest })
     return this.client.updateBuyerShippingDetail(gr4vyBuyerId, buyerShippingId, shippingRequest)
   }
 
   transactionCapture({ amount, transactionId }: TransactionCaptureParams) {
     const transactionCaptureRequest = new TransactionCaptureRequest()
     transactionCaptureRequest.amount = amount
-    logger.debug("transactionCapture", { transactionId, transactionCaptureRequest })
+    this.logger.debug("transactionCapture", { transactionId, transactionCaptureRequest })
     return this.client.captureTransaction(transactionId, transactionCaptureRequest)
   }
 
   transactionRefund({ amount, transactionId }: TransactionRefundParams) {
     const transactionRefundRequest = new TransactionRefundRequest()
     transactionRefundRequest.amount = amount
-    logger.debug("transactionRefund", { transactionId, transactionRefundRequest })
+    this.logger.debug("transactionRefund", { transactionId, transactionRefundRequest })
     return this.client.refundTransaction(transactionId, transactionRefundRequest)
   }
 
   transactionVoid({ transactionId }: TransactionVoidParams) {
-    logger.debug("transactionVoid", transactionId)
+    this.logger.debug("transactionVoid", transactionId)
     return this.client.voidTransaction(transactionId)
   }
 
   getTransactionById(transactionId: string) {
-    logger.debug("getTransactionById", transactionId)
+    this.logger.debug("getTransactionById", transactionId)
     return this.client.getTransaction(transactionId)
   }
 
   listTransactionRefunds(transactionId: string) {
-    logger.debug("listTransactionRefunds", transactionId)
+    this.logger.debug("listTransactionRefunds", transactionId)
     return this.client.listTransactionRefunds(transactionId)
   }
 
   listBuyer(userId: string) {
-    logger.debug("listBuyer", userId)
+    this.logger.debug("listBuyer", userId)
     const result = this.client.listBuyers(userId, 1)
     return result
   }

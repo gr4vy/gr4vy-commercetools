@@ -60,6 +60,14 @@ class ResponseHelper {
       })
     )
   }
+
+  setResponseToEmpty<T>(response: ServerResponse) {
+    response.writeHead(StatusCodes.OK, {
+      ...this.headers,
+      ...cors(),
+    })
+    response.end()
+  }
 }
 
 export default new ResponseHelper()

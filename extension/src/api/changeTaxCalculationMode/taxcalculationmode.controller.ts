@@ -12,7 +12,7 @@ const logger = getLogger()
 const processRequest = async (request: Request, response: ServerResponse) => {
   logger.debug("taxcalculationmode request body", request.body)
 
-  ResponseHelper.setResponseTo200(response, { cartId: "" })
+  ResponseHelper.setResponseToEmpty(response)
 }
 
 export default { processRequest }
