@@ -68,6 +68,14 @@ class ResponseHelper {
     })
     response.end()
   }
+
+  setResponse<T>(response: ServerResponse, params?: T) {
+    response.writeHead(StatusCodes.OK, {
+      ...this.headers,
+      ...cors(),
+    })
+    response.end(JSON.stringify(params))
+  }
 }
 
 export default new ResponseHelper()

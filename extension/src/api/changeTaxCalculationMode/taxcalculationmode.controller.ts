@@ -9,10 +9,13 @@ import ResponseHelper from "../../helper/response";
 
 const processRequest = async (request: Request, response: ServerResponse) => {
   const logger = getLogger()
-  
   logger.debug("taxcalculationmode request body", request.body)
-
-  ResponseHelper.setResponseToEmpty(response)
+  const updateCartResponseData = {
+    "actions": [{"action" : "changeTaxCalculationMode",
+      "taxCalculationMode": "UnitPriceLevel"
+    }]
+  }
+  ResponseHelper.setResponse(response, updateCartResponseData)
 }
 
 export default { processRequest }
