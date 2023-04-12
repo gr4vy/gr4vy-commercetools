@@ -52,7 +52,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     }
 
     let iteration = 0
-    const maxIteration = Number(process.env.PAYMENT_UPDATE_MAX_RETRY)
+    const maxIteration = Number(process.env.PAYMENT_UPDATE_MAX_RETRY) || 2
 
     while (iteration < maxIteration) {
       logger.debug(`Retry iteration: ${iteration + 1}`)
