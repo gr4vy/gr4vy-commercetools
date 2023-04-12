@@ -44,7 +44,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       }
     }
 
-    const gr4vyTransactionId = target?.transaction_id
+    const gr4vyTransactionId = (target.type === "transaction") ? target?.id : target.transaction_id
 
     if (!gr4vyTransactionId) {
       throw {
