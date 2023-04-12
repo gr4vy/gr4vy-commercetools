@@ -44,14 +44,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       }
     }
 
-    if (!target || (target.type && target.type !== "transaction")) {
-      throw {
-        message: `A Webhook request was received with an invalid entity target type - ${target?.type}`,
-        statusCode: 422,
-      }
-    }
-
-    const gr4vyTransactionId = target?.id
+    const gr4vyTransactionId = (target.type === "transaction") ? target?.id : target.transaction_id
 
     if (!gr4vyTransactionId) {
       throw {
