@@ -9,6 +9,7 @@ import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import { handleUpdatePayment } from "./../../handler"
+import { sleep } from "../../utils/retry"
 
 const processRequest = async (request: Request, response: ServerResponse) => {
   const logger = getLogger()
@@ -54,6 +55,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
     let iteration = 0
     const maxIteration = Number(process.env.PAYMENT_UPDATE_MAX_RETRY) || 2
+    const retryInterval = Number(process.env.PAYMENT_UPDATE_RETRY_INTERVAL) || 1000
 
     while (iteration < maxIteration) {
       iteration++
@@ -61,7 +63,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       const { hasErrDueConcurrentModification, orderId, isUpdated } = await handleUpdatePayment({
         request,
         gr4vyTransactionResult,
-        meClient: true
+        meClient: true,
       })
 
       if (!hasErrDueConcurrentModification) {
@@ -70,6 +72,8 @@ const processRequest = async (request: Request, response: ServerResponse) => {
           isUpdated,
         })
       }
+
+      await sleep(retryInterval)
     }
 
     if (iteration === maxIteration) {
