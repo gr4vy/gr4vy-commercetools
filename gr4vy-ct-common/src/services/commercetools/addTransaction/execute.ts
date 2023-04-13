@@ -27,6 +27,26 @@ const getRefundState = (status: string): string => {
   return refundState
 }
 
+const getState = (status: string): string => {
+  const states = Constants.STATES.CT.TRANSACTION
+
+  let state = Constants.STATES.CT.TRANSACTION.INITIAL
+
+  if (status === states.FAILURE) {
+    state = states.FAILURE
+  }
+
+  if (status === states.SUCCESS) {
+    state = states.SUCCESS
+  }
+
+  if (status === states.PENDING) {
+    state = states.PENDING
+  }
+
+  return state
+}
+
 const addTransaction = async ({
   isRefund,
   order,
@@ -50,7 +70,8 @@ const addTransaction = async ({
 
   const [payment] = order?.paymentInfo?.payments || []
 
-  const state = getRefundState(status)
+  const state = isRefund ? getRefundState(status) : getState(status)
+
   const typeKey = isRefund
     ? Constants.CT_CUSTOM_FIELD_TRANSACTION_REFUND
     : Constants.STATES.CT.CUSTOM_FIELDS.GR4VY_TRANSACTION_ID.NAME
