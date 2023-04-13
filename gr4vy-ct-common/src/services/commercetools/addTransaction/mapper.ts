@@ -1,6 +1,12 @@
+import { hasErrorDueConcurrentModification } from "../../../helpers"
 // eslint-disable-next-line
 const responseMapper = (response: any):boolean => {
-  if (response?.body?.errors) {
+
+  // Find error is due to Concurrent Modification
+  const hasErrDueConcurrentModification = hasErrorDueConcurrentModification(response)
+  const shouldThrowErrors = !!response?.body?.errors?.length && !hasErrDueConcurrentModification
+
+  if (shouldThrowErrors) {
     throw {
       // eslint-disable-next-line
       message: response?.body?.errors.map((e: any) => {
@@ -11,7 +17,7 @@ const responseMapper = (response: any):boolean => {
       statusCode: 400,
     }
   }
-  return response?.body?.data?.updatePayment
+  return {...response?.body?.data?.updatePayment, hasErrDueConcurrentModification}
 }
 
 export { responseMapper }

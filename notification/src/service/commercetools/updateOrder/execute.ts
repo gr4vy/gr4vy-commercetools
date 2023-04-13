@@ -6,7 +6,8 @@ import { updateOrderMutation } from "./query"
 import { responseMapper } from "./mapper"
 import { OrderUpdate } from "./../../types"
 
-const updateOrder = async ({ orderUpdate }: { orderUpdate: OrderUpdate }): Promise<boolean> => {
+// eslint-disable-next-line
+const updateOrder = async ({ orderUpdate }: { orderUpdate: OrderUpdate }): Promise<any> => {
   const findFor = ["{repl}orderState:{/repl}", "{repl}paymentState:{/repl}"]
   const replaceWith = [
     "orderState:" + orderUpdate.orderState,
@@ -31,7 +32,7 @@ const updateOrder = async ({ orderUpdate }: { orderUpdate: OrderUpdate }): Promi
     })
     return responseMapper(await apiClient.getData())
   } else {
-    return false
+    return {}
   }
 }
 
