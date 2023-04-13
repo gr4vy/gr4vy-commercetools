@@ -85,7 +85,7 @@ export declare type Order = {
   version: string
   orderState: string
   paymentState: string
-  
+
   paymentInfo: {
     payments: Payment[]
   }
@@ -109,12 +109,14 @@ export declare type Order = {
     }
   }
   taxedPrice: {
-    taxPortions: [{
-      rate: number
-      amount: {
-        centAmount: number
+    taxPortions: [
+      {
+        rate: number
+        amount: {
+          centAmount: number
+        }
       }
-    }]
+    ]
     totalNet: {
       currencyCode: string
       centAmount: number
@@ -143,7 +145,7 @@ export declare type Order = {
           }
         }
       }
-      discountedPricePerQuantity:discountedPricePerQuantity[]
+      discountedPricePerQuantity: discountedPricePerQuantity[]
       taxRate: {
         includedInPrice: boolean
       }
@@ -186,6 +188,7 @@ export declare type Gr4vyTransactionResponse = {
 }
 
 export declare type UpdateOrderWithPaymentResponse = {
+  hasErrDueConcurrentModification: boolean
   hasOrderWithPaymentUpdated: boolean
   updateOrder: { id: string; version: string }
   updatePayment: { id: string; version: string }
