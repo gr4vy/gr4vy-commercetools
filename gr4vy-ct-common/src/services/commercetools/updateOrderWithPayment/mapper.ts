@@ -1,6 +1,12 @@
+import { hasErrorDueConcurrentModification } from "../../../helpers"
 import { UpdateOrderWithPaymentResponse } from "./../../types"
+
 const responseMapper = async (result: any): Promise<UpdateOrderWithPaymentResponse> => {
-  if (result?.body?.errors) {
+  // Find error is due to Concurrent Modification
+  const hasErrDueConcurrentModification = hasErrorDueConcurrentModification(result)
+  const shouldThrowErrors = !!result?.body?.errors?.length && !hasErrDueConcurrentModification
+
+  if (shouldThrowErrors) {
     throw {
       // eslint-disable-next-line
       message: result?.body?.errors.map((e: any) => {
@@ -13,6 +19,7 @@ const responseMapper = async (result: any): Promise<UpdateOrderWithPaymentRespon
     }
   }
   return {
+    hasErrDueConcurrentModification,
     hasOrderWithPaymentUpdated:
       !!result?.body?.data?.updateOrder?.id && !!result?.body?.data?.updatePayment?.id,
     updateOrder: result?.body?.data?.updateOrder,
