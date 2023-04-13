@@ -9,7 +9,6 @@ import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import { handleUpdatePayment, handleTransactions } from "./../../handler"
-import { sleep } from "../../utils/retry"
 
 const processRequest = async (request: Request, response: ServerResponse) => {
   const logger = getLogger()
@@ -86,7 +85,6 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         })
       }
 
-      await sleep(retryInterval)
     }
 
     if (iteration === maxIteration) {

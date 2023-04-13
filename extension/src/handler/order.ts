@@ -4,8 +4,6 @@ import { Order } from "@commercetools/platform-sdk"
 import { getOrder, prepareCTStatuses, updateOrderWithPayment, Constants, getOrderById, listTransactionRefunds, addTransaction, updateTransaction } from "@gr4vy-ct/common"
 import Logger from "bunyan"
 
-import { sleep } from "../utils/retry"
-
 const handleUpdatePayment = async ({ request, gr4vyTransactionResult, meClient }: any) => {
   // Fetch order id from the transaction
   const gr4vyTransaction = gr4vyTransactionResult?.body || {}
@@ -149,7 +147,6 @@ const handleTransactions = async (logger: Logger, orderId: Order, gr4vyTransacti
             paymentVersion = version
             break;
           }
-          await sleep(retryInterval)
         }
 
         if (iteration === maxIteration) {
