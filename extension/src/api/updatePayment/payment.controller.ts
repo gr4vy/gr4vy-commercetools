@@ -54,7 +54,6 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
     let iteration = 0
     const maxIteration = Number(process.env.PAYMENT_UPDATE_MAX_RETRY) || 2
-    const retryInterval = Number(process.env.PAYMENT_UPDATE_RETRY_INTERVAL) || 1000
 
     while (iteration < maxIteration) {
       iteration++
@@ -71,7 +70,6 @@ const processRequest = async (request: Request, response: ServerResponse) => {
           isUpdated,
         })
       }
-
     }
 
     if (iteration === maxIteration) {

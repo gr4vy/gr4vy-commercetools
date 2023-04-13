@@ -2,7 +2,6 @@ import { Order } from "@commercetools/platform-sdk"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { getOrder, prepareCTStatuses, updateOrderWithPayment, Constants, getOrderById, listTransactionRefunds, addTransaction, updateTransaction } from "@gr4vy-ct/common"
-import Logger from "bunyan"
 
 const handleUpdatePayment = async ({ request, gr4vyTransactionResult, meClient }: any) => {
   // Fetch order id from the transaction
@@ -84,7 +83,7 @@ const handleUpdatePayment = async ({ request, gr4vyTransactionResult, meClient }
   return responseData
 }
 
-const handleTransactions = async (logger: Logger, orderId: Order, gr4vyTransaction: any) => {
+const handleTransactions = async (orderId: Order, gr4vyTransaction: any) => {
   // Get latest order payment and transaction details
   const order = await getOrderById(orderId)
 
@@ -119,7 +118,6 @@ const handleTransactions = async (logger: Logger, orderId: Order, gr4vyTransacti
   )
 
   for (const transaction of ctTransactions) {
-    
     if (transactionMapper[transaction.type] === intent) {
       const { transactionState } = await prepareCTStatuses(
         status,
@@ -128,33 +126,20 @@ const handleTransactions = async (logger: Logger, orderId: Order, gr4vyTransacti
         capturedAmount,
         refundedAmount
       )
-      
+
       if (transactionState !== transaction.state) {
-        let iteration = 0
-        const maxIteration = Number(process.env.PAYMENT_UPDATE_MAX_RETRY) || 2
-        const retryInterval = Number(process.env.PAYMENT_UPDATE_RETRY_INTERVAL) || 1000
+        const { version, hasErrDueConcurrentModification } = await updateTransaction({
+          payment,
+          paymentVersion,
+          transaction,
+          transactionState,
+        })
 
-        while (iteration < maxIteration) {
-          iteration++
-          logger.debug(`handleTransactions:updateTransaction:retry iteration: ${iteration}`)
-          const { version, hasErrDueConcurrentModification } = await updateTransaction({
-            payment,
-            paymentVersion,
-            transaction,
-            transactionState,
-          })
-          if (!hasErrDueConcurrentModification) {
-            paymentVersion = version
-            break;
-          }
+        if (hasErrDueConcurrentModification) {
+          return { hasErrDueConcurrentModification }
         }
 
-        if (iteration === maxIteration) {
-          throw {
-            message: `Maximum retry failed!. [handleTransactions:updateTransaction] Unable to update payment due to concurrency issue for Transaction ID ${gr4vyTransactionId}`,
-            statusCode: 409,
-          }
-        }
+        paymentVersion = version
       }
     } else {
       if (!existingCTTransactionTypes.includes(intent)) {

@@ -66,7 +66,6 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
     let iteration = 0
     const maxIteration = Number(process.env.PAYMENT_UPDATE_MAX_RETRY) || 2
-    const retryInterval = Number(process.env.PAYMENT_UPDATE_RETRY_INTERVAL) || 1000
 
     while (iteration < maxIteration) {
       iteration++
@@ -78,13 +77,25 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         })
 
       if (!hasErrDueConcurrentModification) {
-        await handleTransactions(logger, orderId, gr4vyTransaction)
-        return ResponseHelper.setResponseTo200(response, {
-          orderId,
-          isUpdated,
-        })
+        let transIteration = 0
+        while (transIteration < maxIteration) {
+          transIteration++
+          logger.debug(`handleTransactions:retry iteration: ${transIteration}`)
+          const result = await handleTransactions(orderId, gr4vyTransaction)
+          if (!result?.hasErrDueConcurrentModification) {
+            return ResponseHelper.setResponseTo200(response, {
+              orderId,
+              isUpdated,
+            })
+          }
+        }
+        if (transIteration === maxIteration) {
+          throw {
+            message: `Maximum retry failed!. Unable to update payment due to concurrency issue for Transaction ID ${gr4vyTransactionId}`,
+            statusCode: 409,
+          }
+        }
       }
-
     }
 
     if (iteration === maxIteration) {
