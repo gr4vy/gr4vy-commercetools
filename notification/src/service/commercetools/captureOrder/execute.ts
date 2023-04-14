@@ -1,20 +1,20 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getCustomObjects, ApiClient, Constants, getTransactionById } from "@gr4vy-ct/common"
+import { getCustomObjects,  Constants, getTransactionById, getOrderById, addTransaction, updateTransaction,} from "@gr4vy-ct/common"
+import { Transaction } from "@gr4vy-ct/common/src/services/types"
 
 import { transactionCapture, updateOrder } from "./../../../service"
 import { OrderUpdate } from "../../types"
-import { addTransactionCapture } from "./query"
-import { responseMapper } from "./mapper"
 import { CaptureOrderDetailsInterface } from "./../../../model/order/interfaces"
+
+const {
+  STATES: { GR4VY, CT },
+} = Constants
 
 const captureOrder = async (captureOrderDetails: CaptureOrderDetailsInterface) => {
   if (captureOrderDetails.totalAmount <= 0) {
     throw new Error("There is an error - Total amount to capture is invalid or zero")
   }
-  const {
-    STATES: { GR4VY, CT },
-  } = Constants
 
   const gr4vyTransactionId = captureOrderDetails.paymentTransactionId
   const capture = { amount: captureOrderDetails.totalAmount, transactionId: gr4vyTransactionId }
@@ -44,30 +44,71 @@ const captureOrder = async (captureOrderDetails: CaptureOrderDetailsInterface) =
     transactionCaptureResponse &&
     transactionCaptureResponse.status == GR4VY.TRANSACTION.CAPTURE_SUCCEEDED
   ) {
-    const { createdAt: transactionDate } = transactionCaptureResponse
-    const apiClient: ApiClient = new ApiClient()
-    apiClient.setBody({
-      query: addTransactionCapture,
-      variables: {
-        version: captureOrderDetails.paymentVersion,
-        paymentId: captureOrderDetails.paymentId,
-        amount: captureOrderDetails.totalAmount,
-        currencyCode: captureOrderDetails.currencyCode,
-        transactionId: captureOrderDetails.paymentTransactionId,
-        timeStamp: transactionDate,
-      },
-    })
-    const orderCaptureTransactionAdded = await responseMapper(await apiClient.getData())
-    if (orderCaptureTransactionAdded) {
-      const orderUpdate: OrderUpdate = {
-        orderId: captureOrderDetails.orderId,
-        version: captureOrderDetails.version,
-        orderState: CT.ORDER.CONFIRMED,
-        paymentState: CT.ORDERPAYMENT.PAID,
-      }
-      return await updateOrder({ orderUpdate })
-    }
+    const { id: gr4vyCaptureTransactionId } = transactionCaptureResponse
+    return gr4vyCaptureTransactionId
   }
   return false
 }
-export { captureOrder }
+
+const addCaptureTransaction = async (
+  captureOrderDetails: CaptureOrderDetailsInterface,
+  gr4vyCaptureTransactionId: string
+) => {
+  const order = await getOrderById(captureOrderDetails.orderId)
+  if (!order) {
+    throw {
+      message: `Error during fetching order from CT for orderId: ${captureOrderDetails.orderId}`,
+      statusCode: 400,
+    }
+  }
+  const [payment] = order?.paymentInfo?.payments || []
+
+  const chargeTransactionExists = payment?.transactions.find(
+    (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CHARGE
+  )
+  let transactionResponse
+  if (!chargeTransactionExists) {
+    transactionResponse = await addTransaction({
+      isRefund: false,
+      order,
+      status: CT.TRANSACTION.SUCCESS,
+      paymentVersion: captureOrderDetails.paymentVersion,
+      transactionType: CT.TRANSACTION.TYPES.CHARGE,
+      amount: captureOrderDetails.totalAmount,
+      currency: captureOrderDetails.currencyCode,
+      customValue: gr4vyCaptureTransactionId,
+    })
+  } else {
+    if (chargeTransactionExists.state !== CT.TRANSACTION.SUCCESS) {
+      transactionResponse = await updateTransaction({
+        payment,
+        paymentVersion: captureOrderDetails.paymentVersion,
+        transaction: chargeTransactionExists,
+        transactionState: CT.TRANSACTION.SUCCESS,
+      })
+    } else {
+      transactionResponse = {
+        hasErrDueConcurrentModification: false,
+        captureTransactionAdded: true,
+      }
+    }
+  }
+  const { hasErrDueConcurrentModification, version: captureTransactionAdded } = transactionResponse
+
+  return { hasErrDueConcurrentModification, captureTransactionAdded }
+}
+
+const updateCtOrder = async (captureOrderDetails: CaptureOrderDetailsInterface) => {
+  const orderUpdate: OrderUpdate = {
+    orderId: captureOrderDetails.orderId,
+    version: captureOrderDetails.version,
+    orderState: CT.ORDER.CONFIRMED,
+    paymentState: CT.ORDERPAYMENT.PAID,
+  }
+  const { hasErrDueConcurrentModification, version: orderUpdated } = await updateOrder({
+    orderUpdate,
+  })
+  return { hasErrDueConcurrentModification, orderUpdated }
+}
+
+export { captureOrder, addCaptureTransaction, updateCtOrder }

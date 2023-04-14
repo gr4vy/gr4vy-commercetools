@@ -14,6 +14,7 @@ const updateOrderMutation = `mutation ($version: Long!, $orderId: String!) {
         }]
       ){
         id
+        version
       }
     }`
 export { updateOrderMutation }

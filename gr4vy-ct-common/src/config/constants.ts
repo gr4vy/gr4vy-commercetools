@@ -73,6 +73,7 @@ export const Constants = {
         TYPES: {
           AUTHORIZATION: "Authorization",
           CHARGE: "Charge",
+          CANCEL_AUTHORIZATION: "CancelAuthorization"
         },
         INITIAL: "Initial",
         SUCCESS: "Success",
