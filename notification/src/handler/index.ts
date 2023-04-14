@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { Constants, getLogger } from "@gr4vy-ct/common"
+import Logger from "bunyan"
 
 import { OrderCaptureDetails, OrderRefundDetails, OrderVoidDetails } from "./../model"
 import {
@@ -10,7 +11,6 @@ import {
   addCaptureTransaction,
   updateCtOrder,
   addVoidTransaction,
-  addRefundTransaction,
   updateCtRefundOrder,
   RefundMessageObject,
 } from "./../service"
@@ -19,7 +19,6 @@ import {
   OrderRefundDetailsInterface,
   OrderVoidDetailsInterface,
 } from "../model/order/interfaces"
-import Logger from "bunyan";
 
 const {
   STATES: { CT },
@@ -51,7 +50,8 @@ async function handleTransactionCapture(event: any) {
     orderCapture,
     gr4vyTransactionId,
     orderCaptureDetails,
-    logger
+    logger,
+    0
   )
   if (!captureTransactionAdded) {
     return {
@@ -62,7 +62,7 @@ async function handleTransactionCapture(event: any) {
     }
   }
 
-  const orderStatusUpdatedAtCt = await updateOrderAtCt(orderCapture, orderCaptureDetails, logger)
+  const orderStatusUpdatedAtCt = await updateOrderAtCt(orderCapture, orderCaptureDetails, logger, 0)
   if (!orderStatusUpdatedAtCt) {
     return {
       orderCaptureStatus: true,
@@ -105,11 +105,12 @@ async function handleTransactionRefund(event: any) {
     }
   }
 
-  const refundTransactionAdded = await addRefundTransactionAtCt(
+  /*const refundTransactionAdded = await addRefundTransactionAtCt(
     orderRefund,
     gr4vyTransactionId,
     orderRefundDetail,
-    logger
+    logger,
+    0
   )
   if (!refundTransactionAdded) {
     return {
@@ -118,13 +119,14 @@ async function handleTransactionRefund(event: any) {
       refundTransactionAddedAtCt: false,
       message: `Error while adding refund transaction at CT for order: ${orderId}`,
     }
-  }
+  }*/
 
   const orderStatusUpdatedAtCt = await updateOrderRefundStatusAtCt(
     orderRefund,
     orderRefundDetail,
     orderRefundDetail.refundObject,
-    logger
+    logger,
+      0
   )
   if (!orderStatusUpdatedAtCt) {
     return {
@@ -178,7 +180,8 @@ async function handleTransactionVoid(event: any) {
     orderVoid,
     gr4vyTransactionId,
     orderVoidDetail,
-    logger
+    logger,
+    0
   )
   if (!voidTransactionAdded) {
     return {
@@ -200,11 +203,11 @@ async function addCaptureTransactionAtCt(
   orderCapture: CaptureOrderDetailsInterface,
   gr4vyTransactionId: string,
   orderCaptureDetails: OrderCaptureDetails,
+  logger: Logger,
+  iteration: number
   // eslint-disable-next-line
-  logger: Logger
 ): Promise<any> {
   const maxIteration = Number(process.env.PAYMENT_UPDATE_MAX_RETRY) || 2
-  let iteration = 0
   while (iteration < maxIteration) {
     iteration++
     logger.debug(`Retry iteration: ${iteration}`)
@@ -215,7 +218,7 @@ async function addCaptureTransactionAtCt(
       return captureTransactionAdded
     } else {
       const orderCapture: CaptureOrderDetailsInterface = await orderCaptureDetails.execute()
-      return await addCaptureTransactionAtCt(orderCapture, gr4vyTransactionId, orderCaptureDetails, logger)
+      return await addCaptureTransactionAtCt(orderCapture, gr4vyTransactionId, orderCaptureDetails, logger, iteration)
     }
   }
 
@@ -227,15 +230,15 @@ async function addCaptureTransactionAtCt(
   }
 }
 
-async function addRefundTransactionAtCt(
+/*async function addRefundTransactionAtCt(
   orderRefund: OrderRefundDetailsInterface,
   gr4vyTransactionId: string,
   orderRefundDetails: OrderRefundDetails,
-  logger:Logger
+  logger:Logger,
+  iteration: number
   // eslint-disable-next-line
 ): Promise<any> {
   const maxIteration = Number(process.env.PAYMENT_UPDATE_MAX_RETRY) || 2
-  let iteration = 0
   while (iteration < maxIteration) {
     iteration++
     logger.debug(`Retry iteration: ${iteration}`)
@@ -248,7 +251,7 @@ async function addRefundTransactionAtCt(
       return refundTransactionAdded
     } else {
       const orderRefund: OrderRefundDetailsInterface = await orderRefundDetails.execute()
-      return await addRefundTransactionAtCt(orderRefund, gr4vyTransactionId, orderRefundDetails, logger)
+      return await addRefundTransactionAtCt(orderRefund, gr4vyTransactionId, orderRefundDetails, logger, iteration)
     }
   }
 
@@ -258,17 +261,17 @@ async function addRefundTransactionAtCt(
       statusCode: 409,
     }
   }
-}
+}*/
 
 async function addVoidTransactionAtCt(
   orderVoid: OrderVoidDetailsInterface,
   gr4vyTransactionId: string,
   orderVoidDetails: OrderVoidDetails,
-  logger:Logger
+  logger:Logger,
+  iteration: number
   // eslint-disable-next-line
 ): Promise<any> {
   const maxIteration = Number(process.env.PAYMENT_UPDATE_MAX_RETRY) || 2
-  let iteration = 0
   while (iteration < maxIteration) {
     iteration++
     logger.debug(`Retry iteration: ${iteration}`)
@@ -281,7 +284,7 @@ async function addVoidTransactionAtCt(
       return voidTransactionAdded
     } else {
       const orderVoid: OrderVoidDetailsInterface = await orderVoidDetails.execute()
-      return await addVoidTransactionAtCt(orderVoid, gr4vyTransactionId, orderVoidDetails, logger)
+      return await addVoidTransactionAtCt(orderVoid, gr4vyTransactionId, orderVoidDetails, logger, iteration)
     }
   }
 
@@ -296,11 +299,11 @@ async function addVoidTransactionAtCt(
 async function updateOrderAtCt(
   orderCapture: CaptureOrderDetailsInterface,
   orderCaptureDetails: OrderCaptureDetails,
-  logger: Logger
+  logger: Logger,
+  iteration: number
   // eslint-disable-next-line
 ): Promise<any> {
   const maxIteration = Number(process.env.PAYMENT_UPDATE_MAX_RETRY) || 2
-  let iteration = 0
   while (iteration < maxIteration) {
     iteration++
     logger.debug(`Retry iteration: ${iteration}`)
@@ -310,7 +313,7 @@ async function updateOrderAtCt(
       return orderUpdated
     } else {
       const orderCapture: CaptureOrderDetailsInterface = await orderCaptureDetails.execute()
-      return await updateOrderAtCt(orderCapture, orderCaptureDetails, logger)
+      return await updateOrderAtCt(orderCapture, orderCaptureDetails, logger, iteration)
     }
   }
 
@@ -326,11 +329,11 @@ async function updateOrderRefundStatusAtCt(
   orderRefund: OrderRefundDetailsInterface,
   orderRefundDetails: OrderRefundDetails,
   refundData: RefundMessageObject,
-  logger: Logger
+  logger: Logger,
+  iteration: number
   // eslint-disable-next-line
 ): Promise<any> {
   const maxIteration = Number(process.env.PAYMENT_UPDATE_MAX_RETRY) || 2
-  let iteration = 0
   while (iteration < maxIteration) {
     iteration++
     logger.debug(`Retry iteration: ${iteration}`)
@@ -343,7 +346,7 @@ async function updateOrderRefundStatusAtCt(
       return orderUpdated
     } else {
       const orderRefund: OrderRefundDetailsInterface = await orderRefundDetails.execute()
-      return await updateOrderRefundStatusAtCt(orderRefund, orderRefundDetails, refundData, logger)
+      return await updateOrderRefundStatusAtCt(orderRefund, orderRefundDetails, refundData, logger, iteration)
     }
   }
 
