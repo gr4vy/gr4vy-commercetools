@@ -51,11 +51,6 @@ export declare type Payment = {
   transactions: Transaction[]
 }
 
-export declare type OrderCustomFieldsRaw = {
-  name: string
-  value: string
-}
-
 export declare type discountedPricePerQuantity = {
   fullRefunded: boolean
   partiallyRefunded: boolean
@@ -159,10 +154,6 @@ export declare type Order = {
       }
     }
   ]
-
-  custom: {
-    customFieldsRaw: OrderCustomFieldsRaw[]
-  }
 }
 
 export declare type RefundItems = [RefundItem]

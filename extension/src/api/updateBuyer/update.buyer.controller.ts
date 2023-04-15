@@ -65,22 +65,6 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         }
       }
 
-      if (shippingDetail?.id && cart.shippingAddress?.id) {
-        if (!cart?.shippingAddress?.gr4vyShippingDetailId?.value) {
-          cart.gr4vyShippingDetailId = shippingDetail.id
-        }
-
-        //Update Shipping Detail ID into the Shipping Address of the CT customer
-        const isUpdated = await updateCustomerCartAddress({ customer, cart, paymentConfig })
-
-        if (!isUpdated) {
-          throw {
-            message: "Error in updating buyer shipping id in CTP for customer shipping address",
-            statusCode: 400,
-          }
-        }
-      }
-
       //return data to be used by onBeforeTransaction of Embed.
       const responseData = {
         shippingDetailsId: shippingDetail?.id
