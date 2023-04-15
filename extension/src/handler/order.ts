@@ -2,8 +2,13 @@ import { Order } from "@commercetools/platform-sdk"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { getOrder, prepareCTStatuses, updateOrderWithPayment, Constants, getOrderById, listTransactionRefunds, addTransaction, updateTransaction } from "@gr4vy-ct/common"
+import { Transaction } from "@gr4vy-ct/common/src/services/types"
 
-const handleUpdatePayment = async ({ request, gr4vyTransactionResult, meClient }: any) => {
+const {
+  STATES: { GR4VY, CT },
+} = Constants
+
+const handleUpdatePayment = async ({ request, gr4vyTransactionResult, meClient, doNotModifyTransaction }: any) => {
   // Fetch order id from the transaction
   const gr4vyTransaction = gr4vyTransactionResult?.body || {}
   const {
@@ -69,7 +74,7 @@ const handleUpdatePayment = async ({ request, gr4vyTransactionResult, meClient }
       order,
       orderState,
       orderPaymentState,
-      transactionState,
+      transactionState: doNotModifyTransaction ? transaction.state : transactionState,
       gr4vyTransaction,
     })
 
@@ -83,7 +88,7 @@ const handleUpdatePayment = async ({ request, gr4vyTransactionResult, meClient }
   return responseData
 }
 
-const handleTransactions = async (orderId: Order, gr4vyTransaction: any) => {
+const handleTransactions = async (orderId: string, gr4vyTransaction: any) => {
   // Get latest order payment and transaction details
   const order = await getOrderById(orderId)
 
@@ -105,9 +110,11 @@ const handleTransactions = async (orderId: Order, gr4vyTransaction: any) => {
     amount,
     capturedAmount,
     refundedAmount,
+    capturedAt,
+    voidedAt
   } = gr4vyTransaction
 
-  const transactionMapper: any = {
+  /*const transactionMapper: any = {
     Authorization: "authorize",
     Refund: "capture",
     Charge: "capture",
@@ -156,6 +163,32 @@ const handleTransactions = async (orderId: Order, gr4vyTransaction: any) => {
         paymentVersion = version
       }
     }
+  }*/
+
+  if (capturedAt !== null && capturedAmount > 0 && intent === 'authorize' && refundedAmount <= 0) {
+    const { hasErrDueConcurrentModification, version } = await createCaptureTransaction({
+          order,
+          paymentVersion,
+          payment,
+          gr4vyTransaction
+        })
+    if (hasErrDueConcurrentModification) {
+      return { hasErrDueConcurrentModification }
+    }
+    paymentVersion = version
+  }
+
+  if (voidedAt !== null && capturedAmount <= 0 && intent === 'authorize' && status === GR4VY.TRANSACTION.AUTHORIZATION_VOIDED) {
+    const { hasErrDueConcurrentModification, version } = await createVoidTransaction({
+          order,
+          paymentVersion,
+          payment,
+          gr4vyTransaction
+        })
+    if (hasErrDueConcurrentModification) {
+      return { hasErrDueConcurrentModification }
+    }
+    paymentVersion = version
   }
 
   if (refundedAmount > 0) {
@@ -223,6 +256,117 @@ const createRefundTransactions = async ({
       paymentVersion = version
     }
   }
+}
+
+const createCaptureTransaction = async ({
+  order,
+  paymentVersion,
+  payment,
+  gr4vyTransaction
+}: {
+  order: Order
+  paymentVersion: number
+  payment: { transactions: any }
+  gr4vyTransaction: any
+}) => {
+  const {
+    id: gr4vyTransactionId,
+    status,
+    capturedAmount,
+    refundedAmount
+  } = gr4vyTransaction
+
+  const chargeTransactionExists = payment?.transactions.find(
+      (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CHARGE
+  )
+  const { transactionState } = await prepareCTStatuses(
+      status,
+      CT.TRANSACTION.TYPES.CHARGE,
+      "",
+      capturedAmount,
+      refundedAmount
+  )
+  let transactionResponse
+  if (!chargeTransactionExists) {
+    transactionResponse = await addTransaction({
+      isRefund: false,
+      order,
+      status: transactionState,
+      paymentVersion: paymentVersion,
+      transactionType: CT.TRANSACTION.TYPES.CHARGE,
+      amount: capturedAmount,
+      currency: order.totalPrice.currencyCode,
+      customValue: gr4vyTransactionId,
+    })
+  } else {
+    if (chargeTransactionExists.state !== transactionState) {
+      transactionResponse = await updateTransaction({
+        payment,
+        paymentVersion: paymentVersion,
+        transaction: chargeTransactionExists,
+        transactionState: transactionState,
+      })
+    } else {
+      transactionResponse = {
+        hasErrDueConcurrentModification: false,
+        captureTransactionAdded: true,
+      }
+    }
+  }
+  const { hasErrDueConcurrentModification, version } = transactionResponse
+
+  return { hasErrDueConcurrentModification, version }
+}
+
+const createVoidTransaction = async ({
+   order,
+   paymentVersion,
+   payment,
+   gr4vyTransaction
+ }: {
+  order: Order
+  paymentVersion: number
+  payment: { transactions: any }
+  gr4vyTransaction: any
+}) => {
+  const {
+    id: gr4vyTransactionId,
+    amount
+  } = gr4vyTransaction
+
+  const voidTransactionExists = payment?.transactions.find(
+      (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CANCEL_AUTHORIZATION
+  )
+  let transactionResponse
+  if (!voidTransactionExists) {
+    transactionResponse = await addTransaction({
+      isRefund: false,
+      order,
+      status: CT.TRANSACTION.SUCCESS,
+      paymentVersion: paymentVersion,
+      transactionType: CT.TRANSACTION.TYPES.CANCEL_AUTHORIZATION,
+      amount: amount,
+      currency: order.totalPrice.currencyCode,
+      customValue: gr4vyTransactionId,
+    })
+  } else {
+    if (voidTransactionExists.state !== CT.TRANSACTION.SUCCESS) {
+      transactionResponse = await updateTransaction({
+        payment,
+        paymentVersion: paymentVersion,
+        transaction: voidTransactionExists,
+        transactionState: CT.TRANSACTION.SUCCESS,
+      })
+    } else {
+      transactionResponse = {
+        hasErrDueConcurrentModification: false,
+        captureTransactionAdded: true,
+      }
+    }
+  }
+  const { hasErrDueConcurrentModification, version } = transactionResponse
+
+  return { hasErrDueConcurrentModification, version }
 }
 
 export { handleUpdatePayment, handleTransactions, createRefundTransactions }
