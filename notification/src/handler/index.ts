@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { Constants, getLogger } from "@gr4vy-ct/common"
+import Logger from "bunyan";
 
 import { OrderCaptureDetails, OrderRefundDetails, OrderVoidDetails } from "./../model"
 import {
@@ -19,7 +20,6 @@ import {
   OrderRefundDetailsInterface,
   OrderVoidDetailsInterface,
 } from "../model/order/interfaces"
-import Logger from "bunyan";
 
 const {
   STATES: { CT },
