@@ -10,7 +10,7 @@ const responseMapper = (response: any) => {
     }
   }
   return (
-      !!response?.body?.data?.createCustomFieldGr4vyTransactionId
+      !!response?.body?.data?.subscription
   )
 }
 

@@ -4,12 +4,9 @@ const subscription = `
     draft:{
       key:$subsKey
       destination: {
-        SQS:{
-          queueUrl: $queueUrl
-          accessKey: $accessKey
-          accessSecret: $accessSecret
-          region: $region
-          authenticationMode:Credentials
+        GoogleCloudPubSub:{
+          topic: $topic
+          projectId: $projectId
         }
       }
       messages:{
@@ -28,8 +25,6 @@ const createSubscriptionsMutationQuery = `
 mutation createSubscriptions (
   $subsKey:String!,
   $queueUrl: String!,
-  $accessKey: String,
-  $accessSecret: String,
   $region: String!){
   ${subscription},
 }
