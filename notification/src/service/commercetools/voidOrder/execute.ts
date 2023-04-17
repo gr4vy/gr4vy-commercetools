@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {getCustomObjects, Constants, getTransactionById, getOrderById, addTransaction,} from "@gr4vy-ct/common"
+import {getCustomObjects, Constants, getTransactionById, getOrderById, addTransaction, updateTransaction} from "@gr4vy-ct/common"
+import { Transaction } from "@gr4vy-ct/common/src/services/types"
 
 import { transactionVoid } from "./../../../service"
 import {
@@ -59,16 +60,41 @@ const addVoidTransaction = async (
     }
   }
 
-  const { hasErrDueConcurrentModification, version: voidTransactionAdded } = await addTransaction({
-    isRefund: false,
-    order,
-    status: CT.TRANSACTION.SUCCESS,
-    paymentVersion: orderVoidDetails.paymentVersion,
-    transactionType: CT.TRANSACTION.TYPES.CANCEL_AUTHORIZATION,
-    amount: orderVoidDetails.voidAmount,
-    currency: orderVoidDetails.currencyCode,
-    customValue: gr4vyVoidTransactionId,
-  })
+  const [payment] = order?.paymentInfo?.payments || []
+
+  const voidTransactionExists = payment?.transactions.find(
+      (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CANCEL_AUTHORIZATION
+  )
+  let transactionResponse
+  if (!voidTransactionExists) {
+    transactionResponse = await addTransaction({
+      isRefund: false,
+      order,
+      status: CT.TRANSACTION.SUCCESS,
+      paymentVersion: orderVoidDetails.paymentVersion,
+      transactionType: CT.TRANSACTION.TYPES.CANCEL_AUTHORIZATION,
+      amount: orderVoidDetails.voidAmount,
+      currency: orderVoidDetails.currencyCode,
+      customValue: gr4vyVoidTransactionId
+    })
+  } else {
+    if (voidTransactionExists.state !== CT.TRANSACTION.SUCCESS) {
+      transactionResponse = await updateTransaction({
+        payment,
+        paymentVersion: orderVoidDetails.paymentVersion,
+        transaction: voidTransactionExists,
+        transactionState: CT.TRANSACTION.SUCCESS,
+      })
+    } else {
+      transactionResponse = {
+        hasErrDueConcurrentModification: false,
+        captureTransactionAdded: true,
+      }
+    }
+  }
+
+  const { hasErrDueConcurrentModification, version: voidTransactionAdded } = transactionResponse
+
   return { hasErrDueConcurrentModification, voidTransactionAdded }
 }
 
