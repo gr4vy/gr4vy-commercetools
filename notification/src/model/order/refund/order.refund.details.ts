@@ -257,7 +257,7 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
       version,
       paymentId: payment?.id,
       paymentVersion: payment?.version,
-      paymentTransactionId: this.getTransactionId(order),
+      paymentTransactionId: await this.getTransactionId(order),
     }
   }
 }

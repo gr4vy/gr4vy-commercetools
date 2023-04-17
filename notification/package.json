@@ -9,7 +9,7 @@
     "start": "node ./.build/index.js",
     "eslint": "eslint . --ext .ts",
     "prettier": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
-    "start:dev": "nodemon src/index.ts",
+    "start:dev": "nodemon src/index.ts | bunyan",
     "prepare": "cd .. && husky install notification/.husky",
     "zip-lambda-function": "npm run build && cp ./.build/index.lambda.js ./.build/index.js"
   },

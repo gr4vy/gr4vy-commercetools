@@ -1,10 +1,6 @@
-import { IncomingMessage } from "http"
-
 import {
   getBuyer as getGr4vyBuyer,
   createBuyer as createGr4vyBuyer,
-  updateMyCustomerCart,
-  updateMyCart,
 } from "../service"
 import { Cart, Customer, PaymentConfig } from "../service/types"
 
@@ -43,12 +39,10 @@ const createBuyer = async ({
 }
 
 const resolveCustomerBuyerId = async ({
-  request,
   customer,
   cart,
   paymentConfig,
 }: {
-  request: IncomingMessage
   customer: Customer | null
   cart: Cart
   paymentConfig: PaymentConfig
@@ -57,35 +51,18 @@ const resolveCustomerBuyerId = async ({
   if (!buyer) {
     buyer = await createBuyer({ customer, cart, paymentConfig })
   }
-  // Update CT customer and cart with buyer info
-  if (customer) {
-    const isMyCustomerCartUpdated = await updateMyCustomerCart({
-      request,
-      customer,
-      cart,
-      buyer,
-    })
-    if (!isMyCustomerCartUpdated) {
-      throw {
-        message: "Error in updating buyer id in CTP for customer and cart",
-        statusCode: 400,
-      }
+  if (!buyer) {
+    throw {
+      message: "Unable to find or create Buyer in Gr4vy",
+      statusCode: 400,
     }
-
+  }
+  if (customer) {
     // Set gr4vyBuyerId in customer
     customer.gr4vyBuyerId = {
       value: buyer.id,
     }
   } else {
-    //Update Cart with buyer Id
-    const isMyCartUpdated = await updateMyCart({ request, cart, buyer })
-    if (!isMyCartUpdated) {
-      throw {
-        message: "Error in updating buyer id in CTP for guest cart",
-        statusCode: 400,
-      }
-    }
-
     // Set gr4vyBuyerId in cart
     cart.gr4vyBuyerId = {
       value: buyer.id,

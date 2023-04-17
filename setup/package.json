@@ -6,10 +6,10 @@
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./.build/index.js",
+    "start": "node ./.build/index.js | bunyan",
     "eslint": "eslint . --ext .ts",
     "prettier": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
-    "start:dev": "nodemon src/index.ts",
+    "start:dev": "ts-node src/index.ts | bunyan",
     "prepare": "cd .. && husky install setup/.husky"
   },
   "repository": {

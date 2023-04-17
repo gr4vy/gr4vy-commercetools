@@ -1,17 +1,18 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getCustomObjects, ApiClient, Constants, getTransactionById } from "@gr4vy-ct/common"
+import {getCustomObjects, Constants, getTransactionById, getOrderById, addTransaction, updateTransaction} from "@gr4vy-ct/common"
+import { Transaction } from "@gr4vy-ct/common/src/services/types"
 
 import { transactionVoid } from "./../../../service"
-import { addTransactionVoid } from "./query"
-import { responseMapper } from "./mapper"
-import { OrderVoidDetailsInterface } from "./../../../model/order/interfaces"
+import {
+  OrderVoidDetailsInterface,
+} from "./../../../model/order/interfaces"
+
+const {
+  STATES: { GR4VY, CT },
+} = Constants
 
 const voidOrder = async (orderVoidDetails: OrderVoidDetailsInterface) => {
-  const {
-    STATES: { GR4VY },
-  } = Constants
-
   const gr4vyTransactionId = orderVoidDetails.paymentTransactionId
   const voidTxion = { transactionId: gr4vyTransactionId }
   const paymentConfig = await getCustomObjects()
@@ -41,21 +42,60 @@ const voidOrder = async (orderVoidDetails: OrderVoidDetailsInterface) => {
     transactionVoidResponse &&
     transactionVoidResponse.status == GR4VY.TRANSACTION.AUTHORIZATION_VOIDED
   ) {
-    const { createdAt: transactionDate } = transactionVoidResponse
-    const apiClient: ApiClient = new ApiClient()
-    apiClient.setBody({
-      query: addTransactionVoid,
-      variables: {
-        version: orderVoidDetails.paymentVersion,
-        paymentId: orderVoidDetails.paymentId,
-        amount: orderVoidDetails.voidAmount,
-        currencyCode: orderVoidDetails.currencyCode,
-        transactionId: orderVoidDetails.paymentTransactionId,
-        timeStamp: transactionDate,
-      },
-    })
-    return await responseMapper(await apiClient.getData())
+    const { id: gr4vyVoidTransactionId } = transactionVoidResponse
+    return gr4vyVoidTransactionId
   }
-  return false
+  return ""
 }
-export { voidOrder }
+
+const addVoidTransaction = async (
+  orderVoidDetails: OrderVoidDetailsInterface,
+  gr4vyVoidTransactionId: string
+) => {
+  const order = await getOrderById(orderVoidDetails.orderId)
+  if (!order) {
+    throw {
+      message: `Error during fetching order from CT for orderId: ${orderVoidDetails.orderId}`,
+      statusCode: 400,
+    }
+  }
+
+  const [payment] = order?.paymentInfo?.payments || []
+
+  const voidTransactionExists = payment?.transactions.find(
+      (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CANCEL_AUTHORIZATION
+  )
+  let transactionResponse
+  if (!voidTransactionExists) {
+    transactionResponse = await addTransaction({
+      isRefund: false,
+      order,
+      status: CT.TRANSACTION.SUCCESS,
+      paymentVersion: orderVoidDetails.paymentVersion,
+      transactionType: CT.TRANSACTION.TYPES.CANCEL_AUTHORIZATION,
+      amount: orderVoidDetails.voidAmount,
+      currency: orderVoidDetails.currencyCode,
+      customValue: gr4vyVoidTransactionId
+    })
+  } else {
+    if (voidTransactionExists.state !== CT.TRANSACTION.SUCCESS) {
+      transactionResponse = await updateTransaction({
+        payment,
+        paymentVersion: orderVoidDetails.paymentVersion,
+        transaction: voidTransactionExists,
+        transactionState: CT.TRANSACTION.SUCCESS,
+      })
+    } else {
+      transactionResponse = {
+        hasErrDueConcurrentModification: false,
+        captureTransactionAdded: true,
+      }
+    }
+  }
+
+  const { hasErrDueConcurrentModification, version: voidTransactionAdded } = transactionResponse
+
+  return { hasErrDueConcurrentModification, voidTransactionAdded }
+}
+
+export { voidOrder, addVoidTransaction }

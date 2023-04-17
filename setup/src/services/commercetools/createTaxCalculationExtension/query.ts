@@ -8,7 +8,7 @@ const extension = `
           url: $extensionUrl
           authentication: {
             AuthorizationHeader: {
-              headerValue: "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=="
+              headerValue: $authHeader
             }
           }
         }
@@ -29,6 +29,7 @@ const createExtensionMutationQuery = `
 mutation createExtension (
   $taxCalcLevelExtensionKey:String!,
   $extensionUrl: String!
+  $authHeader: String!
   ){
     ${extension},
   }

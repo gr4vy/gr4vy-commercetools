@@ -19,7 +19,7 @@ export class OrderVoidDetails extends OrderDetails implements OrderVoidDetailsIn
       version,
       paymentId: payment?.id,
       paymentVersion: payment?.version,
-      paymentTransactionId: this.getTransactionId(order),
+      paymentTransactionId: await this.getTransactionId(order),
       orderState: orderState,
     }
   }

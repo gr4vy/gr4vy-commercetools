@@ -11,6 +11,7 @@ const {
   STATES: { CT },
 } = Constants
 
+// eslint-disable-next-line
 const updateRefundOrder = async (
   {
     orderUpdateForRefund,
@@ -18,7 +19,8 @@ const updateRefundOrder = async (
     orderUpdateForRefund: OrderUpdateForRefund
   },
   { refundData }: { refundData: RefundMessageObject }
-): Promise<boolean> => {
+  // eslint-disable-next-line
+): Promise<any> => {
   const findFor = "{repl}{/repl}"
 
   let updateRefunOrderMutationQuery = updateRefundOrderMutation
@@ -37,7 +39,6 @@ const updateRefundOrder = async (
   })
   const orderId = orderUpdateForRefund.orderId
   const order = await getOrderById(orderId)
-  console.log(JSON.stringify(order))
   if (order && isFullyRefundedOrder(order)) {
     const replaceValueForOrderState =
       "\n{" +
@@ -65,7 +66,7 @@ const updateRefundOrder = async (
     })
     return await responseMapper(await apiClient.getData())
   }
-  return false
+  return {}
 }
 function isFullyRefundedOrder(order: Order): boolean {
   const totalLineItemsQty: { [key: string]: number } = {}
