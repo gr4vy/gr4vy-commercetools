@@ -6,12 +6,6 @@ export declare type Customer = {
   middleName: string
   lastName: string
   version: string
-  custom: {
-    customFieldsRaw?: {
-      name: string
-      value: string
-    }
-  }
   gr4vyBuyerId?: {
     name?: string
     value: string
@@ -57,16 +51,9 @@ export declare type Cart = {
     name?: string
     value: string
   }
-  gr4vyShippingDetailId: string
   billingAddress: CtCustomerAddress
   shippingAddress: CtCustomerAddress
   shippingInfo: CtShippingInfo
-  custom: {
-    customFieldsRaw?: {
-      name: string
-      value: string
-    }
-  }
 }
 
 export declare type PaymentConfig = {
@@ -203,12 +190,6 @@ export declare type CtCustomerAddress = {
   building?: string
   apartment?: string
   region?: string
-  custom: {
-    customFieldsRaw?: {
-      name: string
-      value: string
-    }
-  }
   gr4vyShippingDetailId?: {
     name?: string
     value: string

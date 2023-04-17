@@ -14,6 +14,7 @@ import {
   manageBuyerShippingAddress,
   getCustomerWithCart,
 } from "../../service"
+import { getBuyer } from "./../../utils"
 
 const processRequest = async (request: Request, response: ServerResponse) => {
   const logger = getLogger()
@@ -34,13 +35,16 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     const { locale } = request.body
     //Get Active customer cart details
     const { customer, cart } = await getCustomerWithCart(request, locale)
-    if (customer?.gr4vyBuyerId?.value || cart?.gr4vyBuyerId?.value) {
-      const paymentConfig = await getCustomObjects()
 
-      if (!paymentConfig) {
-        throw { message: "Payment configuration is missing or empty", statusCode: 400 }
-      }
+    const paymentConfig = await getCustomObjects()
+    if (!paymentConfig) {
+      throw { message: "Payment configuration is missing or empty", statusCode: 400 }
+    }
 
+    const gr4vyBuyer = await getBuyer({ customer, cart, paymentConfig })
+    if (gr4vyBuyer) {
+      if (customer) customer.gr4vyBuyerId = {value: gr4vyBuyer.id};
+      if (cart) cart.gr4vyBuyerId = {value: gr4vyBuyer.id};
       // Update buyer details in Gr4vy
       const { body: buyer } = await updateBuyerDetails({ customer, cart, paymentConfig })
       if (!buyer) {
@@ -61,22 +65,6 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         }
       }
 
-      if (shippingDetail?.id && cart.shippingAddress?.id) {
-        if (!cart?.shippingAddress?.gr4vyShippingDetailId?.value) {
-          cart.gr4vyShippingDetailId = shippingDetail.id
-        }
-
-        //Update Shipping Detail ID into the Shipping Address of the CT customer
-        const isUpdated = await updateCustomerCartAddress({ customer, cart, paymentConfig })
-
-        if (!isUpdated) {
-          throw {
-            message: "Error in updating buyer shipping id in CTP for customer shipping address",
-            statusCode: 400,
-          }
-        }
-      }
-
       //return data to be used by onBeforeTransaction of Embed.
       const responseData = {
         shippingDetailsId: shippingDetail?.id
@@ -84,7 +72,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
       ResponseHelper.setResponseTo200(response, responseData)
     } else {
-      throw { message: "Buyer ID is missing in CT data", statusCode: 400 }
+      throw { message: "Buyer ID is missing in Gr4vy", statusCode: 400 }
     }
   } catch (e) {
     const errorStackTrace =

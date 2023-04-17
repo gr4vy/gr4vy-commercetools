@@ -16,7 +16,7 @@ class OrderCaptureDetails extends OrderDetails implements CaptureOrderDetailsInt
       version,
       paymentId: payment?.id,
       paymentVersion: payment?.version,
-      paymentTransactionId: this.getTransactionId(order),
+      paymentTransactionId: await this.getTransactionId(order),
     }
   }
 }

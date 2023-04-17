@@ -17,7 +17,7 @@ const updateCustomerCartAddress = async ({ customer, cart }: UpdateBuyerQuery): 
       version: customer?.version,
       customerId: customer?.id?customer.id:cart.anonymousId,
       ctCustomFieldNameForGr4vyBuyerAddressId: c.CTP_GR4VY_ADDRESS_DETAIL_ID_ADDRESS,
-      addressDetailId: escapedJSON(cart.gr4vyShippingDetailId),
+      //addressDetailId: escapedJSON(cart.gr4vyShippingDetailId),
       addressId: cart.shippingAddress.id
     },
   })
