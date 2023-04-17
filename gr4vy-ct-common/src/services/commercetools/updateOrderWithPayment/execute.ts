@@ -45,10 +45,6 @@ const updateOrderWithPayment = async ({
       // For order custom field
       version: order.version,
       orderId: order.id,
-      type: CT.CUSTOM_FIELDS.GR4VY_TRANSACTION_ID.TYPE,
-      customFieldKey: CT.CUSTOM_FIELDS.GR4VY_TRANSACTION_ID.KEY,
-      customFieldName: CT.CUSTOM_FIELDS.GR4VY_TRANSACTION_ID.NAME,
-      gr4vyTransactionId: escapedJSON(gr4vyTransaction.id),
       // Payment
       paymentId: payment?.id,
       paymentVersion: payment.version,

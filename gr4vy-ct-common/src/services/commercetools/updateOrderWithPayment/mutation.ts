@@ -6,10 +6,6 @@ const mutation = (
 mutation (
   $orderId: String!,
   $version: Long!,
-  $customFieldKey:String!,
-  $customFieldName:String!,
-  $gr4vyTransactionId: String!,
-  $type: String!,
   $paymentId:String!,
   $paymentVersion: Long!,
   $methodInfoName: String!,
@@ -30,19 +26,7 @@ mutation (
   updateOrder: updateOrder(
     id:$orderId
     version:$version
-    actions:[{      
-      setCustomType:{
-        type: {
-          key: $customFieldKey
-          typeId:$type
-        }
-        fields:{
-          name:$customFieldName
-          value:$gr4vyTransactionId
-        }
-      }
-    }, 
-    {
+    actions:[{
       changeOrderState: {
         orderState: $orderState
       }
