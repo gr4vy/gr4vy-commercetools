@@ -9,12 +9,6 @@ const getCustomerWithCartQuery = `
         middleName
         lastName
         email
-        custom {
-          customFieldsRaw {
-            name
-            value
-          }
-        }
       }
       activeCart {
         id
@@ -109,12 +103,6 @@ const getCustomerWithCartQuery = `
         }
         country
         locale
-        custom {
-          customFieldsRaw {
-            name
-            value
-          }
-        }
         shippingInfo {
           price {
             centAmount
@@ -155,12 +143,6 @@ const getCustomerWithCartQuery = `
     building
     apartment
     region
-    custom {
-      customFieldsRaw {
-        name
-        value
-      }
-    }
   }
 `
 

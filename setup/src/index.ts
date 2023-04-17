@@ -1,13 +1,12 @@
 import * as dotenv from 'dotenv'
-import { createServer } from "./server/"
-import {init} from "./init"
 
-const server = createServer()
+import {init} from "./init"
+import { validate } from "./validate"
 
 dotenv.config()
-//init script to create custom fields
-init();
 
-server.listen(5000, async () => {
-  console.log(`Setup module is running at http://localhost:5000`)
-})
+//validate input parameters
+validate();
+
+//init script to create custom fields, subscription, extensions etc.
+init();

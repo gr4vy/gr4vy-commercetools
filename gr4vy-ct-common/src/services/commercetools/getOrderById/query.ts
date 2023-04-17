@@ -120,12 +120,6 @@ const getOrderDetailsQuery = `
             centAmount
           }
         }
-        custom{
-          customFieldsRaw{
-            name
-            value
-          }
-        }
       }
     }
 `

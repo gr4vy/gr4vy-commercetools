@@ -155,4 +155,10 @@ export class Gr4vy {
     const result = this.client.listBuyers(userId, 1)
     return result
   }
+
+  listTransaction(orderId: string) {
+    this.logger.debug("listTransaction", orderId);
+    const result = this.client.listTransactions(undefined, undefined, undefined, 1, undefined, undefined, undefined, undefined, undefined, undefined, orderId)
+    return result;
+  }
 }

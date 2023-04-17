@@ -17,26 +17,6 @@ const responseMapper = async (
     )
   }
 
-  if (customer?.custom) {
-    const {
-      custom: { customFieldsRaw },
-    } = customer
-    customer.gr4vyBuyerId =
-      customFieldsRaw && Array.isArray(customFieldsRaw)
-        ? customFieldsRaw.find((e: { name: string }) => e.name === c.CTP_GR4VY_BUYER_ID_FIELD.NAME)
-        : null
-  }
-
-  if (cart?.custom) {
-    const {
-      custom: { customFieldsRaw },
-    } = cart
-    cart.gr4vyBuyerId =
-        customFieldsRaw && Array.isArray(customFieldsRaw)
-            ? customFieldsRaw.find((e: { name: string }) => e.name === c.CTP_GR4VY_BUYER_ID_FIELD.NAME)
-            : null
-  }
-
   const cartItems: CartItem[] =
     cart?.lineItems && Array.isArray(cart?.lineItems)
       ? cart?.lineItems.map((c: CartLineItem) => getCartItem(c))
@@ -45,26 +25,6 @@ const responseMapper = async (
   if (customer) {
     customer.displayName = customer?.firstName+' '+customer?.lastName
     customer.externalIdentifier = customer.id?customer.id:cart.anonymousId
-  }
-
-  if (cart?.billingAddress?.custom) {
-    const {
-      custom: { customFieldsRaw },
-    } = cart.billingAddress
-    cart.billingAddress.gr4vyShippingDetailId =
-        customFieldsRaw && Array.isArray(customFieldsRaw)
-            ? customFieldsRaw.find((e: { name: string }) => e.name === c.CTP_GR4VY_ADDRESS_DETAIL_ID_ADDRESS)
-            : null
-  }
-
-  if (cart?.shippingAddress?.custom) {
-    const {
-      custom: { customFieldsRaw },
-    } = cart.shippingAddress
-    cart.shippingAddress.gr4vyShippingDetailId =
-        customFieldsRaw && Array.isArray(customFieldsRaw)
-            ? customFieldsRaw.find((e: { name: string }) => e.name === c.CTP_GR4VY_ADDRESS_DETAIL_ID_ADDRESS)
-            : null
   }
 
   //Add Shipping as an item to the cart Items.

@@ -1,8 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { Constants, getOrderById } from "@gr4vy-ct/common"
+import { getOrderById, getCustomObjects } from "@gr4vy-ct/common"
 import { Order } from "@gr4vy-ct/common/src/services/types"
 
+import { getTransaction } from '../../service'
 import { OrderMainInterface } from "./interfaces"
 
 class OrderDetails implements OrderMainInterface {
@@ -52,15 +53,10 @@ class OrderDetails implements OrderMainInterface {
     return parsedBody || {}
   }
 
-  getTransactionId(order: Order) {
-    const {
-      STATES: { CT },
-    } = Constants
-    const customFieldsRaw = order?.custom?.customFieldsRaw
-    const customFieldsItem = customFieldsRaw.find(
-      fieldItem => fieldItem.name === CT.CUSTOM_FIELDS.GR4VY_TRANSACTION_ID.KEY
-    )
-    return customFieldsItem ? customFieldsItem.value : ""
+  async getTransactionId(order: Order) {
+    const paymentConfig = await getCustomObjects()
+    const transaction = await getTransaction({orderId: order.id, paymentConfig})
+    return transaction ? transaction.id : null
   }
 
   async execute() {
