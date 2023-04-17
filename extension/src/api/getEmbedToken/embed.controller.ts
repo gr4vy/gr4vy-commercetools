@@ -40,9 +40,9 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     if (!paymentConfig) {
       throw { message: "Payment configuration is missing or empty", statusCode: 400 }
     }
-    
+
     // Resolve the customer buyer id in CT
-    await resolveCustomerBuyerId({ request, customer, cart, paymentConfig })
+    await resolveCustomerBuyerId({ customer, cart, paymentConfig })
 
     const gr4vyBuyerId = customer?.gr4vyBuyerId ?? cart.gr4vyBuyerId
 

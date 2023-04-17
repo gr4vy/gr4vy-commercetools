@@ -38,12 +38,6 @@ export const manageBuyerShippingAddress = async ({customer, cart, paymentConfig 
     },
     //if the buyer Id is not there in customer, get it from cart.
     'gr4vyBuyerId': customer?.gr4vyBuyerId?.value?? cart.gr4vyBuyerId?.value,
-    'buyerShippingId': cart.shippingAddress?.gr4vyShippingDetailId?.value
   }
-
-  if (updateShippingAddress.buyerShippingId) {
-    return gr4vy.updateBuyerShippingDetail(updateShippingAddress)
-  } else {
-    return gr4vy.addBuyerShippingDetail(updateShippingAddress)
-  }
+  return gr4vy.addBuyerShippingDetail(updateShippingAddress)
 }
