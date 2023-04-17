@@ -1,3 +1,4 @@
 export * from "./createCustomFields"
-export * from "./createSubscriptions"
+export * from "./createAwsSubscriptions"
+export * from "./createGcpSubscription"
 export * from "./createTaxCalculationExtension"
