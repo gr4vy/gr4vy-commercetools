@@ -1,11 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { ApiClient } from "../../../clients/apiClient"
 import { Order, Gr4vyTransactionResponse, UpdateOrderWithPaymentResponse } from "./../../types"
 import { Constants } from "./../../../config"
 import { mutation } from "./mutation"
 import { responseMapper } from "./mapper"
-import { escapedJSON } from "../../../utils"
 
 const updateOrderWithPayment = async ({
   order,

@@ -27,7 +27,7 @@ export class MeApiClient {
     this.projectKey = env.CTP_PROJECT_KEY as string
   }
 
-  setBody({ query, variables }: { query: string; variables: { [key: string]: string } }) {
+  setBody({ query, variables }: { query: string; variables: { [key: string]: any } }) {
     this.query = query
     this.variables = variables
   }

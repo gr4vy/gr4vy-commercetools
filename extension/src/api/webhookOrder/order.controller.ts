@@ -1,8 +1,6 @@
 import { ServerResponse } from "http"
 
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { getLogger, getTransactionById } from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
@@ -74,7 +72,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         await handleUpdatePayment({
           request,
           gr4vyTransactionResult,
-          doNotModifyTransaction:true
+          doNotModifyTransaction: true,
         })
 
       if (!hasErrDueConcurrentModification) {

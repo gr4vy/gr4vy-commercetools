@@ -1,9 +1,15 @@
 import { ServerResponse } from "http"
 
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { getLogger, getOrder, resolveStatus, replicateCartFromOrder, Constants, prepareCTStatuses, updateOrderWithPayment } from "@gr4vy-ct/common"
+import {
+  getLogger,
+  getOrder,
+  resolveStatus,
+  replicateCartFromOrder,
+  Constants,
+  prepareCTStatuses,
+  updateOrderWithPayment,
+} from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
@@ -42,7 +48,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         statusCode: 400,
       }
     }
-    
+
     const {
       STATES: { CT },
     } = Constants
@@ -59,13 +65,13 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     } = gr4vyTransaction || {}
 
     const haveTransactionInfo = !!(id && status && type && intent)
-    
+
     if (haveTransactionInfo) {
       // Update payment info
       const [payment] = order?.paymentInfo?.payments || []
       const [transaction] = payment?.transactions || []
       const { type: ctTransactionType, id: ctTransactionId } = transaction || {}
-      const { orderState, orderPaymentState, transactionState } = prepareCTStatuses(
+      const { orderState, orderPaymentState, transactionState }: any = prepareCTStatuses(
         status,
         ctTransactionType,
         ctTransactionId,
@@ -80,7 +86,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         transactionState,
         gr4vyTransaction,
       })
-
+      
     } else {
       //Cancel order
       const orderState = CT.ORDER.CANCELLED
@@ -88,7 +94,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       const transactionState = CT.TRANSACTION.FAILURE
       const interfaceText = rawResponseDescription || CT.ORDERPAYMENT.FAILED
       const interfaceCode = rawResponseCode || CT.ORDERPAYMENT.FAILED
-      
+
       await resolveStatus({
         order,
         orderState,

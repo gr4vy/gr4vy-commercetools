@@ -1,11 +1,6 @@
-import { Order } from "./../../types"
-// eslint-disable-next-line
-const responseMapper = async (
-  // eslint-disable-next-line
-  result: any
-): Promise<{
-  order: Order
-}> => {
+import { Order } from "@commercetools/platform-sdk"
+
+const responseMapper = async (result: any): Promise<Order> => {
   return result?.body?.data?.order || {}
 }
 

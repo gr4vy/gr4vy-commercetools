@@ -2,8 +2,6 @@ import http, { ServerResponse } from "http"
 import url from "url"
 
 import { StatusCodes } from "http-status-codes"
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { getLogger } from "@gr4vy-ct/common"
 
 import { routes } from "./../router"

@@ -1,7 +1,5 @@
 import { IncomingMessage } from "http"
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { MeApiClient } from "@gr4vy-ct/common"
 
 import { updateCustomerMutation } from "./query"

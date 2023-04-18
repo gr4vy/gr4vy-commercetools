@@ -1,14 +1,26 @@
-import { Order } from "@commercetools/platform-sdk"
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { getOrder, prepareCTStatuses, updateOrderWithPayment, Constants, getOrderById, listTransactionRefunds, addTransaction, updateTransaction } from "@gr4vy-ct/common"
+import { Order, Payment } from "@commercetools/platform-sdk"
+import {
+  getOrder,
+  prepareCTStatuses,
+  updateOrderWithPayment,
+  Constants,
+  getOrderById,
+  listTransactionRefunds,
+  addTransaction,
+  updateTransaction,
+} from "@gr4vy-ct/common"
 import { Transaction } from "@gr4vy-ct/common/src/services/types"
 
 const {
   STATES: { GR4VY, CT },
 } = Constants
 
-const handleUpdatePayment = async ({ request, gr4vyTransactionResult, meClient, doNotModifyTransaction }: any) => {
+const handleUpdatePayment = async ({
+  request,
+  gr4vyTransactionResult,
+  meClient,
+  doNotModifyTransaction,
+}: any) => {
   // Fetch order id from the transaction
   const gr4vyTransaction = gr4vyTransactionResult?.body || {}
   const {
@@ -59,7 +71,7 @@ const handleUpdatePayment = async ({ request, gr4vyTransactionResult, meClient, 
     }
   }
 
-  const { orderState, orderPaymentState, transactionState } = prepareCTStatuses(
+  const { orderState, orderPaymentState, transactionState }: any = prepareCTStatuses(
     status,
     ctTransactionType,
     ctTransactionId,
@@ -92,7 +104,8 @@ const handleTransactions = async (orderId: string, gr4vyTransaction: any) => {
   // Get latest order payment and transaction details
   const order = await getOrderById(orderId)
 
-  const [payment] = order?.paymentInfo?.payments || []
+  // Due to reference expansion for Payments [Reference Expansion](/../api/general-concepts#reference-expansion)
+  const [payment] = (order?.paymentInfo?.payments || []) as unknown as Payment[]
 
   if (!payment) {
     throw {
@@ -102,89 +115,42 @@ const handleTransactions = async (orderId: string, gr4vyTransaction: any) => {
   }
 
   let paymentVersion = payment.version
-  const ctTransactions = payment?.transactions || []
+
   const {
     id: gr4vyTransactionId,
     status,
     intent,
-    amount,
     capturedAmount,
     refundedAmount,
     capturedAt,
-    voidedAt
+    voidedAt,
   } = gr4vyTransaction
 
-  /*const transactionMapper: any = {
-    Authorization: "authorize",
-    Refund: "capture",
-    Charge: "capture",
-  }
-
-  const existingCTTransactionTypes = ctTransactions.map(
-    (t: { type: string }) => transactionMapper[t.type]
-  )
-
-  for (const transaction of ctTransactions) {
-    if (transactionMapper[transaction.type] === intent) {
-      const { transactionState } = await prepareCTStatuses(
-        status,
-        transaction.type,
-        transaction.id,
-        capturedAmount,
-        refundedAmount
-      )
-
-      if (transactionState !== transaction.state) {
-        const { version, hasErrDueConcurrentModification } = await updateTransaction({
-          payment,
-          paymentVersion,
-          transaction,
-          transactionState,
-        })
-
-        if (hasErrDueConcurrentModification) {
-          return { hasErrDueConcurrentModification }
-        }
-
-        paymentVersion = version
-      }
-    } else {
-      if (!existingCTTransactionTypes.includes(intent)) {
-        const { version } = await addTransaction({
-          isRefund: false,
-          order,
-          status,
-          paymentVersion,
-          transactionType: transaction.type === "authorize" ? "Authorization" : "Charge",
-          amount: amount,
-          currency: transaction?.amount.currencyCode,
-          customValue: gr4vyTransactionId,
-        })
-        paymentVersion = version
-      }
-    }
-  }*/
-
-  if (capturedAt !== null && capturedAmount > 0 && intent === 'authorize' && refundedAmount <= 0) {
+  if (capturedAt !== null && capturedAmount > 0 && intent === "authorize" && refundedAmount <= 0) {
     const { hasErrDueConcurrentModification, version } = await createCaptureTransaction({
-          order,
-          paymentVersion,
-          payment,
-          gr4vyTransaction
-        })
+      order,
+      paymentVersion,
+      payment,
+      gr4vyTransaction,
+    })
     if (hasErrDueConcurrentModification) {
       return { hasErrDueConcurrentModification }
     }
     paymentVersion = version
   }
 
-  if (voidedAt !== null && capturedAmount <= 0 && intent === 'authorize' && status === GR4VY.TRANSACTION.AUTHORIZATION_VOIDED) {
+  if (
+    voidedAt !== null &&
+    capturedAmount <= 0 &&
+    intent === "authorize" &&
+    status === GR4VY.TRANSACTION.AUTHORIZATION_VOIDED
+  ) {
     const { hasErrDueConcurrentModification, version } = await createVoidTransaction({
-          order,
-          paymentVersion,
-          payment,
-          gr4vyTransaction
-        })
+      order,
+      paymentVersion,
+      payment,
+      gr4vyTransaction,
+    })
     if (hasErrDueConcurrentModification) {
       return { hasErrDueConcurrentModification }
     }
@@ -262,29 +228,24 @@ const createCaptureTransaction = async ({
   order,
   paymentVersion,
   payment,
-  gr4vyTransaction
+  gr4vyTransaction,
 }: {
   order: Order
   paymentVersion: number
-  payment: { transactions: any }
+  payment: Payment
   gr4vyTransaction: any
 }) => {
-  const {
-    id: gr4vyTransactionId,
-    status,
-    capturedAmount,
-    refundedAmount
-  } = gr4vyTransaction
+  const { id: gr4vyTransactionId, status, capturedAmount, refundedAmount } = gr4vyTransaction
 
   const chargeTransactionExists = payment?.transactions.find(
-      (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CHARGE
+    (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CHARGE
   )
-  const { transactionState } = await prepareCTStatuses(
-      status,
-      CT.TRANSACTION.TYPES.CHARGE,
-      "",
-      capturedAmount,
-      refundedAmount
+  const { transactionState }: any = await prepareCTStatuses(
+    status,
+    CT.TRANSACTION.TYPES.CHARGE,
+    "",
+    capturedAmount,
+    refundedAmount
   )
   let transactionResponse
   if (!chargeTransactionExists) {
@@ -313,29 +274,26 @@ const createCaptureTransaction = async ({
       }
     }
   }
-  const { hasErrDueConcurrentModification, version } = transactionResponse
+  const { hasErrDueConcurrentModification, version }: any = transactionResponse
 
   return { hasErrDueConcurrentModification, version }
 }
 
 const createVoidTransaction = async ({
-   order,
-   paymentVersion,
-   payment,
-   gr4vyTransaction
- }: {
+  order,
+  paymentVersion,
+  payment,
+  gr4vyTransaction,
+}: {
   order: Order
   paymentVersion: number
-  payment: { transactions: any }
+  payment: Payment
   gr4vyTransaction: any
 }) => {
-  const {
-    id: gr4vyTransactionId,
-    amount
-  } = gr4vyTransaction
+  const { id: gr4vyTransactionId, amount } = gr4vyTransaction
 
   const voidTransactionExists = payment?.transactions.find(
-      (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CANCEL_AUTHORIZATION
+    (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CANCEL_AUTHORIZATION
   )
   let transactionResponse
   if (!voidTransactionExists) {
@@ -364,7 +322,7 @@ const createVoidTransaction = async ({
       }
     }
   }
-  const { hasErrDueConcurrentModification, version } = transactionResponse
+  const { hasErrDueConcurrentModification, version }: any = transactionResponse
 
   return { hasErrDueConcurrentModification, version }
 }

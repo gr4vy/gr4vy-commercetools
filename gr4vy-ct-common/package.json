@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Common package for Commerce tools and Gr4vy",
   "main": ".build/index.js",
-  "types": ".build/index.d.ts",
+  "types": ".build/types/index.d.ts",
   "scripts": {
     "build": "tsc",
     "eslint": "eslint . --ext .ts",

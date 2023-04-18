@@ -4,8 +4,6 @@ import path from "path"
 
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 import formidable from "formidable"
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { getLogger } from "@gr4vy-ct/common"
 
 import ResponseHelper from "./../../helper/response"

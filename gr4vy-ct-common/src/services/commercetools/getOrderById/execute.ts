@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { ApiClient } from "../../../clients/apiClient"
 import { getOrderDetailsQuery } from "./query"
 import { responseMapper } from "./mapper"
