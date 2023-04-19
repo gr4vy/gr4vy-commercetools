@@ -1,3 +1,5 @@
+import { IncomingMessage } from "http"
+
 import { Order, Payment } from "@commercetools/platform-sdk"
 import {
   getOrder,
@@ -10,7 +12,11 @@ import {
   addTransaction,
   updateTransaction,
 } from "@gr4vy-ct/common"
-import { Transaction } from "@gr4vy-ct/common/src/services/types"
+import {
+  Transaction,
+  Gr4vyTransactionResult,
+  Gr4vyTransactionResponse,
+} from "@gr4vy-ct/common/src/services/types"
 
 const {
   STATES: { GR4VY, CT },
@@ -21,7 +27,12 @@ const handleUpdatePayment = async ({
   gr4vyTransactionResult,
   meClient,
   doNotModifyTransaction,
-}: any) => {
+}: {
+  request: IncomingMessage
+  gr4vyTransactionResult: Gr4vyTransactionResult
+  meClient: boolean
+  doNotModifyTransaction?: boolean
+}) => {
   // Fetch order id from the transaction
   const gr4vyTransaction = gr4vyTransactionResult?.body || {}
   const {
@@ -102,7 +113,7 @@ const handleUpdatePayment = async ({
   return responseData
 }
 
-const handleTransactions = async (orderId: string, gr4vyTransaction: any) => {
+const handleTransactions = async (orderId: string, gr4vyTransaction: Gr4vyTransactionResponse) => {
   // Get latest order payment and transaction details
   const order = await getOrderById(orderId)
 
@@ -177,7 +188,7 @@ const createRefundTransactions = async ({
 }: {
   order: Order
   paymentVersion: number
-  payment: { transactions: any }
+  payment: Payment
   gr4vyTransactionId: string
 }) => {
   const { items } = await listTransactionRefunds(gr4vyTransactionId)
@@ -194,9 +205,10 @@ const createRefundTransactions = async ({
 
   for (const transaction of ctTransactions) {
     if (transaction?.custom) {
-      const {
-        custom: { customFieldsRaw },
-      } = transaction
+      const { custom } = transaction
+
+      const customFieldsRaw = (custom as unknown as { customFieldsRaw: { [key: string]: string } })
+        ?.customFieldsRaw
 
       if (customFieldsRaw && Array.isArray(customFieldsRaw)) {
         customFieldsRaw.forEach(customField => {
@@ -235,7 +247,7 @@ const createCaptureTransaction = async ({
   order: Order
   paymentVersion: number
   payment: Payment
-  gr4vyTransaction: any
+  gr4vyTransaction: Gr4vyTransactionResponse
 }) => {
   const { id: gr4vyTransactionId, status, capturedAmount, refundedAmount } = gr4vyTransaction
 
@@ -276,7 +288,10 @@ const createCaptureTransaction = async ({
       }
     }
   }
-  const { hasErrDueConcurrentModification, version }: any = transactionResponse
+  const { hasErrDueConcurrentModification, version } = transactionResponse as {
+    hasErrDueConcurrentModification: boolean
+    version: number
+  }
 
   return { hasErrDueConcurrentModification, version }
 }
@@ -290,7 +305,7 @@ const createVoidTransaction = async ({
   order: Order
   paymentVersion: number
   payment: Payment
-  gr4vyTransaction: any
+  gr4vyTransaction: Gr4vyTransactionResponse
 }) => {
   const { id: gr4vyTransactionId, amount } = gr4vyTransaction
 
@@ -324,7 +339,11 @@ const createVoidTransaction = async ({
       }
     }
   }
-  const { hasErrDueConcurrentModification, version }: any = transactionResponse
+
+  const { hasErrDueConcurrentModification, version } = transactionResponse as {
+    hasErrDueConcurrentModification: boolean
+    version: number
+  }
 
   return { hasErrDueConcurrentModification, version }
 }

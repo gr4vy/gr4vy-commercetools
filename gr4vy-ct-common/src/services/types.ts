@@ -168,8 +168,20 @@ export declare type RefundItem = {
   paymentVersion: string
 }
 
+export declare type Gr4vyTransactionResult = {
+  body: Gr4vyTransactionResponse
+}
+
 export declare type Gr4vyTransactionResponse = {
   id: string
+  intent: string
+  capturedAt: Date
+  voidedAt: Date
+  externalIdentifier: string
+  status: string
+  amount: number
+  capturedAmount: number
+  refundedAmount: number
   paymentService: {
     method: string
     displayName: string

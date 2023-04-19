@@ -72,6 +72,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         await handleUpdatePayment({
           request,
           gr4vyTransactionResult,
+          meClient: false,
           doNotModifyTransaction: true,
         })
 
