@@ -8,6 +8,7 @@ import {
   replicateCartFromOrder,
   Constants,
   prepareCTStatuses,
+  prepareCTStatusesType,
   updateOrderWithPayment,
 } from "@gr4vy-ct/common"
 
@@ -71,13 +72,14 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       const [payment] = order?.paymentInfo?.payments || []
       const [transaction] = payment?.transactions || []
       const { type: ctTransactionType, id: ctTransactionId } = transaction || {}
-      const { orderState, orderPaymentState, transactionState }: any = prepareCTStatuses(
-        status,
-        ctTransactionType,
-        ctTransactionId,
-        gr4vyCapturedAmount,
-        gr4vyRefundedAmount
-      )
+      const { orderState, orderPaymentState, transactionState }: prepareCTStatusesType =
+        prepareCTStatuses(
+          status,
+          ctTransactionType,
+          ctTransactionId,
+          gr4vyCapturedAmount,
+          gr4vyRefundedAmount
+        )
 
       await updateOrderWithPayment({
         order,
@@ -86,7 +88,6 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         transactionState,
         gr4vyTransaction,
       })
-      
     } else {
       //Cancel order
       const orderState = CT.ORDER.CANCELLED

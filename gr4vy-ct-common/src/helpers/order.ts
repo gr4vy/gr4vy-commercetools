@@ -1,16 +1,18 @@
 import { Constants } from "./../config"
 
+export type prepareCTStatusesType = {
+  orderState: string
+  orderPaymentState: string
+  transactionState: string
+}
+
 export const prepareCTStatuses = (
   gr4vyTransactionStatus: string,
   ctTransactionType: string,
   ctTransactionId: string,
   gr4vyCapturedAmount: number,
   gr4vyRefundedAmount: number
-) => {
-  if (!gr4vyTransactionStatus) {
-    return
-  }
-
+): prepareCTStatusesType => {
   const {
     STATES: { GR4VY, CT },
   } = Constants

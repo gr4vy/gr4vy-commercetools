@@ -2,6 +2,7 @@ import { Order, Payment } from "@commercetools/platform-sdk"
 import {
   getOrder,
   prepareCTStatuses,
+  prepareCTStatusesType,
   updateOrderWithPayment,
   Constants,
   getOrderById,
@@ -71,13 +72,14 @@ const handleUpdatePayment = async ({
     }
   }
 
-  const { orderState, orderPaymentState, transactionState }: any = prepareCTStatuses(
-    status,
-    ctTransactionType,
-    ctTransactionId,
-    gr4vyCapturedAmount,
-    gr4vyRefundedAmount
-  )
+  const { orderState, orderPaymentState, transactionState }: prepareCTStatusesType =
+    prepareCTStatuses(
+      status,
+      ctTransactionType,
+      ctTransactionId,
+      gr4vyCapturedAmount,
+      gr4vyRefundedAmount
+    )
 
   // Create custom field in CT for order to save Gr4vy transaction id
   // Update payment info in CT based on Gr4vy transaction
@@ -240,7 +242,7 @@ const createCaptureTransaction = async ({
   const chargeTransactionExists = payment?.transactions.find(
     (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CHARGE
   )
-  const { transactionState }: any = await prepareCTStatuses(
+  const { transactionState }: prepareCTStatusesType = prepareCTStatuses(
     status,
     CT.TRANSACTION.TYPES.CHARGE,
     "",
