@@ -1,11 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { getLogger, Constants } from "@gr4vy-ct/common"
 
 import { handleTransactionCapture, handleTransactionRefund, handleTransactionVoid } from "./handler"
 import { prepareRequestBody } from "./helper"
 
-// eslint-disable-next-line
 export const handler = async (event: any) => {
   const logger = getLogger()
   logger.debug({

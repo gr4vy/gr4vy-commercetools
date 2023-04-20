@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { Constants, getLogger } from "@gr4vy-ct/common"
 import Logger from "bunyan"
 
@@ -126,7 +124,7 @@ async function handleTransactionRefund(event: any) {
     orderRefundDetail,
     orderRefundDetail.refundObject,
     logger,
-      0
+    0
   )
   if (!orderStatusUpdatedAtCt) {
     return {
@@ -218,7 +216,13 @@ async function addCaptureTransactionAtCt(
       return captureTransactionAdded
     } else {
       const orderCapture: CaptureOrderDetailsInterface = await orderCaptureDetails.execute()
-      return await addCaptureTransactionAtCt(orderCapture, gr4vyTransactionId, orderCaptureDetails, logger, iteration)
+      return await addCaptureTransactionAtCt(
+        orderCapture,
+        gr4vyTransactionId,
+        orderCaptureDetails,
+        logger,
+        iteration
+      )
     }
   }
 
@@ -267,7 +271,7 @@ async function addVoidTransactionAtCt(
   orderVoid: OrderVoidDetailsInterface,
   gr4vyTransactionId: string,
   orderVoidDetails: OrderVoidDetails,
-  logger:Logger,
+  logger: Logger,
   iteration: number
   // eslint-disable-next-line
 ): Promise<any> {
@@ -284,7 +288,13 @@ async function addVoidTransactionAtCt(
       return voidTransactionAdded
     } else {
       const orderVoid: OrderVoidDetailsInterface = await orderVoidDetails.execute()
-      return await addVoidTransactionAtCt(orderVoid, gr4vyTransactionId, orderVoidDetails, logger, iteration)
+      return await addVoidTransactionAtCt(
+        orderVoid,
+        gr4vyTransactionId,
+        orderVoidDetails,
+        logger,
+        iteration
+      )
     }
   }
 
@@ -346,7 +356,13 @@ async function updateOrderRefundStatusAtCt(
       return orderUpdated
     } else {
       const orderRefund: OrderRefundDetailsInterface = await orderRefundDetails.execute()
-      return await updateOrderRefundStatusAtCt(orderRefund, orderRefundDetails, refundData, logger, iteration)
+      return await updateOrderRefundStatusAtCt(
+        orderRefund,
+        orderRefundDetails,
+        refundData,
+        logger,
+        iteration
+      )
     }
   }
 

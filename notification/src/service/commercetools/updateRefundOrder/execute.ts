@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { ApiClient, Constants, getOrderById } from "@gr4vy-ct/common"
 import { Order } from "@gr4vy-ct/common/src/services/types"
 
@@ -11,7 +9,6 @@ const {
   STATES: { CT },
 } = Constants
 
-// eslint-disable-next-line
 const updateRefundOrder = async (
   {
     orderUpdateForRefund,
@@ -19,7 +16,6 @@ const updateRefundOrder = async (
     orderUpdateForRefund: OrderUpdateForRefund
   },
   { refundData }: { refundData: RefundMessageObject }
-  // eslint-disable-next-line
 ): Promise<any> => {
   const findFor = "{repl}{/repl}"
 

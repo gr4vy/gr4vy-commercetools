@@ -1,12 +1,9 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { ApiClient } from "@gr4vy-ct/common"
 
 import { updateOrderMutation } from "./query"
 import { responseMapper } from "./mapper"
 import { OrderUpdate } from "./../../types"
 
-// eslint-disable-next-line
 const updateOrder = async ({ orderUpdate }: { orderUpdate: OrderUpdate }): Promise<any> => {
   const findFor = ["{repl}orderState:{/repl}", "{repl}paymentState:{/repl}"]
   const replaceWith = [

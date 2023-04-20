@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 const responseMapper = async (result: any) => {
   const errors = result?.body?.errors
   if (errors) {

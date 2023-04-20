@@ -24,6 +24,7 @@
   },
   "homepage": "https://bitbucket.org/tryzens-commercetools/gr4vy#readme",
   "dependencies": {
+    "@commercetools/platform-sdk": "^4.7.0",
     "@types/node": "^18.11.18",
     "bunyan": "^1.8.15",
     "dotenv": "^16.0.3",
