@@ -46,7 +46,7 @@ const Gr4vy = () => {
       )[0];
       if (CustObj?.value) {
         setPrivateIdFile({
-          filePath: CustObj?.value?.privateKey,
+          fileContent: CustObj?.value?.privateKey,
           fileName: CustObj?.value?.privateKeyFileName,
         });
         setPhoneNumber(CustObj?.value?.statementDescriptor?.phoneNumber);
@@ -64,7 +64,7 @@ const Gr4vy = () => {
       } else {
         setApiResponse({ ...initialValues, information: config.VERSION });
         setPrivateIdFile({
-          filePath: initialValues?.privateKey,
+          fileContent: initialValues?.privateKey,
           fileName: initialValues?.fileName,
         });
         setPhoneNumber(initialValues?.statementDescriptor?.phoneNumber);
@@ -181,10 +181,10 @@ const Gr4vy = () => {
 
       if (deleteFile) {
         delete values.privateKey;
-      } else if (privateIdFile?.filePath) {
+      } else if (privateIdFile?.fileContent) {
         values = {
           ...values,
-          privateKey: privateIdFile.filePath,
+          privateKey: privateIdFile.fileContent,
           privateKeyFileName: privateIdFile.fileName,
         };
       }
@@ -267,7 +267,7 @@ const Gr4vy = () => {
     const file = e.target.files[0];
     const fileReader = await getFile(file);
     setPrivateIdFile({
-      filePath: String(fileReader),
+      fileContent: String(fileReader),
       fileName: file.name,
     });
   };
@@ -295,7 +295,7 @@ const Gr4vy = () => {
   // To fetch dynamic values for input fileds from api
   const getValue = ({ type, superParent, parent, id }) => {
     if (type === 'file') {
-      return privateIdFile?.filePath;
+      return privateIdFile?.fileContent;
     }
     if (type === 'phoneNumber') {
       return phoneNumber;
@@ -407,7 +407,7 @@ const Gr4vy = () => {
                               })}
                               {field?.id === 'privateKey' &&
                               (formik.values[`${field?.id}`] ||
-                                privateIdFile.filePath) ? (
+                                privateIdFile.fileContent) ? (
                                 <Spacings.Inline>
                                   <input
                                     type="checkbox"
@@ -427,7 +427,7 @@ const Gr4vy = () => {
               ))}
           </div>
           {(formik.dirty ||
-            privateIdFile?.filePath ||
+            privateIdFile?.fileContent ||
             deleteFile ||
             phoneNumber) && (
             <div
