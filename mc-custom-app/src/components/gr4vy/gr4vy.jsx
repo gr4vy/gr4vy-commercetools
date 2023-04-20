@@ -45,7 +45,10 @@ const Gr4vy = () => {
         (res) => res.container === config.GR4VY_CUSTOM_OBJECT_CONTAINER
       )[0];
       if (CustObj?.value) {
-        setPrivateIdFile({ filePath: CustObj?.value?.privateKey });
+        setPrivateIdFile({
+          fileContent: CustObj?.value?.privateKey,
+          fileName: CustObj?.value?.privateKeyFileName,
+        });
         setPhoneNumber(CustObj?.value?.statementDescriptor?.phoneNumber);
         if (CustObj?.value?.themeOptions === undefined) {
           setApiResponse({
@@ -60,7 +63,10 @@ const Gr4vy = () => {
         }
       } else {
         setApiResponse({ ...initialValues, information: config.VERSION });
-        setPrivateIdFile({ filePath: initialValues?.privateKey });
+        setPrivateIdFile({
+          fileContent: initialValues?.privateKey,
+          fileName: initialValues?.fileName,
+        });
         setPhoneNumber(initialValues?.statementDescriptor?.phoneNumber);
       }
       // }
@@ -175,8 +181,12 @@ const Gr4vy = () => {
 
       if (deleteFile) {
         delete values.privateKey;
-      } else if (privateIdFile?.filePath) {
-        values = { ...values, privateKey: privateIdFile.filePath };
+      } else if (privateIdFile?.fileContent) {
+        values = {
+          ...values,
+          privateKey: privateIdFile.fileContent,
+          privateKeyFileName: privateIdFile.fileName,
+        };
       }
 
       values = {
@@ -231,7 +241,7 @@ const Gr4vy = () => {
           }
         }
       }
-
+      
       saveCustomObject({
         ...values,
       });
@@ -239,46 +249,27 @@ const Gr4vy = () => {
     enableReinitialize: true,
   });
 
+  const getFile = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsText(file);
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
   // Function to handle file upload to REST server
   const handleFile = async (e) => {
-    const file = e?.target?.files[0];
-    const formData = new FormData();
-    formData.append('file', file, e?.target?.value);
-    try {
-      let axiosConfig = {
-        method: 'post',
-        url: `${config.API_SERVER_URL}/key/upload`,
-        data: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      };
-      axios(axiosConfig)
-        .then(function ({ data }) {
-          setPrivateIdFile({ filePath: data.result.newPath });
-          toast('File saved successfully', {
-            position: 'bottom-right',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            draggable: false,
-            theme: 'light',
-            type: 'success',
-          });
-        })
-        .catch(function (error) {
-          console.log(error);
-          toast('Failed to save file', {
-            position: 'bottom-right',
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            draggable: false,
-            theme: 'light',
-            type: 'error',
-          });
-        });
-    } catch (error) {}
+    const file = e.target.files[0];
+    const fileReader = await getFile(file);
+    setPrivateIdFile({
+      fileContent: String(fileReader),
+      fileName: file.name,
+    });
   };
 
   const handleNumber = (e) => {
@@ -304,7 +295,7 @@ const Gr4vy = () => {
   // To fetch dynamic values for input fileds from api
   const getValue = ({ type, superParent, parent, id }) => {
     if (type === 'file') {
-      return privateIdFile?.filePath;
+      return privateIdFile?.fileContent;
     }
     if (type === 'phoneNumber') {
       return phoneNumber;
@@ -400,6 +391,11 @@ const Gr4vy = () => {
                                 title: field?.title,
                                 value: getValue(field),
                                 name: getName(field),
+                                fileName:
+                                  field?.id === 'privateKey' &&
+                                  privateIdFile?.fileName
+                                    ? privateIdFile?.fileName
+                                    : '',
                                 eventTrigger:
                                   field?.type === 'file'
                                     ? handleFile
@@ -411,7 +407,7 @@ const Gr4vy = () => {
                               })}
                               {field?.id === 'privateKey' &&
                               (formik.values[`${field?.id}`] ||
-                                privateIdFile.filePath) ? (
+                                privateIdFile.fileContent) ? (
                                 <Spacings.Inline>
                                   <input
                                     type="checkbox"
@@ -431,7 +427,7 @@ const Gr4vy = () => {
               ))}
           </div>
           {(formik.dirty ||
-            privateIdFile?.filePath ||
+            privateIdFile?.fileContent ||
             deleteFile ||
             phoneNumber) && (
             <div
