@@ -426,6 +426,7 @@ export const getField = ({
   eventTrigger,
   options,
   disabled = false,
+  fileName,
 }) => {
   switch (type) {
     case 'label':
@@ -497,7 +498,7 @@ export const getField = ({
             onClick={() => document.getElementById(id).click()}
             disabled={disabled}
           />
-          {value ? (
+          {fileName.length > 0 ? (
             <div
               style={{
                 maxWidth: '400px',
@@ -506,7 +507,7 @@ export const getField = ({
                 wordBreak: 'break-word',
               }}
             >
-              {value}
+              {fileName}
             </div>
           ) : null}
         </Spacings.Inline>
