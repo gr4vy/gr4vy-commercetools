@@ -1,9 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getLogger, Constants } from "@gr4vy-ct/common"
+import { getCustomObjects, getLogger, Constants } from "@gr4vy-ct/common"
 
 import { handleTransactionCapture, handleTransactionRefund, handleTransactionVoid } from "./handler"
 import { prepareRequestBody } from "./helper"
+import ResponseHelper from "./helper/response";
 
 // eslint-disable-next-line
 export const handler = async (event: any) => {
@@ -24,6 +25,17 @@ export const handler = async (event: any) => {
       "Unexpected error when processing event"
     )
     throw error
+  }
+
+  const paymentConfig = await getCustomObjects()
+  if (!paymentConfig) {
+    throw { message: "Payment configuration is missing or empty", statusCode: 400 }
+  }
+  //if Gr4vy payment is not active, return.
+  if(!paymentConfig.active) {
+    return {
+      notificationResponse: "[Gr4vy Payment is not active]",
+    }
   }
 
   const {
