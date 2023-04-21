@@ -126,6 +126,7 @@ const Gr4vy = () => {
         });
       }
       fetchCustomObject();
+      setDeleteFile(false);
     } catch (error) {
       toast('Failed to save configuration', {
         position: 'bottom-right',
