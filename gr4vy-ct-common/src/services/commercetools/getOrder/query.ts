@@ -15,6 +15,7 @@ query ($orderId: String) {
           payments {
             id
             version
+            lastModifiedAt
             interfaceId
             paymentMethodInfo {
               paymentInterface
