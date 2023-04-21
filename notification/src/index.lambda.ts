@@ -4,7 +4,6 @@ import { getCustomObjects, getLogger, Constants } from "@gr4vy-ct/common"
 
 import { handleTransactionCapture, handleTransactionRefund, handleTransactionVoid } from "./handler"
 import { prepareRequestBody } from "./helper"
-import ResponseHelper from "./helper/response";
 
 // eslint-disable-next-line
 export const handler = async (event: any) => {
