@@ -2,7 +2,7 @@ import { ServerResponse } from "http"
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getLogger } from "@gr4vy-ct/common"
+import {getCustomObjects, getLogger} from "@gr4vy-ct/common"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 
 import ResponseHelper from "./../../helper/response"
@@ -26,6 +26,13 @@ const processRequest = async (request: Request, response: ServerResponse) => {
           },
         ],
       })
+    }
+
+    //Return if gr4vy payment is not enabled
+    const paymentConfig = await getCustomObjects()
+    const { active } = paymentConfig || {}
+    if (!active) {
+      ResponseHelper.setResponseTo200(response, [])
     }
 
     const { event } = request.body
