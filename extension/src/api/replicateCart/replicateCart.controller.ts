@@ -3,7 +3,7 @@ import { ServerResponse } from "http"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getLogger, getOrder, resolveStatus, replicateCartFromOrder, Constants, prepareCTStatuses, updateOrderWithPayment } from "@gr4vy-ct/common"
+import { getLogger, getOrder, resolveStatus, replicateCartFromOrder, Constants, prepareCTStatuses, updateOrderWithPayment, resolveOrderPayment } from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
@@ -62,7 +62,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     
     if (haveTransactionInfo) {
       // Update payment info
-      const [payment] = order?.paymentInfo?.payments || []
+      const payment = resolveOrderPayment(order)
       const [transaction] = payment?.transactions || []
       const { type: ctTransactionType, id: ctTransactionId } = transaction || {}
       const { orderState, orderPaymentState, transactionState } = prepareCTStatuses(

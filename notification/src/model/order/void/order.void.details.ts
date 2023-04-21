@@ -1,3 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { resolveOrderPayment } from "@gr4vy-ct/common"
+
 import { OrderVoidDetailsInterface } from "../interfaces"
 import { OrderDetails } from "../order.details"
 
@@ -9,8 +13,8 @@ export class OrderVoidDetails extends OrderDetails implements OrderVoidDetailsIn
 
     const order = await super.execute()
 
-    const { version, taxedPrice, paymentInfo, orderState } = order
-    const [payment] = paymentInfo?.payments || []
+    const { version, taxedPrice, orderState } = order
+    const payment = resolveOrderPayment(order)
 
     return {
       orderId,

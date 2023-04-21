@@ -1,5 +1,3 @@
-import fs from "fs"
-
 import {
   Client,
   BuyerRequest,
@@ -7,6 +5,7 @@ import {
   TransactionCaptureRequest,
   TransactionRefundRequest,
 } from "@gr4vy/node"
+import Logger from "bunyan"
 
 import { getLogger } from "../../utils"
 import {
@@ -22,11 +21,9 @@ import {
 
 export class Gr4vy {
   client: Client
-  logger: any
+  logger: Logger
 
   constructor({ gr4vyId, privateKey, environment, debug }: Options) {
-    privateKey = String(fs.readFileSync(process.env.GR4VY_PRIVATE_KEY_PATH + privateKey))
-
     this.logger = getLogger()
     this.client = new Client({
       gr4vyId,

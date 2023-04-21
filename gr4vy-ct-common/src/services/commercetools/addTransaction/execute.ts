@@ -4,6 +4,7 @@ import { responseMapper } from "./mapper"
 import { Order } from "./../../types"
 import { Constants } from "./../../../config"
 import { escapedJSON } from "./../../../utils"
+import { resolveOrderPayment } from "../../../helpers"
 
 const getRefundState = (status: string): string => {
   let refundState = Constants.CT_REFUND_INITIAL
@@ -68,7 +69,7 @@ const addTransaction = async ({
 }) => {
   const apiClient: ApiClient = new ApiClient()
 
-  const [payment] = order?.paymentInfo?.payments || []
+  const payment = resolveOrderPayment(order)
 
   const state = isRefund ? getRefundState(status) : getState(status)
 
