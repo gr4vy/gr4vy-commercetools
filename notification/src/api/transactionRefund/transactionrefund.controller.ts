@@ -29,13 +29,12 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       })
     }
 
-    //Return if gr4vy payment is not enabled
     const paymentConfig = await getCustomObjects()
     if (!paymentConfig) {
       throw { message: "Payment configuration is missing or empty", statusCode: 400 }
     }
-    const { active } = paymentConfig || {}
-    if (!active) {
+    //if Gr4vy payment is not active, return.
+    if(!paymentConfig.active) {
       ResponseHelper.setResponseTo200(response, { active: false })
     }
 
