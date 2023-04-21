@@ -1,6 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getCustomObjects,  Constants, getTransactionById, getOrderById, addTransaction, updateTransaction,} from "@gr4vy-ct/common"
+import {
+  getCustomObjects,
+  Constants,
+  getTransactionById,
+  getOrderById,
+  addTransaction,
+  updateTransaction,
+  resolveOrderPayment,
+} from "@gr4vy-ct/common"
 import { Transaction } from "@gr4vy-ct/common/src/services/types"
 
 import { transactionCapture, updateOrder } from "./../../../service"
@@ -61,7 +69,8 @@ const addCaptureTransaction = async (
       statusCode: 400,
     }
   }
-  const [payment] = order?.paymentInfo?.payments || []
+
+  const payment = resolveOrderPayment(order)
 
   const chargeTransactionExists = payment?.transactions.find(
     (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CHARGE

@@ -11,6 +11,7 @@ import {
   listTransactionRefunds,
   addTransaction,
   updateTransaction,
+  resolveOrderPayment,
 } from "@gr4vy-ct/common"
 import {
   Transaction,
@@ -53,7 +54,7 @@ const handleUpdatePayment = async ({
     }
   }
 
-  const [payment] = order?.paymentInfo?.payments || []
+  const payment = resolveOrderPayment(order)
 
   if (!payment) {
     throw {
@@ -117,8 +118,7 @@ const handleTransactions = async (orderId: string, gr4vyTransaction: Gr4vyTransa
   // Get latest order payment and transaction details
   const order = await getOrderById(orderId)
 
-  // Due to reference expansion for Payments [Reference Expansion](/../api/general-concepts#reference-expansion)
-  const [payment] = (order?.paymentInfo?.payments || []) as unknown as Payment[]
+  const payment = resolveOrderPayment(order)
 
   if (!payment) {
     throw {

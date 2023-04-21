@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { Constants } from "@gr4vy-ct/common"
+import { Constants, resolveOrderPayment } from "@gr4vy-ct/common"
 import { discountedPricePerQuantity, Order } from "@gr4vy-ct/common/src/services/types"
 
 import { OrderRefundDetailsInterface } from "../interfaces"
@@ -248,8 +248,8 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
       }
     }
 
-    const { version, totalPrice, paymentInfo } = order
-    const [payment] = paymentInfo?.payments || []
+    const { version, totalPrice } = order
+    const payment = resolveOrderPayment(order)
     return {
       orderId,
       currencyCode: totalPrice.currencyCode,

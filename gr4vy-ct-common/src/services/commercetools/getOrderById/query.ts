@@ -53,6 +53,7 @@ const getOrderDetailsQuery = `
           payments {
             id
             version
+            lastModifiedAt
             interfaceId
             paymentMethodInfo {
               paymentInterface
