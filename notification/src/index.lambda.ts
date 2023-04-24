@@ -1,8 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getLogger, Constants } from "@gr4vy-ct/common"
+import { getCustomObjects, getLogger, Constants } from "@gr4vy-ct/common"
 
-import { handleTransactionCapture, handleTransactionRefund, handleTransactionVoid } from "./handler"
+import {handleDisabledConfig, handleTransactionCapture, handleTransactionRefund, handleTransactionVoid} from "./handler"
 import { prepareRequestBody } from "./helper"
 
 // eslint-disable-next-line
@@ -24,6 +24,15 @@ export const handler = async (event: any) => {
       "Unexpected error when processing event"
     )
     throw error
+  }
+
+  const isPaymentActive = await handleDisabledConfig(event)
+  //if Gr4vy payment is not active, return.
+  if (!isPaymentActive) {
+    return {
+      notificationResponse: "Gr4vy Payment is not active",
+      details : JSON.stringify(event)
+    }
   }
 
   const {
