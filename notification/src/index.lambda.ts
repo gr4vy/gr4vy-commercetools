@@ -2,7 +2,7 @@
 // @ts-ignore
 import { getCustomObjects, getLogger, Constants } from "@gr4vy-ct/common"
 
-import { handleTransactionCapture, handleTransactionRefund, handleTransactionVoid } from "./handler"
+import {handleDisabledConfig, handleTransactionCapture, handleTransactionRefund, handleTransactionVoid} from "./handler"
 import { prepareRequestBody } from "./helper"
 
 // eslint-disable-next-line
@@ -26,16 +26,7 @@ export const handler = async (event: any) => {
     throw error
   }
 
-  const paymentConfig = await getCustomObjects()
-  if (!paymentConfig) {
-    throw { message: "Payment configuration is missing or empty", statusCode: 400 }
-  }
-  //if Gr4vy payment is not active, return.
-  if(!paymentConfig.active) {
-    return {
-      notificationResponse: "[Gr4vy Payment is not active]",
-    }
-  }
+  await handleDisabledConfig(event)
 
   const {
     STATES: { CT },
