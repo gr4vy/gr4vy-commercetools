@@ -25,7 +25,6 @@ async function handleDisabledConfig(event: any) {
   if (!paymentConfig) {
     throw { message: "Payment configuration is missing or empty", statusCode: 400 }
   }
-  //if Gr4vy payment is not active, return.
   return paymentConfig.active
 }
 

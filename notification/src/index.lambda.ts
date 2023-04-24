@@ -27,6 +27,7 @@ export const handler = async (event: any) => {
   }
 
   const isPaymentActive = await handleDisabledConfig(event)
+  //if Gr4vy payment is not active, return.
   if (!isPaymentActive) {
     return {
       notificationResponse: "Gr4vy Payment is not active",
