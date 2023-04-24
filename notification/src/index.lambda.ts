@@ -26,7 +26,13 @@ export const handler = async (event: any) => {
     throw error
   }
 
-  await handleDisabledConfig(event)
+  const isPaymentActive = await handleDisabledConfig(event)
+  if (!isPaymentActive) {
+    return {
+      notificationResponse: "Gr4vy Payment is not active",
+      details : JSON.stringify(event)
+    }
+  }
 
   const {
     STATES: { CT },
