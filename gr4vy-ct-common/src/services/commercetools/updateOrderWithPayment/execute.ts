@@ -6,6 +6,7 @@ import { Constants } from "./../../../config"
 import { mutation } from "./mutation"
 import { responseMapper } from "./mapper"
 import { escapedJSON } from "../../../utils"
+import { resolveOrderPayment } from "../../../helpers"
 
 const updateOrderWithPayment = async ({
   order,
@@ -27,7 +28,7 @@ const updateOrderWithPayment = async ({
 
   const apiClient: ApiClient = new ApiClient()
 
-  const [payment] = order?.paymentInfo?.payments || []
+  const payment = resolveOrderPayment(order)
   const [transaction] = payment?.transactions || []
   const { id, paymentService, rawResponseCode, rawResponseDescription } = gr4vyTransaction || {}
 

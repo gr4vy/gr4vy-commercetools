@@ -65,7 +65,7 @@ const Gr4vy = () => {
         setApiResponse({ ...initialValues, information: config.VERSION });
         setPrivateIdFile({
           fileContent: initialValues?.privateKey,
-          fileName: initialValues?.fileName,
+          fileName: initialValues?.privateKeyFileName,
         });
         setPhoneNumber(initialValues?.statementDescriptor?.phoneNumber);
       }
@@ -126,6 +126,7 @@ const Gr4vy = () => {
         });
       }
       fetchCustomObject();
+      setDeleteFile(false);
     } catch (error) {
       toast('Failed to save configuration', {
         position: 'bottom-right',
@@ -181,6 +182,7 @@ const Gr4vy = () => {
 
       if (deleteFile) {
         delete values.privateKey;
+        delete values.privateKeyFileName;
       } else if (privateIdFile?.fileContent) {
         values = {
           ...values,
@@ -241,7 +243,7 @@ const Gr4vy = () => {
           }
         }
       }
-      
+
       saveCustomObject({
         ...values,
       });

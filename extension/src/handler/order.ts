@@ -1,7 +1,7 @@
 import { Order } from "@commercetools/platform-sdk"
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getOrder, prepareCTStatuses, updateOrderWithPayment, Constants, getOrderById, listTransactionRefunds, addTransaction, updateTransaction } from "@gr4vy-ct/common"
+import { getOrder, prepareCTStatuses, updateOrderWithPayment, Constants, getOrderById, listTransactionRefunds, addTransaction, updateTransaction, resolveOrderPayment } from "@gr4vy-ct/common"
 import { Transaction } from "@gr4vy-ct/common/src/services/types"
 
 const {
@@ -29,7 +29,7 @@ const handleUpdatePayment = async ({ request, gr4vyTransactionResult, meClient, 
     }
   }
 
-  const [payment] = order?.paymentInfo?.payments || []
+  const payment = resolveOrderPayment(order)
 
   if (!payment) {
     throw {
@@ -92,7 +92,7 @@ const handleTransactions = async (orderId: string, gr4vyTransaction: any) => {
   // Get latest order payment and transaction details
   const order = await getOrderById(orderId)
 
-  const [payment] = order?.paymentInfo?.payments || []
+  const payment = resolveOrderPayment(order)
 
   if (!payment) {
     throw {

@@ -1,12 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {getCustomObjects, Constants, getTransactionById, getOrderById, addTransaction, updateTransaction} from "@gr4vy-ct/common"
+import { getCustomObjects, Constants, getTransactionById, getOrderById, addTransaction, updateTransaction, resolveOrderPayment, } from "@gr4vy-ct/common"
 import { Transaction } from "@gr4vy-ct/common/src/services/types"
 
 import { transactionVoid } from "./../../../service"
-import {
-  OrderVoidDetailsInterface,
-} from "./../../../model/order/interfaces"
+import { OrderVoidDetailsInterface } from "./../../../model/order/interfaces"
 
 const {
   STATES: { GR4VY, CT },
@@ -60,10 +58,10 @@ const addVoidTransaction = async (
     }
   }
 
-  const [payment] = order?.paymentInfo?.payments || []
+  const payment = resolveOrderPayment(order)
 
   const voidTransactionExists = payment?.transactions.find(
-      (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CANCEL_AUTHORIZATION
+    (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CANCEL_AUTHORIZATION
   )
   let transactionResponse
   if (!voidTransactionExists) {
@@ -75,7 +73,7 @@ const addVoidTransaction = async (
       transactionType: CT.TRANSACTION.TYPES.CANCEL_AUTHORIZATION,
       amount: orderVoidDetails.voidAmount,
       currency: orderVoidDetails.currencyCode,
-      customValue: gr4vyVoidTransactionId
+      customValue: gr4vyVoidTransactionId,
     })
   } else {
     if (voidTransactionExists.state !== CT.TRANSACTION.SUCCESS) {

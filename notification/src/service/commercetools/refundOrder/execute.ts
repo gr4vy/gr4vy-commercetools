@@ -1,12 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {getCustomObjects, Constants, addTransaction, getOrderById,} from "@gr4vy-ct/common"
+import { getCustomObjects, Constants, addTransaction, getOrderById, resolveOrderPayment, } from "@gr4vy-ct/common"
 
 import { transactionRefund, updateRefundOrder } from "./../../../service"
 import { OrderUpdateForRefund, RefundMessageObject } from "../../types"
-import {
-  OrderRefundDetailsInterface,
-} from "./../../../model/order/interfaces"
+import { OrderRefundDetailsInterface } from "./../../../model/order/interfaces"
 
 const {
   STATES: { GR4VY },
@@ -48,7 +46,8 @@ const addRefundTransaction = async (
       statusCode: 400,
     }
   }
-  const [payment] = order?.paymentInfo?.payments || []
+
+  const payment = resolveOrderPayment(order)
 
   const ctTransactions = payment?.transactions
 
