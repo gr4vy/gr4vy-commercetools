@@ -1,6 +1,6 @@
 import { ServerResponse } from "http"
 
-import { getLogger } from "@gr4vy-ct/common"
+import { getCustomObjects, getLogger } from "@gr4vy-ct/common"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 
 import ResponseHelper from "../../helper/response"
@@ -25,6 +25,16 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         ],
       })
     }
+
+    const paymentConfig = await getCustomObjects()
+    if (!paymentConfig) {
+      throw { message: "Payment configuration is missing or empty", statusCode: 400 }
+    }
+    //if Gr4vy payment is not active, return.
+    if (!paymentConfig.active) {
+      ResponseHelper.setResponseTo200(response, { active: false })
+    }
+
     const { event } = request.body
     const transactionCaptureResult = await handleTransactionCapture(event)
     ResponseHelper.setResponseTo200(response, transactionCaptureResult)

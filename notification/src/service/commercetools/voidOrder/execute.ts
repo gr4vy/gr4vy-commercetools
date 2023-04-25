@@ -5,8 +5,8 @@ import {
   getOrderById,
   addTransaction,
   updateTransaction,
+  resolveOrderPayment,
 } from "@gr4vy-ct/common"
-import { Payment } from "@commercetools/platform-sdk"
 import { Transaction } from "@gr4vy-ct/common/src/services/types"
 
 import { transactionVoid } from "./../../../service"
@@ -64,7 +64,7 @@ const addVoidTransaction = async (
     }
   }
 
-  const [payment] = (order?.paymentInfo?.payments || []) as unknown as Payment[]
+  const payment = resolveOrderPayment(order)
 
   const voidTransactionExists = payment?.transactions.find(
     (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CANCEL_AUTHORIZATION

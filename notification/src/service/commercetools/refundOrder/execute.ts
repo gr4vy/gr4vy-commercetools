@@ -1,5 +1,10 @@
-import { getCustomObjects, Constants, addTransaction, getOrderById } from "@gr4vy-ct/common"
-import { Payment } from "@commercetools/platform-sdk"
+import {
+  getCustomObjects,
+  Constants,
+  addTransaction,
+  getOrderById,
+  resolveOrderPayment,
+} from "@gr4vy-ct/common"
 
 import { transactionRefund, updateRefundOrder } from "./../../../service"
 import { OrderUpdateForRefund, RefundMessageObject } from "../../types"
@@ -50,7 +55,8 @@ const addRefundTransaction = async (
       statusCode: 400,
     }
   }
-  const [payment] = (order?.paymentInfo?.payments || []) as unknown as Payment[]
+
+  const payment = resolveOrderPayment(order)
 
   const ctTransactions = payment?.transactions
 

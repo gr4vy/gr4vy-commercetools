@@ -25,18 +25,23 @@ const processRequest = async (request: Request, response: ServerResponse) => {
   }
 
   try {
+    const paymentConfig = await getCustomObjects()
+
+    if (!paymentConfig) {
+      throw { message: "Payment configuration is missing or empty", statusCode: 400 }
+    }
+
+    //if Gr4vy payment is not active, return.
+    if(!paymentConfig.active) {
+      ResponseHelper.setResponseTo200(response, { active: false })
+    }
+
     // load commercetools data
     const { locale } = request.body
     const { customer, cart, cartItems } = await getCustomerWithCart(request, locale)
 
     if (!cart) {
       throw { message: "Cart information is missing or empty", statusCode: 400 }
-    }
-
-    const paymentConfig = await getCustomObjects()
-
-    if (!paymentConfig) {
-      throw { message: "Payment configuration is missing or empty", statusCode: 400 }
     }
 
     // Resolve the customer buyer id in CT

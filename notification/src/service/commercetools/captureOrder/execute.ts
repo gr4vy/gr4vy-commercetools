@@ -5,8 +5,9 @@ import {
   getOrderById,
   addTransaction,
   updateTransaction,
+  resolveOrderPayment,
 } from "@gr4vy-ct/common"
-import { Payment } from "@commercetools/platform-sdk"
+import { Transaction } from "@gr4vy-ct/common/src/services/types"
 
 import { transactionCapture, updateOrder } from "./../../../service"
 import { OrderUpdate } from "../../types"
@@ -66,10 +67,11 @@ const addCaptureTransaction = async (
       statusCode: 400,
     }
   }
-  const [payment] = (order?.paymentInfo?.payments || []) as unknown as Payment[]
+
+  const payment = resolveOrderPayment(order)
 
   const chargeTransactionExists = payment?.transactions.find(
-    transaction => transaction.type === CT.TRANSACTION.TYPES.CHARGE
+    (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CHARGE
   )
   let transactionResponse
   if (!chargeTransactionExists) {

@@ -1,5 +1,5 @@
-import { getOrderById, getCustomObjects } from "@gr4vy-ct/common"
-import { Order } from "@commercetools/platform-sdk"
+import { getOrderById, getCustomObjects, resolveOrderPayment } from "@gr4vy-ct/common"
+import { Order } from "@gr4vy-ct/common/src/services/types"
 
 import { getTransaction } from "../../service"
 
@@ -69,9 +69,7 @@ class OrderDetails {
       }
     }
 
-    const { paymentInfo } = order
-
-    const [payment] = paymentInfo?.payments || []
+    const payment = resolveOrderPayment(order)
 
     if (!payment?.id) {
       throw {

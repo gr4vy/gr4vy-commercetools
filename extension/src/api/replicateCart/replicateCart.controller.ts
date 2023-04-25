@@ -8,8 +8,9 @@ import {
   replicateCartFromOrder,
   Constants,
   prepareCTStatuses,
-  prepareCTStatusesType,
   updateOrderWithPayment,
+  resolveOrderPayment,
+  prepareCTStatusesType
 } from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
@@ -69,7 +70,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
     if (haveTransactionInfo) {
       // Update payment info
-      const [payment] = order?.paymentInfo?.payments || []
+      const payment = resolveOrderPayment(order)
       const [transaction] = payment?.transactions || []
       const { type: ctTransactionType, id: ctTransactionId } = transaction || {}
       const { orderState, orderPaymentState, transactionState }: prepareCTStatusesType =

@@ -1,5 +1,5 @@
-import { Constants } from "@gr4vy-ct/common"
-import { Order, Payment, TaxedItemPrice } from "@commercetools/platform-sdk"
+import { Constants, resolveOrderPayment } from "@gr4vy-ct/common"
+import { Order, TaxedItemPrice } from "@commercetools/platform-sdk"
 
 import { RefundMessageObject } from "../../../service/types"
 import { OrderDetails } from "../order.details"
@@ -250,8 +250,8 @@ export class OrderRefundDetails extends OrderDetails {
       }
     }
 
-    const { version, totalPrice, paymentInfo } = order
-    const [payment] = (paymentInfo?.payments || []) as unknown as Payment[]
+    const { version, totalPrice } = order
+    const payment = resolveOrderPayment(order)
     return {
       ...order,
       orderId,
