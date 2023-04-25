@@ -1,11 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { ApiClient, Constants} from "@gr4vy-ct/common"
 
 import {createCustomFieldsMutationQuery} from "./query"
 import {responseMapper} from "./mapper"
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import C from "./../../../config/constants"
 
 const createCustomFields = async () => {
