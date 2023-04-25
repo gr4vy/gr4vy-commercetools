@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { Constants, getLogger } from "@gr4vy-ct/common"
+import {Constants, getCustomObjects, getLogger} from "@gr4vy-ct/common"
 import Logger from "bunyan"
 
 import { OrderCaptureDetails, OrderRefundDetails, OrderVoidDetails } from "./../model"
@@ -19,6 +19,14 @@ import {
   OrderRefundDetailsInterface,
   OrderVoidDetailsInterface,
 } from "../model/order/interfaces"
+
+async function handleDisabledConfig(event: any) {
+  const paymentConfig = await getCustomObjects()
+  if (!paymentConfig) {
+    throw { message: "Payment configuration is missing or empty", statusCode: 400 }
+  }
+  return paymentConfig.active
+}
 
 const {
   STATES: { CT },
@@ -357,4 +365,4 @@ async function updateOrderRefundStatusAtCt(
     }
   }
 }
-export { handleTransactionCapture, handleTransactionRefund, handleTransactionVoid }
+export { handleDisabledConfig, handleTransactionCapture, handleTransactionRefund, handleTransactionVoid }
