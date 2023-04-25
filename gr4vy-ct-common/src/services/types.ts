@@ -1,3 +1,5 @@
+import { Order as ctOrder } from "@commercetools/platform-sdk"
+
 export declare type PaymentConfigContainer = {
   id: string
   key: string
@@ -75,86 +77,7 @@ export declare type OrderReturnInfo = {
   items: OrderReturnInfoItems[]
 }
 
-export declare type Order = {
-  id: string
-  version: string
-  orderState: string
-  paymentState: string
-
-  paymentInfo: {
-    payments: Payment[]
-  }
-  returnInfo: OrderReturnInfo[]
-
-  totalPrice: {
-    type: string
-    centAmount: number
-    fractionDigits: number
-    currencyCode: string
-  }
-  shippingInfo: {
-    taxRate: {
-      amount: number
-      includedInPrice: boolean
-    }
-  }
-  taxedShippingPrice: {
-    totalTax: {
-      centAmount: number
-    }
-  }
-  taxedPrice: {
-    taxPortions: [
-      {
-        rate: number
-        amount: {
-          centAmount: number
-        }
-      }
-    ]
-    totalNet: {
-      currencyCode: string
-      centAmount: number
-    }
-    totalGross: {
-      currencyCode: string
-      centAmount: number
-    }
-  }
-
-  lineItems: [
-    {
-      id: string
-      productId: string
-      quantity: number
-      totalPrice: {
-        centAmount: number
-      }
-      price: {
-        value: {
-          centAmount: number
-        }
-        discounted: {
-          value: {
-            centAmount: number
-          }
-        }
-      }
-      discountedPricePerQuantity: discountedPricePerQuantity[]
-      taxRate: {
-        includedInPrice: boolean
-      }
-      taxedPrice: {
-        totalNet: {
-          centAmount: number
-        }
-        totalGross: {
-          centAmount: number
-        }
-      }
-    }
-  ]
-}
+export declare type Order = ctOrder
 
 export declare type RefundItems = [RefundItem]
 

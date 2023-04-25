@@ -16,10 +16,15 @@ export const transactionCapture = async ({
     privateKey,
   })
 
+  if (!capture.amount) {
+    throw new Error("Capture amount is empty")
+  }
+
   const transactionCaptureParams = {
     amount: capture.amount,
     transactionId: capture.transactionId,
   }
+
   try {
     return await gr4vy.transactionCapture(transactionCaptureParams)
   } catch (e) {

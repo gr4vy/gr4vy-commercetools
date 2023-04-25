@@ -6,17 +6,17 @@ export declare type Delivery = {
 export declare type OrderUpdate = {
   orderState: string
   paymentState: string
-  version: string
+  version: number
   orderId: string
 }
 
 export declare type OrderUpdateForRefund = {
-  version: string
+  version: number
   orderId: string
 }
 
 export declare type Capture = {
-  amount: number
+  amount: number | undefined
   transactionId: string
 }
 

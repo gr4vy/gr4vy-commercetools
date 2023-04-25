@@ -2,15 +2,14 @@ import { getOrderById, getCustomObjects } from "@gr4vy-ct/common"
 import { Order } from "@commercetools/platform-sdk"
 
 import { getTransaction } from "../../service"
-import { OrderMainInterface } from "./interfaces"
 
-class OrderDetails implements OrderMainInterface {
+class OrderDetails {
   orderId: string
-  version: string
+  version: number
   paymentVersion: number
-  currencyCode: string
+  currencyCode: string | undefined
   paymentId: string
-  paymentTransactionId: string
+  paymentTransactionId: string | null | undefined
   // eslint-disable-next-line
   requestBody: any
 

@@ -75,12 +75,13 @@ function isFullyRefundedOrder(order: Order): boolean {
   })
 
   const totalReturnItemsQty: { [key: string]: number } = {}
-  order.returnInfo.forEach(returnInfo => {
+  order.returnInfo?.forEach(returnInfo => {
     returnInfo.items.forEach(returnItem => {
-      if (totalReturnItemsQty[returnItem.lineItemId]) {
-        totalReturnItemsQty[returnItem.lineItemId] += returnItem.quantity
+      const returnlineItemId = (returnItem as { lineItemId: string }).lineItemId
+      if (totalReturnItemsQty[returnlineItemId]) {
+        totalReturnItemsQty[returnlineItemId] += returnItem.quantity
       } else {
-        totalReturnItemsQty[returnItem.lineItemId] = returnItem.quantity
+        totalReturnItemsQty[returnlineItemId] = returnItem.quantity
       }
     })
   })

@@ -6,7 +6,7 @@ import {
   addTransaction,
   updateTransaction,
 } from "@gr4vy-ct/common"
-import { Transaction } from "@gr4vy-ct/common/src/services/types"
+import { Payment } from "@commercetools/platform-sdk"
 
 import { transactionCapture, updateOrder } from "./../../../service"
 import { OrderUpdate } from "../../types"
@@ -17,11 +17,11 @@ const {
 } = Constants
 
 const captureOrder = async (captureOrderDetails: CaptureOrderDetailsInterface) => {
-  if (captureOrderDetails.totalAmount <= 0) {
+  if (captureOrderDetails.totalAmount && captureOrderDetails.totalAmount <= 0) {
     throw new Error("There is an error - Total amount to capture is invalid or zero")
   }
 
-  const gr4vyTransactionId = captureOrderDetails.paymentTransactionId
+  const gr4vyTransactionId = captureOrderDetails.paymentTransactionId || ""
   const capture = { amount: captureOrderDetails.totalAmount, transactionId: gr4vyTransactionId }
   const paymentConfig = await getCustomObjects()
 
@@ -47,7 +47,7 @@ const captureOrder = async (captureOrderDetails: CaptureOrderDetailsInterface) =
   const { body: transactionCaptureResponse } = await transactionCapture({ capture, paymentConfig })
   if (
     transactionCaptureResponse &&
-    transactionCaptureResponse.status == GR4VY.TRANSACTION.CAPTURE_SUCCEEDED
+    (transactionCaptureResponse.status as unknown as string) == GR4VY.TRANSACTION.CAPTURE_SUCCEEDED
   ) {
     const { id: gr4vyCaptureTransactionId } = transactionCaptureResponse
     return gr4vyCaptureTransactionId
@@ -66,10 +66,10 @@ const addCaptureTransaction = async (
       statusCode: 400,
     }
   }
-  const [payment] = order?.paymentInfo?.payments || []
+  const [payment] = (order?.paymentInfo?.payments || []) as unknown as Payment[]
 
   const chargeTransactionExists = payment?.transactions.find(
-    (transaction: Transaction) => transaction.type === CT.TRANSACTION.TYPES.CHARGE
+    transaction => transaction.type === CT.TRANSACTION.TYPES.CHARGE
   )
   let transactionResponse
   if (!chargeTransactionExists) {
@@ -79,8 +79,8 @@ const addCaptureTransaction = async (
       status: CT.TRANSACTION.SUCCESS,
       paymentVersion: captureOrderDetails.paymentVersion,
       transactionType: CT.TRANSACTION.TYPES.CHARGE,
-      amount: captureOrderDetails.totalAmount,
-      currency: captureOrderDetails.currencyCode,
+      amount: captureOrderDetails.totalAmount || 0,
+      currency: captureOrderDetails.currencyCode || "",
       customValue: gr4vyCaptureTransactionId,
     })
   } else {
@@ -98,7 +98,11 @@ const addCaptureTransaction = async (
       }
     }
   }
-  const { hasErrDueConcurrentModification, version: captureTransactionAdded } = transactionResponse
+  const { hasErrDueConcurrentModification, version: captureTransactionAdded } =
+    transactionResponse as {
+      hasErrDueConcurrentModification: boolean
+      version: number
+    }
 
   return { hasErrDueConcurrentModification, captureTransactionAdded }
 }

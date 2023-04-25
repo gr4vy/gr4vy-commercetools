@@ -1,7 +1,8 @@
+import { Payment, Order } from "@commercetools/platform-sdk"
+
 import { ApiClient } from "../../../clients/apiClient"
 import { mutationQuery, mutationQueryWithoutTransaction } from "./query"
 import { responseMapper, responseMapperWithoutTransaction } from "./mapper"
-import { Order } from "./../../types"
 
 const resolveStatus = async ({
   order,
@@ -20,7 +21,7 @@ const resolveStatus = async ({
 }) => {
   const apiClient: ApiClient = new ApiClient()
 
-  const [payment] = order?.paymentInfo?.payments || []
+  const [payment] = (order?.paymentInfo?.payments || []) as unknown as Payment[]
   const [transaction] = payment?.transactions || []
 
   const orderPaymentTransactionState = transaction?.state

@@ -1,4 +1,5 @@
 import { getCustomObjects, Constants, addTransaction, getOrderById } from "@gr4vy-ct/common"
+import { Payment } from "@commercetools/platform-sdk"
 
 import { transactionRefund, updateRefundOrder } from "./../../../service"
 import { OrderUpdateForRefund, RefundMessageObject } from "../../types"
@@ -12,6 +13,10 @@ const refundOrder = async (orderRefundDetails: OrderRefundDetailsInterface): Pro
   if (orderRefundDetails.refundAmount <= 0) {
     throw new Error("There is an error - Total amount to refund is invalid or zero")
   }
+  if (!orderRefundDetails.paymentTransactionId) {
+    throw new Error("There is an error - Payment transaction id is empty")
+  }
+
   const refund = {
     amount: orderRefundDetails.refundAmount,
     transactionId: orderRefundDetails.paymentTransactionId,
@@ -25,11 +30,12 @@ const refundOrder = async (orderRefundDetails: OrderRefundDetailsInterface): Pro
 
   if (
     transactionRefundResponse &&
-    transactionRefundResponse.status == GR4VY.TRANSACTION.REFUND_SUCCEEDED
+    (transactionRefundResponse.status as unknown as string) == GR4VY.TRANSACTION.REFUND_SUCCEEDED
   ) {
     const { id: gr4vyRefundTransactionId } = transactionRefundResponse
-    return gr4vyRefundTransactionId
+    return gr4vyRefundTransactionId || ""
   }
+
   return ""
 }
 
@@ -44,7 +50,7 @@ const addRefundTransaction = async (
       statusCode: 400,
     }
   }
-  const [payment] = order?.paymentInfo?.payments || []
+  const [payment] = (order?.paymentInfo?.payments || []) as unknown as Payment[]
 
   const ctTransactions = payment?.transactions
 
@@ -52,9 +58,8 @@ const addRefundTransaction = async (
 
   for (const transaction of ctTransactions) {
     if (transaction?.custom) {
-      const {
-        custom: { customFieldsRaw },
-      } = transaction
+      const { custom } = transaction
+      const customFieldsRaw = custom as unknown as { customFieldsRaw: { [key: string]: string } }
 
       if (customFieldsRaw && Array.isArray(customFieldsRaw)) {
         customFieldsRaw.forEach(customField => {
@@ -76,7 +81,7 @@ const addRefundTransaction = async (
         paymentVersion: orderRefundDetails.paymentVersion,
         transactionType: "Refund",
         amount: orderRefundDetails.refundAmount,
-        currency: orderRefundDetails.currencyCode,
+        currency: orderRefundDetails.currencyCode || "",
         customValue: gr4vyRefundTransactionId,
       })
     return { hasErrDueConcurrentModification, refundTransactionAdded }

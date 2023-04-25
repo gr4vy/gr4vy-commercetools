@@ -1,7 +1,8 @@
-import { OrderVoidDetailsInterface } from "../interfaces"
+import { Payment } from "@commercetools/platform-sdk"
+
 import { OrderDetails } from "../order.details"
 
-export class OrderVoidDetails extends OrderDetails implements OrderVoidDetailsInterface {
+export class OrderVoidDetails extends OrderDetails {
   voidAmount: number
   orderState: string
   async execute() {
@@ -10,12 +11,13 @@ export class OrderVoidDetails extends OrderDetails implements OrderVoidDetailsIn
     const order = await super.execute()
 
     const { version, taxedPrice, paymentInfo, orderState } = order
-    const [payment] = paymentInfo?.payments || []
+    const [payment] = (paymentInfo?.payments || []) as unknown as Payment[]
 
     return {
+      ...order,
       orderId,
-      currencyCode: taxedPrice.totalGross.currencyCode,
-      voidAmount: taxedPrice.totalGross.centAmount,
+      currencyCode: taxedPrice?.totalGross.currencyCode,
+      voidAmount: taxedPrice?.totalGross.centAmount,
       version,
       paymentId: payment?.id,
       paymentVersion: payment?.version,

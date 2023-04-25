@@ -1,13 +1,15 @@
-export interface OrderMainInterface {
+import { Order, DiscountedLineItemPriceForQuantity } from "@commercetools/platform-sdk"
+export interface OrderMainInterface extends Order {
   orderId: string
-  version: string
+  version: number
   paymentVersion: number
-  currencyCode: string
+  currencyCode: string | undefined
   paymentId: string
-  paymentTransactionId: string
+  paymentTransactionId: string | null | undefined
 }
+
 export interface CaptureOrderDetailsInterface extends OrderMainInterface {
-  totalAmount: number
+  totalAmount: number | undefined
 }
 
 export interface OrderRefundDetailsInterface extends OrderMainInterface {
@@ -16,6 +18,11 @@ export interface OrderRefundDetailsInterface extends OrderMainInterface {
 
 export interface OrderVoidDetailsInterface extends OrderMainInterface {
   orderState: string
-  voidAmount: number
-  currencyCode: string
+  voidAmount: number | undefined
+  currencyCode: string | undefined
+}
+
+export interface DiscountedLineItemPriceForQuantityCT extends DiscountedLineItemPriceForQuantity {
+  balanceQty: number
+  quantity: number
 }

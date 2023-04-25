@@ -1,9 +1,8 @@
 import { Payment } from "@commercetools/platform-sdk"
 
-import { CaptureOrderDetailsInterface } from "../interfaces"
 import { OrderDetails } from "../order.details"
 
-class OrderCaptureDetails extends OrderDetails implements CaptureOrderDetailsInterface {
+class OrderCaptureDetails extends OrderDetails {
   totalAmount: number
 
   async execute() {

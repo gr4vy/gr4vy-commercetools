@@ -1,5 +1,7 @@
+import { Order, Payment } from "@commercetools/platform-sdk"
+
 import { ApiClient } from "../../../clients/apiClient"
-import { Order, Gr4vyTransactionResponse, UpdateOrderWithPaymentResponse } from "./../../types"
+import { Gr4vyTransactionResponse, UpdateOrderWithPaymentResponse } from "./../../types"
 import { Constants } from "./../../../config"
 import { mutation } from "./mutation"
 import { responseMapper } from "./mapper"
@@ -19,12 +21,11 @@ const updateOrderWithPayment = async ({
 }): Promise<UpdateOrderWithPaymentResponse> => {
   const {
     defaultLocale,
-    STATES: { CT },
   } = Constants
 
   const apiClient: ApiClient = new ApiClient()
 
-  const [payment] = order?.paymentInfo?.payments || []
+  const [payment] = (order?.paymentInfo?.payments || [])  as unknown as Payment[]
   const [transaction] = payment?.transactions || []
   const { id, paymentService, rawResponseCode, rawResponseDescription } = gr4vyTransaction || {}
 
