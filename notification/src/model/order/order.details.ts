@@ -17,40 +17,9 @@ class OrderDetails implements OrderMainInterface {
   requestBody: any
 
   // eslint-disable-next-line
-  constructor(event: any) {
-    this.requestBody = this.prepareRequestBody(event)
+  constructor(body: any) {
+    this.requestBody = body
     this.orderId = this.requestBody?.orderId
-  }
-
-  // eslint-disable-next-line
-  prepareRequestBody(event: any) {
-    if (!event || !event.Records) return {}
-
-    const [record] = event.Records ? event.Records : []
-    const { body } = record
-    let parsedBody
-    if (body) {
-      try {
-        parsedBody = JSON.parse(body)
-      } catch (e) {
-        if (e.message.includes("Unexpected token")) {
-          parsedBody = body
-        } else {
-          return {}
-        }
-      }
-      const typeId = parsedBody?.resource?.typeId
-      if (typeId && typeId === "order") {
-        parsedBody.orderId = parsedBody.resource.id
-      }
-    }
-    if (!parsedBody || !parsedBody.orderId) {
-      throw {
-        message: `Required parameter orderId is missing or empty`,
-        statusCode: 400,
-      }
-    }
-    return parsedBody || {}
   }
 
   async getTransactionId(order: Order) {
