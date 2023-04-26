@@ -2,13 +2,14 @@ import { ServerResponse } from "http"
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {getCustomObjects, getLogger} from "@gr4vy-ct/common"
+import { getCustomObjects, getLogger } from "@gr4vy-ct/common"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import { Request } from "./../../types"
 import { handleTransactionVoid } from "../../handler"
+import { prepareRequestBody } from "../../helper"
 
 const processRequest = async (request: Request, response: ServerResponse) => {
   const logger = getLogger()
@@ -33,12 +34,13 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       throw { message: "Payment configuration is missing or empty", statusCode: 400 }
     }
     //if Gr4vy payment is not active, return.
-    if(!paymentConfig.active) {
+    if (!paymentConfig.active) {
       ResponseHelper.setResponseTo200(response, { active: false })
     }
 
     const { event } = request.body
-    const transactionVoidResult = await handleTransactionVoid(event)
+    const body = await prepareRequestBody(event)
+    const transactionVoidResult = await handleTransactionVoid(body)
     ResponseHelper.setResponseTo200(response, transactionVoidResult)
   } catch (e) {
     ResponseHelper.setResponseError(response, {

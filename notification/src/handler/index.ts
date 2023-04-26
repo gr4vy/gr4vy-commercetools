@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import {Constants, getCustomObjects, getLogger} from "@gr4vy-ct/common"
+import { Constants, getCustomObjects, getLogger } from "@gr4vy-ct/common"
 import Logger from "bunyan"
 
 import { OrderCaptureDetails, OrderRefundDetails, OrderVoidDetails } from "./../model"
@@ -20,7 +20,7 @@ import {
   OrderVoidDetailsInterface,
 } from "../model/order/interfaces"
 
-async function handleDisabledConfig(event: any) {
+async function handleDisabledConfig() {
   const paymentConfig = await getCustomObjects()
   if (!paymentConfig) {
     throw { message: "Payment configuration is missing or empty", statusCode: 400 }
@@ -33,9 +33,9 @@ const {
 } = Constants
 
 // eslint-disable-next-line
-async function handleTransactionCapture(event: any) {
+async function handleTransactionCapture(body: any) {
   const logger = getLogger()
-  const orderCaptureDetails: OrderCaptureDetails = new OrderCaptureDetails(event)
+  const orderCaptureDetails: OrderCaptureDetails = new OrderCaptureDetails(body)
 
   //Load order details from Commercetools
   const orderCapture: CaptureOrderDetailsInterface = await orderCaptureDetails.execute()
@@ -91,9 +91,9 @@ async function handleTransactionCapture(event: any) {
 }
 
 // eslint-disable-next-line
-async function handleTransactionRefund(event: any) {
+async function handleTransactionRefund(body: any) {
   const logger = getLogger()
-  const orderRefundDetail: OrderRefundDetails = new OrderRefundDetails(event)
+  const orderRefundDetail: OrderRefundDetails = new OrderRefundDetails(body)
 
   //Load order details from Commercetools
   const orderRefund: OrderRefundDetailsInterface = await orderRefundDetail.execute()
@@ -134,7 +134,7 @@ async function handleTransactionRefund(event: any) {
     orderRefundDetail,
     orderRefundDetail.refundObject,
     logger,
-      0
+    0
   )
   if (!orderStatusUpdatedAtCt) {
     return {
@@ -156,9 +156,9 @@ async function handleTransactionRefund(event: any) {
 }
 
 // eslint-disable-next-line
-async function handleTransactionVoid(event: any) {
+async function handleTransactionVoid(body: any) {
   const logger = getLogger()
-  const orderVoidDetail: OrderVoidDetails = new OrderVoidDetails(event)
+  const orderVoidDetail: OrderVoidDetails = new OrderVoidDetails(body)
   //Load order details from Commercetools
   const orderVoid: OrderVoidDetailsInterface = await orderVoidDetail.execute()
   if (!orderVoid) {
@@ -226,7 +226,13 @@ async function addCaptureTransactionAtCt(
       return captureTransactionAdded
     } else {
       const orderCapture: CaptureOrderDetailsInterface = await orderCaptureDetails.execute()
-      return await addCaptureTransactionAtCt(orderCapture, gr4vyTransactionId, orderCaptureDetails, logger, iteration)
+      return await addCaptureTransactionAtCt(
+        orderCapture,
+        gr4vyTransactionId,
+        orderCaptureDetails,
+        logger,
+        iteration
+      )
     }
   }
 
@@ -275,7 +281,7 @@ async function addVoidTransactionAtCt(
   orderVoid: OrderVoidDetailsInterface,
   gr4vyTransactionId: string,
   orderVoidDetails: OrderVoidDetails,
-  logger:Logger,
+  logger: Logger,
   iteration: number
   // eslint-disable-next-line
 ): Promise<any> {
@@ -292,7 +298,13 @@ async function addVoidTransactionAtCt(
       return voidTransactionAdded
     } else {
       const orderVoid: OrderVoidDetailsInterface = await orderVoidDetails.execute()
-      return await addVoidTransactionAtCt(orderVoid, gr4vyTransactionId, orderVoidDetails, logger, iteration)
+      return await addVoidTransactionAtCt(
+        orderVoid,
+        gr4vyTransactionId,
+        orderVoidDetails,
+        logger,
+        iteration
+      )
     }
   }
 
@@ -354,7 +366,13 @@ async function updateOrderRefundStatusAtCt(
       return orderUpdated
     } else {
       const orderRefund: OrderRefundDetailsInterface = await orderRefundDetails.execute()
-      return await updateOrderRefundStatusAtCt(orderRefund, orderRefundDetails, refundData, logger, iteration)
+      return await updateOrderRefundStatusAtCt(
+        orderRefund,
+        orderRefundDetails,
+        refundData,
+        logger,
+        iteration
+      )
     }
   }
 
@@ -365,4 +383,9 @@ async function updateOrderRefundStatusAtCt(
     }
   }
 }
-export { handleDisabledConfig, handleTransactionCapture, handleTransactionRefund, handleTransactionVoid }
+export {
+  handleDisabledConfig,
+  handleTransactionCapture,
+  handleTransactionRefund,
+  handleTransactionVoid,
+}
