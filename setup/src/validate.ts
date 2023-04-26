@@ -4,7 +4,7 @@ import C from './config/constants'
 
 const validate = () => {
     if (!env.CTP_SUBSCRIPTION_TYPE) {
-        throw new Error("Missing Subscription Type. It should be either AWS or GCP");
+        throw new Error("Missing Subscription Type. It should be either AWS or GCP or Other");
     }
     if (env.CTP_SUBSCRIPTION_TYPE == C.CT.SUBSCRIPTION.TYPE.AWS) {
         if (!env.CTP_SUBSCRIPTION_AWS_SQS_AUTH_MODE) {
