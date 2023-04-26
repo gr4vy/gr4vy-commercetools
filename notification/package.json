@@ -11,7 +11,8 @@
     "prettier": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "start:dev": "nodemon src/index.ts | bunyan",
     "prepare": "cd .. && husky install notification/.husky",
-    "zip-lambda-function": "npm run build && cp ./.build/index.lambda.js ./.build/index.js"
+    "zip-lambda-function": "npm run build && cp ./.build/index.lambda.js ./.build/index.js",
+    "zip-google-function": "npm run build && cp ./.build/index.googleFunction.js ./.build/index.js"
   },
   "repository": {
     "type": "git",
