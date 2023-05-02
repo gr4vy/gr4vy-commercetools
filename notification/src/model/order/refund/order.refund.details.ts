@@ -17,8 +17,8 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
   refundObject: RefundMessageObject
 
   // eslint-disable-next-line
-  constructor(event: any) {
-    super(event)
+  constructor(body: any) {
+    super(body)
     this.refundObject = this.requestBody?.returnInfo ?? {}
   }
 

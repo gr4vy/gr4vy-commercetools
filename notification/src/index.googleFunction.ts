@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { getCustomObjects, getLogger, Constants } from "@gr4vy-ct/common"
+import { getLogger, Constants } from "@gr4vy-ct/common"
 
 import {
   handleDisabledConfig,
@@ -8,7 +8,7 @@ import {
   handleTransactionRefund,
   handleTransactionVoid,
 } from "./handler"
-import { prepareRequestBody } from "./helper"
+import { prepareRequestBodyGCP } from "./helper"
 
 // eslint-disable-next-line
 export const handler = async (event: any) => {
@@ -16,17 +16,17 @@ export const handler = async (event: any) => {
   logger.debug({
     event: JSON.stringify(event),
   })
-  const body = prepareRequestBody(event)
+  const body = prepareRequestBodyGCP(event)
 
   if (!body) {
-    const error = new Error("Error during getting notification record")
+    const error = new Error("[GCP]:Error during getting notification record")
     logger.error(
       {
         event: JSON.stringify(event),
         notification: undefined,
         error,
       },
-      "Unexpected error when processing event"
+      "[GCP]:Unexpected error when processing event"
     )
     throw error
   }
@@ -35,7 +35,7 @@ export const handler = async (event: any) => {
   //if Gr4vy payment is not active, return.
   if (!isPaymentActive) {
     return {
-      notificationResponse: "Gr4vy Payment is not active",
+      notificationResponse: "[GCP]:Gr4vy Payment is not active",
       details: JSON.stringify(event),
     }
   }
@@ -63,7 +63,7 @@ export const handler = async (event: any) => {
       {
         error: JSON.stringify(err),
       },
-      "Unexpected exception occurred."
+      "[GCP]:Unexpected exception occurred."
     )
   }
 

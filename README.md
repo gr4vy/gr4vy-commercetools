@@ -25,7 +25,7 @@
 Running the setup module will setup the Gr4vy integration against the Commercetools project.
 
 - Refer to [Integration Guide](/setup/docs/integrationguide.md) on how to integrate your shop with this module.
-- Refer to [How to run](/setup//docs/howtorun.md) the extension module.
+- Refer to [How to run](/setup//docs/howtorun.md) the setup module.
 
 ## Merchant Center Custom App
 
