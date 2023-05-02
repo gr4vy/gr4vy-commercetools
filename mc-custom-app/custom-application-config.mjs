@@ -17,8 +17,8 @@ const config = {
     },
   },
   oAuthScopes: {
-    view: ['view_products'],
-    manage: ['manage_products'],
+    view: ['view_key_value_documents'],
+    manage: ['manage_key_value_documents'],
   },
   headers: {
     csp: {

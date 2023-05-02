@@ -1,7 +1,7 @@
 {
   "GR4VY_CUSTOM_OBJECT_CONTAINER": "ctp-gr4vy-configuration",
   "GR4VY_CUSTOM_OBJECT_CONTAINER_KEY": "gr4vy-configuration",
-  "API_SERVER_URL": "https://2ad9-2405-201-f003-611b-4427-dc99-8be6-21f9.in.ngrok.io",
-  "VERSION": "Currently installed version: 1.0.22",
+  "API_SERVER_URL": "https://myextensiondomain.com",
+  "VERSION": "Currently installed version: 1.0.0",
   "ENTRY_POINT": "gr4vy"
 }
