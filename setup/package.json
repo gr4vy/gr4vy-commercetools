@@ -4,13 +4,14 @@
   "description": "Setup package for Commerce tools and Gr4vy",
   "main": ".build/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "npm link @gr4vy-ct/common && npm run build-common && tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./.build/index.js | bunyan",
     "eslint": "eslint . --ext .ts",
     "prettier": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "start:dev": "ts-node src/index.ts | bunyan",
-    "prepare": "cd .. && husky install setup/.husky"
+    "prepare": "cd .. && husky install setup/.husky",
+    "build-common": "cd ./node_modules/@gr4vy-ct/common && npm run build"
   },
   "repository": {
     "type": "git",
