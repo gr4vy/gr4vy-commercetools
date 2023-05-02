@@ -4,7 +4,7 @@
   "description": "Notification package for Commerce tools and Gr4vy",
   "main": ".build/index.js",
   "scripts": {
-    "build": "npm run build-common && tsc",
+    "build": "npm link @gr4vy-ct/common && npm run build-common && tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./.build/index.js",
     "eslint": "eslint . --ext .ts",
