@@ -7,7 +7,6 @@ Follow the steps:
   - Create environment variables in the serverless function of your cloud provider.
 - Create an API client from your Commercetools project with scope: TBD
 - Update the 'commercetools config' variables with API client information.
-- Update APP_CORS_ALLOWED_HOSTS with your store front domain.
 - Update 'logger' section in the .env file with suitable values.
 - Create a deployment file by running one of the following commands based on your serverless provider:
   - For AWS: `npm run zip-lambda-function`
