@@ -49,3 +49,7 @@ This module contains the back office integrations with Gr4vy.
 
 - Refer to [Integration Guide](/notification/docs/integrationguide.md) on how to integrate your shop with this module.
 - Refer to [How to run](/notification/docs/howtorun.md) the Extension module.
+
+## Store front Integration
+
+Each merchant will have their own implementation of Storefront. So we have used the demo storefront provided by Commercetools, the [Sunrise SPA] for sample integration. The modified files for the integration could be found here: [/sunrise-spa](/sunrise-spa/) You can model the integration for your storefront in the same line. The majority of integration code is in the file [/sunrise-spa/src/presentation/fashion/PageCheckout/PageCheckout.js](/sunrise-spa/src/presentation/fashion/PageCheckout/PageCheckout.js)
