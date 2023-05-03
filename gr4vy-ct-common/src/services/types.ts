@@ -1,5 +1,3 @@
-import { Order as ctOrder } from "@commercetools/platform-sdk"
-
 export declare type PaymentConfigContainer = {
   id: string
   key: string
@@ -76,8 +74,6 @@ export declare type OrderReturnInfoItems = {
 export declare type OrderReturnInfo = {
   items: OrderReturnInfoItems[]
 }
-
-export declare type Order = ctOrder
 
 export declare type RefundItems = [RefundItem]
 

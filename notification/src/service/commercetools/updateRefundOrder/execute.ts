@@ -1,5 +1,5 @@
 import { ApiClient, Constants, getOrderById } from "@gr4vy-ct/common"
-import { Order } from "@gr4vy-ct/common/src/services/types"
+import { Order } from "@commercetools/platform-sdk"
 
 import { updateRefundOrderMutation } from "./query"
 import { responseMapper } from "./mapper"
