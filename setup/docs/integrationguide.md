@@ -12,7 +12,7 @@ Commercetools API Extensions extends behavior of an API with custom business log
 
 The Gr4vy extension updates the cart to have the tax calculation mode to "UnitPriceLevel" when a cart is created. That is the tax calculation supported by most of the payment gateways.
 
-HTTP type API Extension is used which points to `https://domain.com/taxcalculationmode` URL in the Gr4vy Extension module. Use your own domain name instead of `domain.com`.
+HTTP type API Extension is used which points to `https://myextensiondomain.com/taxcalculationmode` URL in the Gr4vy Extension module. Use the URL in your extension server for the same.
 
 ## Subscriptions
 

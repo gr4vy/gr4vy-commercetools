@@ -1,4 +1,4 @@
-# How to run
+# How to run Extension Module
 
 Follow the steps:
 

@@ -1,4 +1,4 @@
-# How to run
+# How to run Notification Module
 
 Follow the steps:
 
@@ -11,5 +11,5 @@ Follow the steps:
 - Create a deployment file by running one of the following commands based on your serverless provider:
   - For AWS: `npm run zip-lambda-function`
   - For GCP: `npm run zip-google-function`
-  - For others, you will have create them yourself.
+  - For others, you will have create the deployment file yourself. Note that, you got to create an index.ts file for specific serverless provider.
 - Upload the deployment file to the serverless cloud.
