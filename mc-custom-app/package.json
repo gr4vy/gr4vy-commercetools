@@ -30,7 +30,7 @@
     "@commercetools-frontend/i18n": "21.20.4",
     "@commercetools-frontend/jest-preset-mc-app": "21.20.4",
     "@commercetools-frontend/mc-dev-authentication": "21.20.4",
-    "@commercetools-frontend/mc-scripts": "21.20.4",
+    "@commercetools-frontend/mc-scripts": "21.25.2",
     "@commercetools-frontend/permissions": "21.20.4",
     "@commercetools-frontend/sdk": "^21.21.2",
     "@commercetools-test-data/channel": "4.1.1",
