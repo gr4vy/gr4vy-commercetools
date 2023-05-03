@@ -1,6 +1,7 @@
 import { Constants, resolveOrderPayment } from "@gr4vy-ct/common"
 import { Order, TaxedItemPrice } from "@commercetools/platform-sdk"
 
+import { OrderRefundDetailsInterface } from "../interfaces"
 import { RefundMessageObject } from "../../../service/types"
 import { OrderDetails } from "../order.details"
 import { DiscountedLineItemPriceForQuantityCT } from "../interfaces"
@@ -8,7 +9,7 @@ import { DiscountedLineItemPriceForQuantityCT } from "../interfaces"
 const {
   STATES: { CT },
 } = Constants
-export class OrderRefundDetails extends OrderDetails {
+export class OrderRefundDetails extends OrderDetails implements OrderRefundDetailsInterface {
   refundAmount: number
 
   refundObject: RefundMessageObject

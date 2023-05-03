@@ -1,8 +1,9 @@
 import { resolveOrderPayment } from "@gr4vy-ct/common"
 
+import { OrderVoidDetailsInterface } from "../interfaces"
 import { OrderDetails } from "../order.details"
 
-export class OrderVoidDetails extends OrderDetails {
+export class OrderVoidDetails extends OrderDetails implements OrderVoidDetailsInterface  {
   voidAmount: number
   orderState: string
   async execute() {

@@ -1,8 +1,9 @@
 import { resolveOrderPayment } from "@gr4vy-ct/common"
 
+import { CaptureOrderDetailsInterface } from "../interfaces"
 import { OrderDetails } from "../order.details"
 
-class OrderCaptureDetails extends OrderDetails {
+class OrderCaptureDetails extends OrderDetails implements CaptureOrderDetailsInterface {
   totalAmount: number
 
   async execute() {

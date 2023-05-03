@@ -1,9 +1,10 @@
 import { getOrderById, getCustomObjects, resolveOrderPayment } from "@gr4vy-ct/common"
-import { Order } from "@gr4vy-ct/common/src/services/types"
+import { Order } from "@commercetools/platform-sdk"
 
 import { getTransaction } from "../../service"
+import { OrderMainInterface } from "./interfaces"
 
-class OrderDetails {
+class OrderDetails implements OrderMainInterface {
   orderId: string
   version: number
   paymentVersion: number

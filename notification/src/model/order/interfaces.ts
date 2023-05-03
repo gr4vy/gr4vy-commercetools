@@ -1,5 +1,5 @@
 import { Order, DiscountedLineItemPriceForQuantity } from "@commercetools/platform-sdk"
-export interface OrderMainInterface extends Order {
+export interface OrderMainInterface{
   orderId: string
   version: number
   paymentVersion: number
