@@ -1,6 +1,4 @@
-import { Payment } from "@commercetools/platform-sdk"
-
-import { Order } from "./../services/types"
+import { Payment, Order } from "@commercetools/platform-sdk"
 
 export const resolveOrderPayment = (order: Order): Payment => {
   const payments = (order?.paymentInfo?.payments || []) as unknown as Payment[]

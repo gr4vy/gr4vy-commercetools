@@ -16,7 +16,7 @@ export const listTransactionRefunds = async (transactionId: string) => {
   const gr4vy = new Gr4vy({
     gr4vyId,
     privateKey,
-    debug: paymentConfig?.debug ? true : false,
+    debug: !!paymentConfig?.debug,
   })
 
   return responseMapper(await gr4vy.listTransactionRefunds(transactionId))

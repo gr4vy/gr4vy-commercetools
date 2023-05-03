@@ -1,9 +1,17 @@
 import { ServerResponse } from "http"
 
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { getLogger, getOrder, resolveStatus, replicateCartFromOrder, Constants, prepareCTStatuses, updateOrderWithPayment, resolveOrderPayment } from "@gr4vy-ct/common"
+import {
+  getLogger,
+  getOrder,
+  resolveStatus,
+  replicateCartFromOrder,
+  Constants,
+  prepareCTStatuses,
+  updateOrderWithPayment,
+  resolveOrderPayment,
+  prepareCTStatusesType
+} from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
@@ -42,7 +50,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         statusCode: 400,
       }
     }
-    
+
     const {
       STATES: { CT },
     } = Constants
@@ -59,19 +67,20 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     } = gr4vyTransaction || {}
 
     const haveTransactionInfo = !!(id && status && type && intent)
-    
+
     if (haveTransactionInfo) {
       // Update payment info
       const payment = resolveOrderPayment(order)
       const [transaction] = payment?.transactions || []
       const { type: ctTransactionType, id: ctTransactionId } = transaction || {}
-      const { orderState, orderPaymentState, transactionState } = prepareCTStatuses(
-        status,
-        ctTransactionType,
-        ctTransactionId,
-        gr4vyCapturedAmount,
-        gr4vyRefundedAmount
-      )
+      const { orderState, orderPaymentState, transactionState }: prepareCTStatusesType =
+        prepareCTStatuses(
+          status,
+          ctTransactionType,
+          ctTransactionId,
+          gr4vyCapturedAmount,
+          gr4vyRefundedAmount
+        )
 
       await updateOrderWithPayment({
         order,
@@ -80,7 +89,6 @@ const processRequest = async (request: Request, response: ServerResponse) => {
         transactionState,
         gr4vyTransaction,
       })
-
     } else {
       //Cancel order
       const orderState = CT.ORDER.CANCELLED
@@ -88,7 +96,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
       const transactionState = CT.TRANSACTION.FAILURE
       const interfaceText = rawResponseDescription || CT.ORDERPAYMENT.FAILED
       const interfaceCode = rawResponseCode || CT.ORDERPAYMENT.FAILED
-      
+
       await resolveStatus({
         order,
         orderState,

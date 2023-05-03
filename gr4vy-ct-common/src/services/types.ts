@@ -164,12 +164,24 @@ export declare type RefundItem = {
   transactionId: string
   status: string
   currency: string
-  amount: string
+  amount: number
   paymentVersion: string
+}
+
+export declare type Gr4vyTransactionResult = {
+  body: Gr4vyTransactionResponse
 }
 
 export declare type Gr4vyTransactionResponse = {
   id: string
+  intent: string
+  capturedAt: Date
+  voidedAt: Date
+  externalIdentifier: string
+  status: string
+  amount: number
+  capturedAmount: number
+  refundedAmount: number
   paymentService: {
     method: string
     displayName: string
@@ -183,4 +195,21 @@ export declare type UpdateOrderWithPaymentResponse = {
   hasOrderWithPaymentUpdated: boolean
   updateOrder: { id: string; version: string }
   updatePayment: { id: string; version: string }
+}
+
+export declare type ListRefundTransactions = {
+  response: {
+    body: {
+      items: [
+        {
+          type: string
+          id: string
+          transactionId: string
+          status: string
+          currency: string
+          amount: number
+        }
+      ]
+    }
+  }
 }
