@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { Gr4vy } from "@gr4vy-ct/common"
 
 import { Cart, Customer, PaymentConfig } from "./../../types"

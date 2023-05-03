@@ -1,7 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { ApiClient, Constants, getOrderById } from "@gr4vy-ct/common"
-import { Order } from "@gr4vy-ct/common/src/services/types"
+import { Order } from "@commercetools/platform-sdk"
 
 import { updateRefundOrderMutation } from "./query"
 import { responseMapper } from "./mapper"
@@ -11,7 +9,6 @@ const {
   STATES: { CT },
 } = Constants
 
-// eslint-disable-next-line
 const updateRefundOrder = async (
   {
     orderUpdateForRefund,
@@ -19,7 +16,6 @@ const updateRefundOrder = async (
     orderUpdateForRefund: OrderUpdateForRefund
   },
   { refundData }: { refundData: RefundMessageObject }
-  // eslint-disable-next-line
 ): Promise<any> => {
   const findFor = "{repl}{/repl}"
 
@@ -79,12 +75,13 @@ function isFullyRefundedOrder(order: Order): boolean {
   })
 
   const totalReturnItemsQty: { [key: string]: number } = {}
-  order.returnInfo.forEach(returnInfo => {
+  order.returnInfo?.forEach(returnInfo => {
     returnInfo.items.forEach(returnItem => {
-      if (totalReturnItemsQty[returnItem.lineItemId]) {
-        totalReturnItemsQty[returnItem.lineItemId] += returnItem.quantity
+      const returnlineItemId = (returnItem as { lineItemId: string }).lineItemId
+      if (totalReturnItemsQty[returnlineItemId]) {
+        totalReturnItemsQty[returnlineItemId] += returnItem.quantity
       } else {
-        totalReturnItemsQty[returnItem.lineItemId] = returnItem.quantity
+        totalReturnItemsQty[returnlineItemId] = returnItem.quantity
       }
     })
   })

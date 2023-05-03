@@ -1,8 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { hasErrorDueConcurrentModification } from "@gr4vy-ct/common"
 
-// eslint-disable-next-line
 const responseMapper = async (result: any) => {
   // Find error is due to Concurrent Modification
   const hasErrDueConcurrentModification = hasErrorDueConcurrentModification(result)

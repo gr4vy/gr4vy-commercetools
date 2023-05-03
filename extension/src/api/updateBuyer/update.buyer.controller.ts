@@ -1,19 +1,12 @@
 import { ServerResponse } from "http"
 
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { getLogger, getCustomObjects } from "@gr4vy-ct/common"
 
 import { Request } from "./../../types"
 import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
-import {
-  updateBuyerDetails,
-  updateCustomerCartAddress,
-  manageBuyerShippingAddress,
-  getCustomerWithCart,
-} from "../../service"
+import { updateBuyerDetails, manageBuyerShippingAddress, getCustomerWithCart } from "../../service"
 import { getBuyer } from "./../../utils"
 
 const processRequest = async (request: Request, response: ServerResponse) => {
@@ -43,8 +36,8 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
     const gr4vyBuyer = await getBuyer({ customer, cart, paymentConfig })
     if (gr4vyBuyer) {
-      if (customer) customer.gr4vyBuyerId = {value: gr4vyBuyer.id};
-      if (cart) cart.gr4vyBuyerId = {value: gr4vyBuyer.id};
+      if (customer) customer.gr4vyBuyerId = { value: gr4vyBuyer.id || "" }
+      if (cart) cart.gr4vyBuyerId = { value: gr4vyBuyer.id || "" }
       // Update buyer details in Gr4vy
       const { body: buyer } = await updateBuyerDetails({ customer, cart, paymentConfig })
       if (!buyer) {
@@ -67,7 +60,7 @@ const processRequest = async (request: Request, response: ServerResponse) => {
 
       //return data to be used by onBeforeTransaction of Embed.
       const responseData = {
-        shippingDetailsId: shippingDetail?.id
+        shippingDetailsId: shippingDetail?.id,
       }
 
       ResponseHelper.setResponseTo200(response, responseData)

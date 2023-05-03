@@ -4,15 +4,17 @@
   "description": "Notification package for Commerce tools and Gr4vy",
   "main": ".build/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "npm link @gr4vy-ct/common && npm run build-common && tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./.build/index.js",
     "eslint": "eslint . --ext .ts",
     "prettier": "prettier --ignore-path .prettierignore --write \"**/*.+(js|ts|json)\"",
     "start:dev": "nodemon src/index.ts | bunyan",
     "prepare": "cd .. && husky install notification/.husky",
-    "zip-lambda-function": "npm run build && cp ./.build/index.lambda.js ./.build/index.js",
-    "zip-google-function": "npm run build && cp ./.build/index.googleFunction.js ./.build/index.js"
+    "zip-lambda-function": "npm run build && cp ./.build/index.lambda.js ./.build/index.js && npm run zip-module && mv gr4vy-notification.zip aws-gr4vy-notification.zip",
+    "zip-google-function": "npm run build && cp ./.build/index.googleFunction.js ./.build/index.js && npm run zip-module && mv gr4vy-notification.zip gcp-gr4vy-notification.zip",
+    "zip-module": "mkdir gr4vy-notification && cp -r ./.build/* ./gr4vy-notification && cp -rf ./node_modules ./gr4vy-notification/ && rm ./gr4vy-notification/node_modules/@gr4vy-ct/common && mkdir ./gr4vy-notification/node_modules/@gr4vy-ct/common && cp -r ./node_modules/@gr4vy-ct/common/.build/* ./gr4vy-notification/node_modules/@gr4vy-ct/common/ && zip -r gr4vy-notification.zip ./gr4vy-notification && rm -rf gr4vy-notification",
+    "build-common": "cd ./node_modules/@gr4vy-ct/common && npm run build"
   },
   "repository": {
     "type": "git",
@@ -25,6 +27,7 @@
   },
   "homepage": "https://bitbucket.org/tryzens-commercetools/gr4vy#readme",
   "dependencies": {
+    "@commercetools/platform-sdk": "^4.4.0",
     "@types/node": "^18.11.18",
     "bunyan": "^1.8.15",
     "dotenv": "^16.0.3",

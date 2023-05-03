@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { Gr4vy } from "@gr4vy-ct/common"
 
 import { PaymentConfig, Capture } from "./../../types"
@@ -18,10 +16,15 @@ export const transactionCapture = async ({
     privateKey,
   })
 
+  if (!capture.amount) {
+    throw new Error("Capture amount is empty")
+  }
+
   const transactionCaptureParams = {
     amount: capture.amount,
     transactionId: capture.transactionId,
   }
+
   try {
     return await gr4vy.transactionCapture(transactionCaptureParams)
   } catch (e) {

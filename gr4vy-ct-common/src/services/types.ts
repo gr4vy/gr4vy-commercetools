@@ -75,87 +75,6 @@ export declare type OrderReturnInfo = {
   items: OrderReturnInfoItems[]
 }
 
-export declare type Order = {
-  id: string
-  version: string
-  orderState: string
-  paymentState: string
-
-  paymentInfo: {
-    payments: Payment[]
-  }
-  returnInfo: OrderReturnInfo[]
-
-  totalPrice: {
-    type: string
-    centAmount: number
-    fractionDigits: number
-    currencyCode: string
-  }
-  shippingInfo: {
-    taxRate: {
-      amount: number
-      includedInPrice: boolean
-    }
-  }
-  taxedShippingPrice: {
-    totalTax: {
-      centAmount: number
-    }
-  }
-  taxedPrice: {
-    taxPortions: [
-      {
-        rate: number
-        amount: {
-          centAmount: number
-        }
-      }
-    ]
-    totalNet: {
-      currencyCode: string
-      centAmount: number
-    }
-    totalGross: {
-      currencyCode: string
-      centAmount: number
-    }
-  }
-
-  lineItems: [
-    {
-      id: string
-      productId: string
-      quantity: number
-      totalPrice: {
-        centAmount: number
-      }
-      price: {
-        value: {
-          centAmount: number
-        }
-        discounted: {
-          value: {
-            centAmount: number
-          }
-        }
-      }
-      discountedPricePerQuantity: discountedPricePerQuantity[]
-      taxRate: {
-        includedInPrice: boolean
-      }
-      taxedPrice: {
-        totalNet: {
-          centAmount: number
-        }
-        totalGross: {
-          centAmount: number
-        }
-      }
-    }
-  ]
-}
-
 export declare type RefundItems = [RefundItem]
 
 export declare type RefundItem = {
@@ -164,12 +83,24 @@ export declare type RefundItem = {
   transactionId: string
   status: string
   currency: string
-  amount: string
+  amount: number
   paymentVersion: string
+}
+
+export declare type Gr4vyTransactionResult = {
+  body: Gr4vyTransactionResponse
 }
 
 export declare type Gr4vyTransactionResponse = {
   id: string
+  intent: string
+  capturedAt: Date
+  voidedAt: Date
+  externalIdentifier: string
+  status: string
+  amount: number
+  capturedAmount: number
+  refundedAmount: number
   paymentService: {
     method: string
     displayName: string
@@ -183,4 +114,21 @@ export declare type UpdateOrderWithPaymentResponse = {
   hasOrderWithPaymentUpdated: boolean
   updateOrder: { id: string; version: string }
   updatePayment: { id: string; version: string }
+}
+
+export declare type ListRefundTransactions = {
+  response: {
+    body: {
+      items: [
+        {
+          type: string
+          id: string
+          transactionId: string
+          status: string
+          currency: string
+          amount: number
+        }
+      ]
+    }
+  }
 }

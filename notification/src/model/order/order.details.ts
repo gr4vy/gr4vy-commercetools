@@ -1,18 +1,16 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { getOrderById, getCustomObjects, resolveOrderPayment } from "@gr4vy-ct/common"
-import { Order } from "@gr4vy-ct/common/src/services/types"
+import { Order } from "@commercetools/platform-sdk"
 
 import { getTransaction } from "../../service"
 import { OrderMainInterface } from "./interfaces"
 
 class OrderDetails implements OrderMainInterface {
   orderId: string
-  version: string
+  version: number
   paymentVersion: number
-  currencyCode: string
+  currencyCode: string | undefined
   paymentId: string
-  paymentTransactionId: string
+  paymentTransactionId: string | null | undefined
   // eslint-disable-next-line
   requestBody: any
 

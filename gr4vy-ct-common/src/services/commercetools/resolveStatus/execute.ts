@@ -1,7 +1,8 @@
+import { Order } from "@commercetools/platform-sdk"
+
 import { ApiClient } from "../../../clients/apiClient"
 import { mutationQuery, mutationQueryWithoutTransaction } from "./query"
 import { responseMapper, responseMapperWithoutTransaction } from "./mapper"
-import { Order } from "./../../types"
 import { resolveOrderPayment } from "../../../helpers"
 
 const resolveStatus = async ({

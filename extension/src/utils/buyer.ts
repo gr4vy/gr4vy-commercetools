@@ -19,7 +19,7 @@ const getBuyer = async ({
     body: { items },
   } = await getGr4vyBuyer({ userId, paymentConfig })
 
-  return items.length > 0 ? items[0] : null
+  return items && items.length > 0 ? items[0] : null
 }
 
 const createBuyer = async ({
@@ -60,12 +60,12 @@ const resolveCustomerBuyerId = async ({
   if (customer) {
     // Set gr4vyBuyerId in customer
     customer.gr4vyBuyerId = {
-      value: buyer.id,
+      value: buyer.id || "",
     }
   } else {
     // Set gr4vyBuyerId in cart
     cart.gr4vyBuyerId = {
-      value: buyer.id,
+      value: buyer.id || "",
     }
   }
 }

@@ -24,8 +24,8 @@ const subscription = `
 const createSubscriptionsMutationQuery = `
 mutation createSubscriptions (
   $subsKey:String!,
-  $queueUrl: String!,
-  $region: String!){
+  $topic: String!,
+  $projectId: String!){
   ${subscription},
 }
 `

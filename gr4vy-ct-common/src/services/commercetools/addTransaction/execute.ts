@@ -1,7 +1,8 @@
+import { Order } from "@commercetools/platform-sdk"
+
 import { ApiClient } from "../../../clients/apiClient"
 import { updatePaymentMutation } from "./query"
 import { responseMapper } from "./mapper"
-import { Order } from "./../../types"
 import { Constants } from "./../../../config"
 import { escapedJSON } from "./../../../utils"
 import { resolveOrderPayment } from "../../../helpers"
