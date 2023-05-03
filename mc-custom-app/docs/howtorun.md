@@ -1,4 +1,4 @@
-# How to run
+# How to run Custom App module
 
 Following steps to run the Merchant Center:
 

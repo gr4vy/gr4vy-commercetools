@@ -1,4 +1,4 @@
-# How to run
+# How to run Setup Module
 
 Follow the below steps to run the setup:
 
@@ -10,6 +10,6 @@ Follow the below steps to run the setup:
 - If you use GCP as type above, then you got to have a Google Cloud PubSub queue and configure the "GCP Configuration" section.
 - If you use type as Other, then you will have to create the subscription yourself.
 - Configure the extension configuration. The extension URL will point to the Extension server and will have a value `https://yourextensiondomain.com/taxcalculationmode` and auth header can have a value `Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==`
-- Build the common and setup projects by going to the respective folders and running the following commands: `npm run build`
-- Go to the setup folder and run the command `npm start`
+- Go to the common folder: `npm run setup`
+- Go to the setup folder and run the command `npm run build` and then `npm start`.
 - A success message will be displayed.
