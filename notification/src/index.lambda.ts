@@ -28,7 +28,7 @@ export const handler = async (event: any) => {
     throw error
   }
 
-  const isPaymentActive = await handleDisabledConfig(event)
+  const isPaymentActive = await handleDisabledConfig()
   //if Gr4vy payment is not active, return.
   if (!isPaymentActive) {
     return {
@@ -44,13 +44,13 @@ export const handler = async (event: any) => {
   try {
     switch (body.type) {
       case CT.MESSAGE_TYPES.ORDER.DELIVERY_ADDED:
-        await handleTransactionCapture(event)
+        await handleTransactionCapture(body)
         break
       case CT.MESSAGE_TYPES.ORDER.RETURN_INFO_ADDED:
-        await handleTransactionRefund(event)
+        await handleTransactionRefund(body)
         break
       case CT.MESSAGE_TYPES.ORDER.ORDER_STATE_CHANGED:
-        await handleTransactionVoid(event)
+        await handleTransactionVoid(body)
         break
       default:
         throw new Error(`Error during identify type of notification. Received type: ${body.type}`)

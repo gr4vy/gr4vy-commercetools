@@ -4,7 +4,7 @@ import { getCustomObjects, getLogger } from "@gr4vy-ct/common"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 
 import ResponseHelper from "../../helper/response"
-import { isPostRequest } from "../../helper"
+import { isPostRequest, prepareRequestBody } from "../../helper"
 import { Request } from "../../types"
 import { handleTransactionCapture } from "./../../handler"
 
@@ -36,7 +36,8 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     }
 
     const { event } = request.body
-    const transactionCaptureResult = await handleTransactionCapture(event)
+    const body = prepareRequestBody(event)
+    const transactionCaptureResult = await handleTransactionCapture(body)
     ResponseHelper.setResponseTo200(response, transactionCaptureResult)
   } catch (e) {
     ResponseHelper.setResponseError(response, {

@@ -18,7 +18,7 @@ const responseMapper = (response: any): PaymentConfig => {
 const cleanup = (config: PaymentConfig) => {
 
   //validate if metadata config has a valid json string. otherwise use default.
-  let metadata = { ct_custom_data: "default" };
+  let metadata = {};
   if(config?.customData) {
     try {
       metadata = JSON.parse(config?.customData);

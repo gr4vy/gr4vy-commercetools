@@ -23,7 +23,7 @@ export class ApiClient {
     this.projectKey = env.CTP_PROJECT_KEY as string
   }
 
-  setBody({ query, variables }: { query: string; variables: { [key: string]: string | number } }) {
+  setBody({ query, variables }: { query: string; variables: { [key: string]: any } }) {
     this.query = query
     this.variables = variables
   }

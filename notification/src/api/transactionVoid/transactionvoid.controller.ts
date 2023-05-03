@@ -7,6 +7,7 @@ import ResponseHelper from "./../../helper/response"
 import { isPostRequest } from "./../../helper/methods"
 import { Request } from "./../../types"
 import { handleTransactionVoid } from "../../handler"
+import { prepareRequestBody } from "../../helper"
 
 const processRequest = async (request: Request, response: ServerResponse) => {
   const logger = getLogger()
@@ -36,7 +37,8 @@ const processRequest = async (request: Request, response: ServerResponse) => {
     }
 
     const { event } = request.body
-    const transactionVoidResult = await handleTransactionVoid(event)
+    const body = await prepareRequestBody(event)
+    const transactionVoidResult = await handleTransactionVoid(body)
     ResponseHelper.setResponseTo200(response, transactionVoidResult)
   } catch (e) {
     ResponseHelper.setResponseError(response, {

@@ -18,7 +18,7 @@ import {
   OrderVoidDetailsInterface,
 } from "../model/order/interfaces"
 
-async function handleDisabledConfig(event: any) {
+async function handleDisabledConfig() {
   const paymentConfig = await getCustomObjects()
   if (!paymentConfig) {
     throw { message: "Payment configuration is missing or empty", statusCode: 400 }
@@ -31,9 +31,9 @@ const {
 } = Constants
 
 // eslint-disable-next-line
-async function handleTransactionCapture(event: any) {
+async function handleTransactionCapture(body: any) {
   const logger = getLogger()
-  const orderCaptureDetails: OrderCaptureDetails = new OrderCaptureDetails(event)
+  const orderCaptureDetails: OrderCaptureDetails = new OrderCaptureDetails(body)
 
   //Load order details from Commercetools
   const orderCapture: CaptureOrderDetailsInterface = await orderCaptureDetails.execute()
@@ -89,9 +89,9 @@ async function handleTransactionCapture(event: any) {
 }
 
 // eslint-disable-next-line
-async function handleTransactionRefund(event: any) {
+async function handleTransactionRefund(body: any) {
   const logger = getLogger()
-  const orderRefundDetail: OrderRefundDetails = new OrderRefundDetails(event)
+  const orderRefundDetail: OrderRefundDetails = new OrderRefundDetails(body)
 
   //Load order details from Commercetools
   const orderRefund: OrderRefundDetailsInterface = await orderRefundDetail.execute()
@@ -154,9 +154,9 @@ async function handleTransactionRefund(event: any) {
 }
 
 // eslint-disable-next-line
-async function handleTransactionVoid(event: any) {
+async function handleTransactionVoid(body: any) {
   const logger = getLogger()
-  const orderVoidDetail: OrderVoidDetails = new OrderVoidDetails(event)
+  const orderVoidDetail: OrderVoidDetails = new OrderVoidDetails(body)
   //Load order details from Commercetools
   const orderVoid: OrderVoidDetailsInterface = await orderVoidDetail.execute()
   if (!orderVoid) {
