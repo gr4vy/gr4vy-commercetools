@@ -1,7 +1,5 @@
 import { ServerResponse } from "http"
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { getCustomObjects, getLogger } from "@gr4vy-ct/common"
 import { StatusCodes, getReasonPhrase } from "http-status-codes"
 

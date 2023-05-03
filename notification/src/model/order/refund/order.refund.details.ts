@@ -1,16 +1,14 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { Constants, resolveOrderPayment } from "@gr4vy-ct/common"
-import { discountedPricePerQuantity, Order } from "@gr4vy-ct/common/src/services/types"
+import { Order, TaxedItemPrice } from "@commercetools/platform-sdk"
 
 import { OrderRefundDetailsInterface } from "../interfaces"
 import { RefundMessageObject } from "../../../service/types"
 import { OrderDetails } from "../order.details"
+import { DiscountedLineItemPriceForQuantityCT } from "../interfaces"
 
 const {
   STATES: { CT },
 } = Constants
-
 export class OrderRefundDetails extends OrderDetails implements OrderRefundDetailsInterface {
   refundAmount: number
 
@@ -23,8 +21,7 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
   }
 
   validateReturn(order: Order, refundObject: RefundMessageObject): boolean {
-    // eslint-disable-next-line
-    order.returnInfo.forEach((returnInfo: { items: any[] }) => {
+    order.returnInfo?.forEach((returnInfo: { items: { id: string; paymentState: string }[] }) => {
       returnInfo.items.forEach(returnItem => {
         this.refundObject.items.find(function (refundItem) {
           if (
@@ -54,13 +51,14 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
     refundObject.items.forEach(returnItem => {
       returnItemIds.push(returnItem.id)
     })
-    order.returnInfo.forEach(function (returnInfoItem) {
+    order.returnInfo?.forEach(function (returnInfoItem) {
       returnInfoItem.items.forEach(function (alreadyReturnedItem) {
         if (!returnItemIds.includes(alreadyReturnedItem.id)) {
-          if (itemsQtyAlreadyReturned[alreadyReturnedItem.lineItemId]) {
-            itemsQtyAlreadyReturned[alreadyReturnedItem.lineItemId] += alreadyReturnedItem.quantity
+          const lineItemId = (alreadyReturnedItem as { lineItemId: string }).lineItemId
+          if (itemsQtyAlreadyReturned[lineItemId]) {
+            itemsQtyAlreadyReturned[lineItemId] += alreadyReturnedItem.quantity
           } else {
-            itemsQtyAlreadyReturned[alreadyReturnedItem.lineItemId] = alreadyReturnedItem.quantity
+            itemsQtyAlreadyReturned[lineItemId] = alreadyReturnedItem.quantity
           }
         }
       })
@@ -88,12 +86,13 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
     lineItemId: string,
     returnId: string,
     order: Order,
-    discountedPricePerQuantity: discountedPricePerQuantity[]
-  ): discountedPricePerQuantity[] {
+    discountedPricePerQuantity: DiscountedLineItemPriceForQuantityCT[]
+  ): DiscountedLineItemPriceForQuantityCT[] {
     let totalReturnedQty = 0
-    order.returnInfo.forEach(function (returnInfoItem) {
+    order.returnInfo?.forEach(function (returnInfoItem) {
       returnInfoItem.items.forEach(function (returnItem) {
-        if (returnItem.id != returnId && returnItem.lineItemId == lineItemId) {
+        const returnlineItemId = (returnItem as { lineItemId: string }).lineItemId
+        if (returnItem.id != returnId && returnlineItemId == lineItemId) {
           totalReturnedQty += returnItem.quantity
         }
       })
@@ -153,10 +152,12 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
           refundItemLineItem.id,
           refundItem.id,
           order,
-          discountedPricePerQuantity
+          discountedPricePerQuantity as DiscountedLineItemPriceForQuantityCT[]
         )
         for (let i = 0; i < discountedPricePerQuantity.length; i++) {
-          const discountedQty = discountedPricePerQuantity[i].balanceQty
+          const discountedQty = (
+            discountedPricePerQuantity as DiscountedLineItemPriceForQuantityCT[]
+          )[i].balanceQty
           if (discountedQty <= 0) {
             continue
           }
@@ -188,7 +189,7 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
 
     let taxIncluded = false
     order.lineItems.forEach(function (lineItem) {
-      taxIncluded = lineItem.taxRate.includedInPrice
+      taxIncluded = !!lineItem.taxRate?.includedInPrice
     })
 
     const taxAmount = order?.taxedPrice?.taxPortions[0]?.amount?.centAmount ?? 0
@@ -199,7 +200,8 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
 
     order.lineItems.forEach(lineItem => {
       const totalLineItemTax =
-        lineItem.taxedPrice.totalGross.centAmount - lineItem.taxedPrice.totalNet.centAmount
+        (lineItem.taxedPrice as TaxedItemPrice).totalGross.centAmount -
+        (lineItem.taxedPrice as TaxedItemPrice).totalNet.centAmount
       const totalLineItemTaxSplit = this.splitTaxOnLineItems(totalLineItemTax, lineItem.quantity)
       lineItemWiseTaxSplit[lineItem.id] = totalLineItemTaxSplit
     })
@@ -208,11 +210,12 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
     refundObject.items.forEach(refundItem => {
       currentReturnItemIds.push(refundItem.id)
     })
-    order.returnInfo.forEach(function (returnInfoItem) {
+    order.returnInfo?.forEach(function (returnInfoItem) {
       returnInfoItem.items.forEach(function (returnItem) {
+        const returnlineItemId = (returnItem as { lineItemId: string }).lineItemId
         if (currentReturnItemIds.indexOf(returnItem.id) == -1) {
           order.lineItems.forEach(function (lineItem) {
-            if (lineItem.id == returnItem.lineItemId && lineItemWiseTaxSplit[lineItem.id]) {
+            if (lineItem.id == returnlineItemId && lineItemWiseTaxSplit[lineItem.id]) {
               for (let i = 1; i <= returnItem.quantity; i++) {
                 lineItemWiseTaxSplit[lineItem.id].shift()
               }
@@ -251,6 +254,7 @@ export class OrderRefundDetails extends OrderDetails implements OrderRefundDetai
     const { version, totalPrice } = order
     const payment = resolveOrderPayment(order)
     return {
+      ...order,
       orderId,
       currencyCode: totalPrice.currencyCode,
       refundAmount: this.getRefundAmount(this.refundObject, order),

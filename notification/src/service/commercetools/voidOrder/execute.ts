@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import {
   getCustomObjects,
   Constants,
@@ -19,7 +17,7 @@ const {
 } = Constants
 
 const voidOrder = async (orderVoidDetails: OrderVoidDetailsInterface) => {
-  const gr4vyTransactionId = orderVoidDetails.paymentTransactionId
+  const gr4vyTransactionId = orderVoidDetails.paymentTransactionId || ""
   const voidTxion = { transactionId: gr4vyTransactionId }
   const paymentConfig = await getCustomObjects()
 
@@ -46,7 +44,7 @@ const voidOrder = async (orderVoidDetails: OrderVoidDetailsInterface) => {
 
   if (
     transactionVoidResponse &&
-    transactionVoidResponse.status == GR4VY.TRANSACTION.AUTHORIZATION_VOIDED
+    (transactionVoidResponse.status as unknown as string) == GR4VY.TRANSACTION.AUTHORIZATION_VOIDED
   ) {
     const { id: gr4vyVoidTransactionId } = transactionVoidResponse
     return gr4vyVoidTransactionId
@@ -79,8 +77,8 @@ const addVoidTransaction = async (
       status: CT.TRANSACTION.SUCCESS,
       paymentVersion: orderVoidDetails.paymentVersion,
       transactionType: CT.TRANSACTION.TYPES.CANCEL_AUTHORIZATION,
-      amount: orderVoidDetails.voidAmount,
-      currency: orderVoidDetails.currencyCode,
+      amount: orderVoidDetails.voidAmount || 0,
+      currency: orderVoidDetails.currencyCode || "",
       customValue: gr4vyVoidTransactionId,
     })
   } else {
@@ -99,7 +97,12 @@ const addVoidTransaction = async (
     }
   }
 
-  const { hasErrDueConcurrentModification, version: voidTransactionAdded } = transactionResponse
+  const { hasErrDueConcurrentModification, version: voidTransactionAdded } =
+    transactionResponse as {
+      hasErrDueConcurrentModification: boolean
+      version: boolean
+      captureTransactionAdded: boolean
+    }
 
   return { hasErrDueConcurrentModification, voidTransactionAdded }
 }

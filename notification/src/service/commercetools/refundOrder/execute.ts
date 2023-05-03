@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import {
   getCustomObjects,
   Constants,
@@ -20,6 +18,10 @@ const refundOrder = async (orderRefundDetails: OrderRefundDetailsInterface): Pro
   if (orderRefundDetails.refundAmount <= 0) {
     throw new Error("There is an error - Total amount to refund is invalid or zero")
   }
+  if (!orderRefundDetails.paymentTransactionId) {
+    throw new Error("There is an error - Payment transaction id is empty")
+  }
+
   const refund = {
     amount: orderRefundDetails.refundAmount,
     transactionId: orderRefundDetails.paymentTransactionId,
@@ -33,11 +35,12 @@ const refundOrder = async (orderRefundDetails: OrderRefundDetailsInterface): Pro
 
   if (
     transactionRefundResponse &&
-    transactionRefundResponse.status == GR4VY.TRANSACTION.REFUND_SUCCEEDED
+    (transactionRefundResponse.status as unknown as string) == GR4VY.TRANSACTION.REFUND_SUCCEEDED
   ) {
     const { id: gr4vyRefundTransactionId } = transactionRefundResponse
-    return gr4vyRefundTransactionId
+    return gr4vyRefundTransactionId || ""
   }
+
   return ""
 }
 
@@ -61,9 +64,8 @@ const addRefundTransaction = async (
 
   for (const transaction of ctTransactions) {
     if (transaction?.custom) {
-      const {
-        custom: { customFieldsRaw },
-      } = transaction
+      const { custom } = transaction
+      const customFieldsRaw = custom as unknown as { customFieldsRaw: { [key: string]: string } }
 
       if (customFieldsRaw && Array.isArray(customFieldsRaw)) {
         customFieldsRaw.forEach(customField => {
@@ -85,7 +87,7 @@ const addRefundTransaction = async (
         paymentVersion: orderRefundDetails.paymentVersion,
         transactionType: "Refund",
         amount: orderRefundDetails.refundAmount,
-        currency: orderRefundDetails.currencyCode,
+        currency: orderRefundDetails.currencyCode || "",
         customValue: gr4vyRefundTransactionId,
       })
     return { hasErrDueConcurrentModification, refundTransactionAdded }

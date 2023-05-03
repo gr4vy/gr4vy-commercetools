@@ -22,7 +22,6 @@ const updateOrderWithPayment = async ({
 }): Promise<UpdateOrderWithPaymentResponse> => {
   const {
     defaultLocale,
-    STATES: { CT },
   } = Constants
 
   const apiClient: ApiClient = new ApiClient()
